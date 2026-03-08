@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aaron Wiley — District 21 | We Are Here</title>
+  <meta name="description" content="Aaron Wiley for Utah House District 21. The West Side is rising. Caucus Night March 17 — Rose Park Elementary." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #1B3A6B;
+      --navy-dark: #0f2347;
+      --coral: #E8553E;
+      --coral-light: #f07060;
+      --white: #ffffff;
+      --off-white: #f8f6f2;
+      --light-gray: #eeecea;
+      --text: #1a1a1a;
+      --text-muted: #555;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Barlow', sans-serif;
+      color: var(--text);
+      background: var(--white);
+      overflow-x: hidden;
+    }
+
+    /* ─── URGENT BANNER ─── */
+    .urgent-banner {
+      background: var(--coral);
+      color: white;
+      text-align: center;
+      padding: 12px 20px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      position: relative;
+      z-index: 100;
+    }
+    .urgent-banner a {
+      color: white;
+      text-decoration: underline;
+      margin-left: 12px;
+    }
+    .urgent-banner .date-highlight {
+      background: white;
+      color: var(--coral);
+      padding: 2px 8px;
+      border-radius: 3px;
+      margin: 0 4px;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      background: var(--navy);
+      position: sticky;
+      top: 0;
+      z-index: 99;
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+    }
+    .nav-logo img {
+      height: 40px;
+      display: block;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: white; }
+    .nav-social {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .nav-social a {
+      color: rgba(255,255,255,0.7);
+      font-size: 1.1rem;
+      transition: color 0.2s;
+      text-decoration: none;
+    }
+    .nav-social a:hover { color: white; }
+    .nav-cta {
+      background: var(--coral);
+      color: white !important;
+      padding: 8px 20px;
+      border-radius: 4px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: background 0.2s !important;
+    }
+    .nav-cta:hover { background: var(--coral-light) !important; }
+    .hamburger {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      flex-direction: column;
+      gap: 5px;
+      padding: 4px;
+    }
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: white;
+      transition: 0.3s;
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('images/hero-kayak.jpg');
+      background-size: cover;
+      background-position: center 30%;
+      transform: scale(1.05);
+      animation: heroZoom 20s ease-in-out infinite alternate;
+    }
+    @keyframes heroZoom {
+      from { transform: scale(1.05); }
+      to { transform: scale(1.12); }
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        105deg,
+        rgba(11, 28, 58, 0.88) 0%,
+        rgba(11, 28, 58, 0.72) 50%,
+        rgba(11, 28, 58, 0.3) 100%
+      );
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      padding: 0 8vw;
+      max-width: 900px;
+    }
+    .hero-we-are {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: clamp(5rem, 14vw, 12rem);
+      line-height: 0.88;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+      animation: heroFadeUp 0.9s ease both;
+    }
+    .hero-we-are .line2 {
+      color: var(--coral);
+      display: block;
+      animation: heroFadeUp 0.9s 0.15s ease both;
+    }
+    @keyframes heroFadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .hero-sub {
+      margin-top: 24px;
+      color: rgba(255,255,255,0.9);
+      font-size: clamp(1.1rem, 2.2vw, 1.4rem);
+      font-weight: 400;
+      line-height: 1.5;
+      max-width: 560px;
+      animation: heroFadeUp 0.9s 0.3s ease both;
+    }
+    .hero-tags {
+      margin-top: 16px;
+      color: rgba(255,255,255,0.6);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      animation: heroFadeUp 0.9s 0.45s ease both;
+    }
+    .hero-tags span { margin: 0 6px; color: var(--coral); }
+    .hero-buttons {
+      margin-top: 40px;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      animation: heroFadeUp 0.9s 0.6s ease both;
+    }
+    .btn-primary {
+      background: var(--coral);
+      color: white;
+      padding: 16px 36px;
+      border-radius: 4px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+      display: inline-block;
+    }
+    .btn-primary:hover { background: var(--coral-light); transform: translateY(-2px); }
+    .btn-secondary {
+      background: transparent;
+      color: white;
+      padding: 16px 36px;
+      border-radius: 4px;
+      border: 2px solid rgba(255,255,255,0.5);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: border-color 0.2s, transform 0.2s;
+      display: inline-block;
+    }
+    .btn-secondary:hover { border-color: white; transform: translateY(-2px); }
+    .hero-scroll {
+      position: absolute;
+      bottom: 40px;
+      left: 8vw;
+      color: rgba(255,255,255,0.5);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: bounce 2s infinite;
+    }
+    .hero-scroll::before {
+      content: '';
+      display: block;
+      width: 1px;
+      height: 40px;
+      background: rgba(255,255,255,0.3);
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(6px); }
+    }
+
+    /* ─── SECTIONS ─── */
+    section { padding: 100px 8vw; }
+    .section-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--coral);
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      line-height: 1;
+      color: var(--navy);
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      margin-bottom: 24px;
+    }
+    .section-title.white { color: white; }
+    .section-title .accent { color: var(--coral); }
+    .section-body {
+      font-size: 1.1rem;
+      line-height: 1.75;
+      color: var(--text-muted);
+      max-width: 680px;
+    }
+    .section-body.wide { max-width: 860px; }
+    .section-body p + p { margin-top: 16px; }
+    .section-body strong { color: var(--text); font-weight: 600; }
+
+    /* ─── MOVEMENT SECTION ─── */
+    .movement {
+      background: var(--navy-dark);
+      color: white;
+      padding: 100px 8vw;
+      position: relative;
+      overflow: hidden;
+    }
+    .movement::before {
+      content: 'WE ARE 21';
+      position: absolute;
+      right: -2vw;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: clamp(6rem, 14vw, 16rem);
+      color: rgba(255,255,255,0.03);
+      text-transform: uppercase;
+      white-space: nowrap;
+      pointer-events: none;
+      line-height: 1;
+    }
+    .movement-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .movement-text .section-body {
+      color: rgba(255,255,255,0.8);
+      max-width: 100%;
+    }
+    .movement-text .section-body p { font-size: 1.15rem; }
+    .movement-text .section-body p.bold-line {
+      color: white;
+      font-weight: 600;
+      font-size: 1.25rem;
+    }
+    .movement-photos {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 280px 180px;
+      gap: 12px;
+    }
+    .movement-photos .photo-big {
+      grid-column: 1 / 3;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .movement-photos .photo-small {
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .movement-photos img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+    .movement-photos img:hover { transform: scale(1.03); }
+
+    /* ─── WHY I'M RUNNING ─── */
+    .why-running {
+      background: var(--off-white);
+    }
+    .why-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .why-photo {
+      border-radius: 6px;
+      overflow: hidden;
+      position: sticky;
+      top: 100px;
+    }
+    .why-photo img {
+      width: 100%;
+      height: 580px;
+      object-fit: cover;
+      display: block;
+    }
+    .why-text .section-body {
+      max-width: 100%;
+      color: #444;
+    }
+    .why-text .section-body p + p { margin-top: 18px; }
+    .quote-pullout {
+      border-left: 4px solid var(--coral);
+      padding: 16px 24px;
+      margin: 28px 0;
+      background: white;
+      border-radius: 0 6px 6px 0;
+    }
+    .quote-pullout p {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: var(--navy);
+      line-height: 1.3;
+      font-style: italic;
+    }
+
+    /* ─── MEET AARON ─── */
+    .meet-aaron {
+      background: white;
+    }
+    .aaron-intro {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 60px;
+      align-items: start;
+      margin-bottom: 60px;
+    }
+    .aaron-portrait {
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .aaron-portrait img {
+      width: 100%;
+      height: 380px;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
+    .aaron-bio-text .section-body { max-width: 100%; }
+    .aaron-bio-text .section-body p + p { margin-top: 16px; }
+    .aaron-quote {
+      background: var(--navy);
+      color: white;
+      padding: 32px 40px;
+      border-radius: 6px;
+      margin-top: 28px;
+      font-size: 1.2rem;
+      font-style: italic;
+      line-height: 1.6;
+      position: relative;
+    }
+    .aaron-quote::before {
+      content: '"';
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 5rem;
+      color: var(--coral);
+      position: absolute;
+      top: -10px;
+      left: 28px;
+      line-height: 1;
+    }
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    .photo-grid-item {
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+    .photo-grid-item img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+    .photo-grid-item:hover img { transform: scale(1.05); }
+    .photo-grid-item .photo-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,0.7));
+      color: white;
+      padding: 20px 12px 10px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 600;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* ─── COMMITMENT / ISSUES ─── */
+    .commitment {
+      background: var(--light-gray);
+    }
+    .commitment-intro {
+      max-width: 700px;
+      margin-bottom: 60px;
+    }
+    .issue-cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+    .issue-card {
+      background: white;
+      border-radius: 6px;
+      padding: 36px;
+      border-top: 4px solid var(--navy);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .issue-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+    }
+    .issue-card:nth-child(2) { border-top-color: var(--coral); }
+    .issue-card:nth-child(3) { border-top-color: #2a7a4b; }
+    .issue-card:nth-child(4) { border-top-color: #7b4fa0; }
+    .issue-icon {
+      font-size: 2.4rem;
+      margin-bottom: 16px;
+      display: block;
+    }
+    .issue-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 1.5rem;
+      color: var(--navy);
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      margin-bottom: 12px;
+    }
+    .issue-desc {
+      color: #555;
+      line-height: 1.65;
+      font-size: 0.95rem;
+    }
+    .issue-points {
+      margin-top: 16px;
+      padding-left: 0;
+      list-style: none;
+    }
+    .issue-points li {
+      padding: 4px 0 4px 18px;
+      position: relative;
+      font-size: 0.9rem;
+      color: #444;
+    }
+    .issue-points li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--coral);
+      font-weight: 700;
+    }
+
+    /* ─── HOW WE WIN ─── */
+    .how-we-win {
+      background: var(--navy);
+      color: white;
+      text-align: center;
+    }
+    .caucus-date-badge {
+      display: inline-block;
+      background: var(--coral);
+      color: white;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 1rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 8px 24px;
+      border-radius: 4px;
+      margin-bottom: 24px;
+    }
+    .caucus-location {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 6px;
+      padding: 24px 40px;
+      display: inline-block;
+      margin: 32px auto;
+      font-family: 'Barlow Condensed', sans-serif;
+    }
+    .caucus-location .loc-title {
+      font-weight: 800;
+      font-size: 1.5rem;
+      color: var(--coral);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .caucus-location .loc-address {
+      font-size: 1.1rem;
+      color: rgba(255,255,255,0.8);
+      margin-top: 4px;
+    }
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      margin: 60px 0;
+      text-align: left;
+    }
+    .step-card {
+      background: rgba(255,255,255,0.06);
+      border-radius: 6px;
+      padding: 36px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .step-number {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 4rem;
+      color: var(--coral);
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+    .step-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 12px;
+    }
+    .step-desc {
+      color: rgba(255,255,255,0.7);
+      line-height: 1.65;
+      font-size: 0.95rem;
+    }
+    .virtual-note {
+      color: rgba(255,255,255,0.6);
+      font-size: 0.95rem;
+      margin-top: 16px;
+    }
+    .virtual-note a {
+      color: var(--coral);
+      text-decoration: underline;
+    }
+
+    /* ─── GET INVOLVED ─── */
+    .get-involved {
+      background: var(--off-white);
+    }
+    .involved-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .form-wrapper {
+      background: white;
+      border-radius: 8px;
+      padding: 48px;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.07);
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--navy);
+      margin-bottom: 6px;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e0ddd8;
+      border-radius: 4px;
+      font-family: 'Barlow', sans-serif;
+      font-size: 1rem;
+      color: var(--text);
+      transition: border-color 0.2s;
+      background: #faf9f7;
+    }
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--navy);
+    }
+    .checkboxes {
+      margin: 24px 0;
+    }
+    .checkbox-group {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 14px;
+      cursor: pointer;
+    }
+    .checkbox-group input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin-top: 2px;
+      accent-color: var(--coral);
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .checkbox-group label {
+      font-size: 0.95rem;
+      line-height: 1.4;
+      cursor: pointer;
+      color: var(--text);
+    }
+    .checkbox-group label strong {
+      display: block;
+      font-weight: 600;
+      color: var(--navy);
+    }
+    .btn-submit {
+      width: 100%;
+      background: var(--coral);
+      color: white;
+      border: none;
+      padding: 18px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 1.2rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+      margin-top: 8px;
+    }
+    .btn-submit:hover { background: var(--coral-light); transform: translateY(-2px); }
+    .involved-text .section-body { max-width: 100%; }
+    .why-join-list {
+      margin-top: 32px;
+      list-style: none;
+    }
+    .why-join-list li {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+    .why-join-list .wj-icon {
+      font-size: 1.8rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .why-join-list .wj-text strong {
+      display: block;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--navy);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .why-join-list .wj-text span {
+      font-size: 0.9rem;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--navy-dark);
+      color: rgba(255,255,255,0.7);
+      padding: 60px 8vw 40px;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 60px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 30px;
+    }
+    .footer-logo img { height: 48px; margin-bottom: 16px; }
+    .footer-tagline {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--coral);
+      margin-bottom: 12px;
+    }
+    .footer-email {
+      color: rgba(255,255,255,0.6);
+      font-size: 0.9rem;
+      text-decoration: none;
+    }
+    .footer-email:hover { color: white; }
+    .footer-social {
+      display: flex;
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .footer-social a {
+      background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.7);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+    }
+    .footer-social a:hover { background: var(--coral); color: white; }
+    .footer-nav h4 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: white;
+      margin-bottom: 16px;
+    }
+    .footer-nav ul { list-style: none; }
+    .footer-nav ul li { margin-bottom: 10px; }
+    .footer-nav ul a {
+      color: rgba(255,255,255,0.6);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    .footer-nav ul a:hover { color: var(--coral); }
+    .footer-bottom {
+      text-align: center;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 0.05em;
+    }
+
+    /* ─── MOBILE ─── */
+    @media (max-width: 768px) {
+      section { padding: 70px 6vw; }
+      nav { padding: 0 20px; }
+      .nav-links, .nav-social { display: none; }
+      .hamburger { display: flex; }
+      .movement-grid,
+      .why-grid,
+      .aaron-intro,
+      .involved-grid,
+      .footer-grid { grid-template-columns: 1fr; gap: 40px; }
+      .issue-cards { grid-template-columns: 1fr; }
+      .steps-grid { grid-template-columns: 1fr; }
+      .photo-grid { grid-template-columns: 1fr 1fr; }
+      .movement-photos { grid-template-rows: 220px 160px; }
+      .why-photo { position: static; }
+      .form-row { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+      .hero-content { padding: 0 6vw; }
+    }
+
+    /* ─── SCROLL ANIMATIONS ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+
+    /* ─── FORM SUCCESS ─── */
+    .form-success {
+      display: none;
+      text-align: center;
+      padding: 40px;
+    }
+    .form-success .success-icon { font-size: 3rem; margin-bottom: 16px; }
+    .form-success h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 2rem;
+      color: var(--navy);
+      text-transform: uppercase;
+    }
+    .form-success p { color: #666; margin-top: 8px; }
+  </style>
+</head>
+<body>
+
+  <!-- URGENT BANNER -->
+  <div class="urgent-banner">
+    🗓 Caucus Night is <span class="date-highlight">March 17</span> — Show up. Run as a delegate. Make District 21 heard.
+    <a href="#how-we-win">Learn How →</a>
+  </div>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">
+      <img src="images/logo-main.png" alt="Aaron Wiley District 21" />
+    </a>
+    <ul class="nav-links">
+      <li><a href="#movement">Our Story</a></li>
+      <li><a href="#commitment">Issues</a></li>
+      <li><a href="#meet-aaron">Meet Aaron</a></li>
+      <li><a href="#how-we-win">Caucus Guide</a></li>
+      <li><a href="#get-involved" class="nav-cta">Become a Delegate</a></li>
+    </ul>
+    <div class="nav-social">
+      <a href="https://instagram.com/utahforwiley" target="_blank" title="Instagram">📸</a>
+      <a href="https://facebook.com/utahforwiley" target="_blank" title="Facebook">👍</a>
+    </div>
+    <button class="hamburger" onclick="toggleNav()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-we-are">
+        WE ARE 21
+        <span class="line2">WE ARE HERE</span>
+      </div>
+      <p class="hero-sub">For too long the West Side has been overlooked. Not anymore.</p>
+      <p class="hero-tags">
+        Dad <span>•</span> Coach <span>•</span> Community Builder <span>•</span> Fighter for District 21
+      </p>
+      <div class="hero-buttons">
+        <a href="#get-involved" class="btn-primary">Become a Delegate</a>
+        <a href="#movement" class="btn-secondary">Join the Movement ↓</a>
+      </div>
+    </div>
+    <div class="hero-scroll">Scroll</div>
+  </section>
+
+  <!-- THE MOVEMENT -->
+  <section class="movement" id="movement">
+    <div class="movement-grid">
+      <div class="movement-text">
+        <div class="section-label reveal">The Movement</div>
+        <h2 class="section-title white reveal reveal-delay-1">The West Side<br/><span class="accent">Has Always Been Here.</span></h2>
+        <div class="section-body reveal reveal-delay-2">
+          <p>We are the families raising our kids under winter inversion skies — wondering what's in the air they breathe.</p>
+          <p>We are the neighbors who organized when corporations tried to poison our communities. We are the communities who fought back when toxic waste was burned near our homes.</p>
+          <p>We are renters watching the neighborhoods we built become too expensive to stay in.</p>
+          <p>We are elders and people with disabilities who feel forgotten by decision-makers hundreds of miles away.</p>
+          <p>We are small business owners opening our doors before sunrise. We are teachers, coaches, parents, and dreamers.</p>
+          <p><strong style="color:white;">We are the heart of Salt Lake City.</strong></p>
+          <p>But for too long, the people in power treated the West Side like it didn't matter. Our communities were split apart by gerrymandering. Our local voices were stripped away by state politicians who think they know better than the people who live here.</p>
+          <p>They thought we wouldn't notice. They thought we wouldn't organize. They thought we wouldn't fight back.</p>
+          <p class="bold-line">They were wrong.</p>
+          <p class="bold-line">District 21 is rising. Neighbors are mobilizing. And together, we're building the voice the West Side has always deserved.</p>
+          <p>Aaron Wiley is stepping forward — not to speak for the community, but to stand with it. Because the West Side isn't asking for permission anymore.</p>
+          <p class="bold-line" style="color: var(--coral); font-size: 1.3rem;">We are organizing. We are mobilizing. We are 21.<br/>And we are just getting started.</p>
+        </div>
+      </div>
+      <div class="movement-photos reveal reveal-delay-2">
+        <div class="photo-big">
+          <img src="images/rally.jpg" alt="Aaron Wiley campaign rally with supporters holding signs" loading="lazy" />
+        </div>
+        <div class="photo-small">
+          <img src="images/baseball-team.jpg" alt="Aaron with West Side baseball team" loading="lazy" />
+        </div>
+        <div class="photo-small">
+          <img src="images/foodbank.jpg" alt="Aaron volunteering at food bank" loading="lazy" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY I'M RUNNING -->
+  <section class="why-running" id="why">
+    <div class="why-grid">
+      <div class="why-photo reveal">
+        <img src="images/speaking.jpg" alt="Aaron Wiley speaking at a community meeting" loading="lazy" />
+      </div>
+      <div class="why-text">
+        <div class="section-label reveal">Why I'm Running</div>
+        <h2 class="section-title reveal reveal-delay-1">I've Seen What Happens When <span class="accent">Nobody Speaks Up.</span></h2>
+        <div class="section-body wide reveal reveal-delay-2">
+          <p>I grew up on the east side of Salt Lake — one of the only Black, Chicano, Buddhist kids in my school.</p>
+          <p>My parents sat me down early and told me something I've never forgotten:</p>
+          <div class="quote-pullout">
+            <p>When you see something wrong, you speak up. With grace. With courage. Every time.</p>
+          </div>
+          <p>I've carried that lesson my whole life.</p>
+          <p>In college, I started organizing. I ran campaigns, led the Black Student Union, organized with MEChA, and worked on Barack Obama's first presidential campaign. That's where I learned how power actually works — and more importantly, how communities build it.</p>
+          <p>Later, I moved to the West Side. Started a family. Coached kids. Put down roots.</p>
+          <p><strong>And then Stericycle happened.</strong></p>
+          <p>A hazardous medical waste facility was operating near our neighborhoods. Most people didn't even know what was being released into our air. So we organized. Neighbors. Parents. Legislators. Community leaders.</p>
+          <p>We brought in experts. We demanded answers. We refused to stay quiet. And eventually, Utah had to change.</p>
+          <div class="quote-pullout">
+            <p>The West Side doesn't lack power. It lacks representation.</p>
+          </div>
+          <p>I'm not a career politician. I'm a dad, a coach, a tech founder, and someone who has been part of this community for decades. I'm running because my neighbors deserve someone who fights for them the same way I fight for the kids I coach — with heart, with discipline, and with everything I've got.</p>
+          <p style="font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.5rem; color: var(--navy); margin-top: 24px;">We are District 21. And I'm all in.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MEET AARON -->
+  <section class="meet-aaron" id="meet-aaron">
+    <div class="section-label reveal">Meet Aaron</div>
+    <h2 class="section-title reveal reveal-delay-1">The Person Behind <span class="accent">The Campaign.</span></h2>
+    <div class="aaron-intro reveal reveal-delay-2">
+      <div class="aaron-portrait">
+        <img src="images/portrait.jpg" alt="Aaron Wiley portrait" />
+      </div>
+      <div class="aaron-bio-text">
+        <div class="section-body">
+          <p>Aaron Wiley isn't a career politician. He's a father, a coach, a builder, and someone who believes the West Side deserves a stronger voice.</p>
+          <p><strong>Father first.</strong> Aaron has raised four kids here in our community. Two graduated from West High, one is currently enrolled, and his youngest is preparing to attend SLARTS. Like many parents on the West Side, his life revolves around supporting his kids, their schools, and the future they deserve.</p>
+          <p><strong>A coach and mentor.</strong> For more than 20 years Aaron has coached youth sports across the West Side — including baseball, basketball, football, and soccer. He helps young people build confidence, teamwork, and leadership both on and off the field.</p>
+          <p><strong>A community advocate.</strong> Aaron serves on the PNUT Board and was on the front lines of the Stericycle fight that brought national attention to pollution affecting local families. What started as a local concern grew into a statewide conversation about environmental accountability.</p>
+          <p><strong>A builder and problem solver.</strong> After studying Political Science at the University of Utah, Aaron built his career in technology — working in some of the early SaaS companies and now building platforms that help founders and business owners grow their companies.</p>
+          <p><strong>A lifelong leader.</strong> At the University of Utah, Aaron served as President of the Black Student Union, was active in MEChA, and served as the first paid employee and campaign director during President Obama's campaign in Utah.</p>
+        </div>
+        <div class="aaron-quote">
+          I'm not running away from something. I'm running toward something — a West Side that finally has a seat at the table. And I'm not afraid to stand up to anyone who tries to silence our community.
+        </div>
+      </div>
+    </div>
+    <div class="photo-grid reveal">
+      <div class="photo-grid-item">
+        <img src="images/dad-daughter-boat.jpg" alt="Aaron and daughter on lake" loading="lazy" />
+        <div class="photo-caption">Father First</div>
+      </div>
+      <div class="photo-grid-item">
+        <img src="images/coaching2.jpg" alt="Aaron coaching baseball" loading="lazy" />
+        <div class="photo-caption">20 Years Coaching</div>
+      </div>
+      <div class="photo-grid-item">
+        <img src="images/silicon-slopes.jpg" alt="Aaron at Silicon Slopes Utah" loading="lazy" />
+        <div class="photo-caption">Tech Builder</div>
+      </div>
+      <div class="photo-grid-item">
+        <img src="images/surfing-peru.jpg" alt="Aaron surfing in Peru" loading="lazy" />
+        <div class="photo-caption">Adventurer</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MY COMMITMENT -->
+  <section class="commitment" id="commitment">
+    <div class="commitment-intro reveal">
+      <div class="section-label">My Commitment</div>
+      <h2 class="section-title">Fighting for the Future of <span class="accent">District 21.</span></h2>
+      <p class="section-body">I'm running because the West Side deserves more than promises — we deserve results. These are the priorities I'll take with me to the Capitol.</p>
+    </div>
+    <div class="issue-cards">
+      <div class="issue-card reveal">
+        <span class="issue-icon">🏠</span>
+        <div class="issue-title">Housing & Cost of Living</div>
+        <p class="issue-desc">The dream of owning or even renting a home is slipping out of reach for too many families in our community. We need smart housing solutions that keep our neighborhoods strong.</p>
+        <ul class="issue-points">
+          <li>Increasing attainable housing options</li>
+          <li>Protecting renters and first-time buyers</li>
+          <li>Responsible development that serves communities</li>
+          <li>Making sure growth works for residents already here</li>
+        </ul>
+      </div>
+      <div class="issue-card reveal reveal-delay-1">
+        <span class="issue-icon">🌊</span>
+        <div class="issue-title">Clean Air & Healthy Communities</div>
+        <p class="issue-desc">Every family deserves clean air and a safe environment. Too many West Side communities have carried the burden of pollution for decades.</p>
+        <ul class="issue-points">
+          <li>Stronger environmental protections</li>
+          <li>Accountability for polluters</li>
+          <li>Investment in clean energy and cleaner transportation</li>
+          <li>Protecting our air, water, and Great Salt Lake</li>
+        </ul>
+      </div>
+      <div class="issue-card reveal reveal-delay-2">
+        <span class="issue-icon">🗳️</span>
+        <div class="issue-title">Fair Representation & Local Voice</div>
+        <p class="issue-desc">Utah voters approved reforms to protect fair representation — but those protections have been weakened. Government should reflect the will of the people.</p>
+        <ul class="issue-points">
+          <li>Fair district maps</li>
+          <li>Respect for voter initiatives</li>
+          <li>Protecting local decision-making</li>
+          <li>Every community has a voice</li>
+        </ul>
+      </div>
+      <div class="issue-card reveal reveal-delay-3">
+        <span class="issue-icon">🎓</span>
+        <div class="issue-title">Opportunity for the Next Generation</div>
+        <p class="issue-desc">As a father of four and a youth coach for 20+ years, I've seen the power of strong schools, mentorship, and community support. Our kids deserve every opportunity.</p>
+        <ul class="issue-points">
+          <li>Strengthen public education</li>
+          <li>Support student mental health services</li>
+          <li>Invest in career pathways and workforce training</li>
+          <li>Expand opportunities for young people across Utah</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW WE WIN -->
+  <section class="how-we-win" id="how-we-win">
+    <div class="caucus-date-badge reveal">📅 Caucus Night — March 17, 2026</div>
+    <h2 class="section-title white reveal reveal-delay-1">This Is How <span class="accent">We Win.</span></h2>
+    <p class="section-body reveal reveal-delay-2" style="color: rgba(255,255,255,0.75); margin: 0 auto 20px; max-width: 600px; text-align: center;">
+      You don't need experience. You don't need to be a politician. You just need to show up and raise your hand. When you become a delegate, <strong style="color: white;">you become the decision maker.</strong>
+    </p>
+    <div class="caucus-location reveal">
+      <div class="loc-title">📍 Rose Park Elementary</div>
+      <div class="loc-address">1105 W 1000 N, Salt Lake City, UT 84116 &nbsp;·&nbsp; House District 21</div>
+    </div>
+    <div class="steps-grid reveal">
+      <div class="step-card">
+        <div class="step-number">01</div>
+        <div class="step-title">Show Up</div>
+        <p class="step-desc">Attend your neighborhood caucus on March 17 at Rose Park Elementary. Doors open at 7:00 PM. Just showing up is the most important thing you can do.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">02</div>
+        <div class="step-title">Raise Your Hand</div>
+        <p class="step-desc">Volunteer to run as a delegate who supports Aaron. Stand up and say you want to represent your precinct. It takes 30 seconds. Anyone can do it.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">03</div>
+        <div class="step-title">Vote at Convention</div>
+        <p class="step-desc">As a delegate you vote for Aaron at the county convention. Your vote is what puts him on the ballot for District 21. This is where it starts.</p>
+      </div>
+    </div>
+    <a href="#get-involved" class="btn-primary reveal" style="font-size: 1.2rem; padding: 18px 48px;">I Want to Be a Delegate — Sign Me Up</a>
+    <p class="virtual-note reveal" style="margin-top: 20px;">
+      Can't make it in person? <a href="https://www.slcountydems.com/caucusnight" target="_blank">Fill out a virtual nomination form</a> before March 17 to still be considered as a delegate.
+    </p>
+  </section>
+
+  <!-- GET INVOLVED -->
+  <section class="get-involved" id="get-involved">
+    <div class="involved-grid">
+      <div class="involved-text reveal">
+        <div class="section-label">Join the Movement</div>
+        <h2 class="section-title">Join <span class="accent">Team Wiley.</span></h2>
+        <p class="section-body">District 21 wins when we show up together. Tell us how you want to help — and we'll be in touch personally.</p>
+        <ul class="why-join-list">
+          <li>
+            <span class="wj-icon">🗳️</span>
+            <div class="wj-text">
+              <strong>Become a Delegate</strong>
+              <span>The single most powerful thing you can do right now. Show up March 17 and vote for Aaron at convention.</span>
+            </div>
+          </li>
+          <li>
+            <span class="wj-icon">🤝</span>
+            <div class="wj-text">
+              <strong>Volunteer</strong>
+              <span>Knock doors, make calls, show up at events. We need bodies on the ground.</span>
+            </div>
+          </li>
+          <li>
+            <span class="wj-icon">📢</span>
+            <div class="wj-text">
+              <strong>Spread the Word</strong>
+              <span>Share this site. Tell your neighbors. The West Side mobilizes when we talk to each other.</span>
+            </div>
+          </li>
+          <li>
+            <span class="wj-icon">🪧</span>
+            <div class="wj-text">
+              <strong>Get a Yard Sign</strong>
+              <span>Show your neighborhood where you stand. Let's make District 21 visible.</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="form-wrapper reveal reveal-delay-1">
+        <form id="signupForm" onsubmit="handleSubmit(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="firstName">First Name *</label>
+              <input type="text" id="firstName" name="firstName" required placeholder="First name" />
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name *</label>
+              <input type="text" id="lastName" name="lastName" required placeholder="Last name" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="email">Email Address *</label>
+            <input type="email" id="email" name="email" required placeholder="your@email.com" />
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" placeholder="(801) 555-0000" />
+          </div>
+          <div class="form-group">
+            <label for="address">Home Address</label>
+            <input type="text" id="address" name="address" placeholder="So we can find your caucus location" />
+          </div>
+          <div class="checkboxes">
+            <label class="checkbox-group">
+              <input type="checkbox" name="attend_caucus" value="yes" />
+              <label>
+                <strong>✊ I will attend caucus night on March 17</strong>
+                Rose Park Elementary — 1105 W 1000 N
+              </label>
+            </label>
+            <label class="checkbox-group">
+              <input type="checkbox" name="be_delegate" value="yes" />
+              <label>
+                <strong>🗳️ I want to run as a delegate for Aaron Wiley</strong>
+                The most important thing you can do
+              </label>
+            </label>
+            <label class="checkbox-group">
+              <input type="checkbox" name="volunteer" value="yes" />
+              <label>
+                <strong>🤝 I want to volunteer for the campaign</strong>
+                Canvassing, phone banking, events
+              </label>
+            </label>
+            <label class="checkbox-group">
+              <input type="checkbox" name="yard_sign" value="yes" />
+              <label>
+                <strong>🪧 I want a yard sign</strong>
+              </label>
+            </label>
+            <label class="checkbox-group">
+              <input type="checkbox" name="updates" value="yes" checked />
+              <label>
+                <strong>📬 Sign me up for campaign updates</strong>
+              </label>
+            </label>
+          </div>
+          <button type="submit" class="btn-submit">Count Me In for District 21 →</button>
+        </form>
+        <div class="form-success" id="formSuccess">
+          <div class="success-icon">🎉</div>
+          <h3>You're In!</h3>
+          <p>Thank you for joining Team Wiley. We'll be in touch soon — see you on March 17.</p>
+          <p style="margin-top: 12px; font-weight: 600; color: var(--coral);">We Are 21. We Are Here.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">
+          <img src="images/logo-we21.png" alt="We Are 21 — Aaron Wiley District 21" />
+        </div>
+        <p class="footer-tagline">We Are 21. We Are Here.</p>
+        <a href="mailto:utahforwiley@gmail.com" class="footer-email">utahforwiley@gmail.com</a>
+        <div class="footer-social">
+          <a href="https://instagram.com/utahforwiley" target="_blank" title="Instagram">📸</a>
+          <a href="https://facebook.com/utahforwiley" target="_blank" title="Facebook">👍</a>
+        </div>
+      </div>
+      <div class="footer-nav">
+        <h4>Campaign</h4>
+        <ul>
+          <li><a href="#movement">Our Story</a></li>
+          <li><a href="#why">Why I'm Running</a></li>
+          <li><a href="#meet-aaron">Meet Aaron</a></li>
+          <li><a href="#commitment">Issues</a></li>
+        </ul>
+      </div>
+      <div class="footer-nav">
+        <h4>Take Action</h4>
+        <ul>
+          <li><a href="#how-we-win">Caucus Guide</a></li>
+          <li><a href="#get-involved">Become a Delegate</a></li>
+          <li><a href="#get-involved">Volunteer</a></li>
+          <li><a href="https://www.slcountydems.com/caucusnight" target="_blank">SL County Dems</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      Paid for by Wiley for Utah &nbsp;·&nbsp; Aaron Wiley for Utah House District 21 &nbsp;·&nbsp; utahforwiley@gmail.com
+    </div>
+  </footer>
+
+  <script>
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.12 });
+    reveals.forEach(el => observer.observe(el));
+
+    // Mobile nav
+    function toggleNav() {
+      const links = document.querySelector('.nav-links');
+      const social = document.querySelector('.nav-social');
+      if (links.style.display === 'flex') {
+        links.style.display = 'none';
+        social.style.display = 'none';
+      } else {
+        links.style.display = 'flex';
+        links.style.flexDirection = 'column';
+        links.style.position = 'absolute';
+        links.style.top = '64px';
+        links.style.left = '0';
+        links.style.right = '0';
+        links.style.background = 'var(--navy)';
+        links.style.padding = '20px 24px';
+        links.style.gap = '16px';
+        social.style.display = 'none';
+      }
+    }
+
+    // Form submit
+    function handleSubmit(e) {
+      e.preventDefault();
+      const form = document.getElementById('signupForm');
+      const success = document.getElementById('formSuccess');
+      
+      // Collect data
+      const data = new FormData(form);
+      const payload = {};
+      data.forEach((v, k) => { payload[k] = v; });
+      
+      // Send to Netlify Forms
+      fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ 'form-name': 'signup', ...payload }).toString()
+      }).catch(() => {});
+      
+      form.style.display = 'none';
+      success.style.display = 'block';
+    }
+  </script>
+
+</body>
+</html>
