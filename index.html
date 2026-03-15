@@ -560,5 +560,24 @@
 </footer>
 
 <script src="js/main.js"></script>
+<script>
+  // Secret shortcut: hold Command (⌘ on Mac) or Ctrl (on Windows/Linux)
+  // and press A twice quickly to open the original design
+  (function() {
+    var lastA = 0;
+    document.addEventListener('keydown', function(e) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'a') {
+        e.preventDefault();
+        var now = Date.now();
+        if (now - lastA < 600) {
+          window.location.href = '_original.html';
+          lastA = 0;
+        } else {
+          lastA = now;
+        }
+      }
+    });
+  })();
+</script>
 </body>
 </html>
