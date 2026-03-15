@@ -1,0 +1,24 @@
+[
+  {
+    "id": "aaron-wiley",
+    "name": "Aaron Wiley",
+    "district": 21,
+    "office": "Utah House of Representatives",
+    "party": "Democrat",
+    "status": "candidate",
+    "location": "Salt Lake City, UT",
+    "website": "https://wileyfor21.com/",
+    "email": "utahforwiley@gmail.com",
+    "facebook": "https://facebook.com/utahforwiley",
+    "instagram": "https://instagram.com/utahforwiley",
+    "photo": "images/aaron-portrait.jpg",
+    "tagline": "We Are 21. We Are Here.",
+    "bio": "Father, coach, community advocate, and tech founder fighting for the West Side of Salt Lake City. Aaron has lived on the West Side for decades, coached youth sports for 20+ years, and led the community fight against Stericycle pollution. He is running to give District 21 the representation it deserves.",
+    "issues": ["Housing & Cost of Living", "Clean Air & Healthy Communities", "Fair Representation", "Education & Opportunity"],
+    "caucus": {
+      "date": "2026-03-17",
+      "location": "Rose Park Elementary",
+      "address": "1105 W 1000 N, Salt Lake City, UT 84116"
+    }
+  }
+]

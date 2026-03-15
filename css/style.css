@@ -1,0 +1,315 @@
+/* ============================================
+   Aaron Wiley for Utah House District 21
+   Main Stylesheet
+   ============================================
+   To update colors, edit the :root variables below.
+   To update layout/spacing, search for the section name (e.g. /* NAV */).
+*/
+
+:root {
+  --navy: #1B3A6B;
+  --navy-dark: #0f2347;
+  --coral: #E8553E;
+  --coral-light: #f07060;
+  --white: #ffffff;
+  --off-white: #f8f6f2;
+  --light-gray: #eeecea;
+  --text: #1a1a1a;
+  --text-muted: #555;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: "Barlow", sans-serif; color: var(--text); background: var(--white); overflow-x: hidden; }
+
+/* ============================================
+   URGENT BANNER
+   To hide: add display:none to .urgent-banner
+   ============================================ */
+.urgent-banner {
+  background: var(--coral);
+  color: white;
+  text-align: center;
+  padding: 13px 20px;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  position: relative;
+  z-index: 100;
+}
+.urgent-banner a { color: white; text-decoration: underline; margin-left: 12px; }
+.date-highlight { background: white; color: var(--coral); padding: 2px 8px; border-radius: 3px; margin: 0 4px; font-weight: 800; }
+
+/* ============================================
+   NAV
+   ============================================ */
+nav {
+  background: var(--navy);
+  position: sticky;
+  top: 0;
+  z-index: 99;
+  padding: 0 5vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 68px;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+}
+.nav-logo img { height: 44px; display: block; }
+.nav-links { display: flex; align-items: center; gap: 28px; list-style: none; }
+.nav-links a {
+  color: rgba(255,255,255,0.85);
+  text-decoration: none;
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: white; }
+.nav-right { display: flex; align-items: center; gap: 20px; }
+.nav-social { display: flex; gap: 12px; }
+.nav-social a {
+  color: rgba(255,255,255,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.2);
+  transition: all 0.2s;
+  text-decoration: none;
+}
+.nav-social a:hover { color: white; border-color: white; background: rgba(255,255,255,0.1); }
+.nav-cta {
+  background: var(--coral) !important;
+  color: white !important;
+  padding: 9px 22px !important;
+  border-radius: 4px;
+  font-family: "Barlow Condensed", sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 0.9rem !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+  transition: background 0.2s !important;
+  white-space: nowrap;
+}
+.nav-cta:hover { background: var(--coral-light) !important; }
+.hamburger { display: none; background: none; border: none; cursor: pointer; flex-direction: column; gap: 5px; padding: 4px; }
+.hamburger span { display: block; width: 24px; height: 2px; background: white; }
+
+/* ============================================
+   HERO
+   Background image is set via inline style in index.html
+   so you can easily swap it without editing this file.
+   ============================================ */
+.hero { position: relative; min-height: 100vh; display: flex; align-items: center; overflow: hidden; }
+.hero-bg {
+  position: absolute; inset: 0;
+  background-size: cover;
+  background-position: center 30%;
+  animation: heroZoom 20s ease-in-out infinite alternate;
+}
+@keyframes heroZoom { from { transform: scale(1.03); } to { transform: scale(1.08); } }
+.hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(105deg, rgba(11,28,58,0.9) 0%, rgba(11,28,58,0.75) 55%, rgba(11,28,58,0.35) 100%);
+}
+.hero-content { position: relative; z-index: 2; padding: 0 8vw; max-width: 920px; }
+.hero-we-are {
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 900;
+  font-size: clamp(5rem, 13vw, 11rem);
+  line-height: 0.88;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  animation: fadeUp 0.9s ease both;
+}
+.hero-we-are .line2 { color: var(--coral); display: block; animation: fadeUp 0.9s 0.15s ease both; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+.hero-sub { margin-top: 24px; color: rgba(255,255,255,0.9); font-size: clamp(1.05rem, 2vw, 1.35rem); line-height: 1.55; max-width: 540px; animation: fadeUp 0.9s 0.3s ease both; }
+.hero-tags { margin-top: 14px; color: rgba(255,255,255,0.6); font-family: "Barlow Condensed", sans-serif; font-size: 1rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; animation: fadeUp 0.9s 0.45s ease both; }
+.hero-tags span { margin: 0 6px; color: var(--coral); }
+.hero-buttons { margin-top: 40px; display: flex; gap: 16px; flex-wrap: wrap; animation: fadeUp 0.9s 0.6s ease both; }
+.btn-primary { background: var(--coral); color: white; padding: 16px 36px; border-radius: 4px; font-family: "Barlow Condensed", sans-serif; font-weight: 800; font-size: 1.1rem; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; transition: background 0.2s, transform 0.2s; display: inline-block; }
+.btn-primary:hover { background: var(--coral-light); transform: translateY(-2px); }
+.btn-secondary { background: transparent; color: white; padding: 16px 36px; border-radius: 4px; border: 2px solid rgba(255,255,255,0.5); font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.1rem; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; transition: border-color 0.2s, transform 0.2s; display: inline-block; }
+.btn-secondary:hover { border-color: white; transform: translateY(-2px); }
+
+/* ============================================
+   SHARED SECTION STYLES
+   ============================================ */
+section { padding: 100px 8vw; }
+.section-label { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 0.78rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--coral); margin-bottom: 14px; }
+.section-title { font-family: "Barlow Condensed", sans-serif; font-weight: 900; font-size: clamp(2.4rem, 4.5vw, 3.8rem); line-height: 1; color: var(--navy); text-transform: uppercase; letter-spacing: -0.01em; margin-bottom: 28px; }
+.section-title.white { color: white; }
+.section-title .accent { color: var(--coral); }
+.section-body { font-size: 1.05rem; line-height: 1.78; color: var(--text-muted); max-width: 680px; }
+.section-body p + p { margin-top: 16px; }
+.section-body strong { color: var(--text); font-weight: 600; }
+
+/* ============================================
+   MOVEMENT SECTION
+   ============================================ */
+.movement { background: var(--navy-dark, #0f2347); padding: 100px 8vw; position: relative; overflow: hidden; }
+.movement::before { content: "WE ARE 21"; position: absolute; right: -2vw; top: 50%; transform: translateY(-50%); font-family: "Barlow Condensed", sans-serif; font-weight: 900; font-size: clamp(6rem, 13vw, 15rem); color: rgba(255,255,255,0.03); text-transform: uppercase; white-space: nowrap; pointer-events: none; line-height: 1; }
+.movement-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 70px; align-items: start; }
+.movement-text .section-body { color: rgba(255,255,255,0.8); max-width: 100%; }
+.movement-text .section-body p { font-size: 1.05rem; }
+.movement-text .section-body p.bold-white { color: white; font-weight: 600; font-size: 1.15rem; }
+.movement-text .section-body p.coral-big { color: var(--coral); font-weight: 700; font-size: 1.25rem; font-family: "Barlow Condensed", sans-serif; letter-spacing: 0.02em; }
+.movement-photos { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 300px 200px; gap: 10px; }
+.movement-photos .photo-big { grid-column: 1 / 3; border-radius: 6px; overflow: hidden; }
+.movement-photos .photo-small { border-radius: 6px; overflow: hidden; }
+.movement-photos img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; transition: transform 0.4s ease; }
+.movement-photos img:hover { transform: scale(1.03); }
+
+/* ============================================
+   WHY I'M RUNNING
+   ============================================ */
+.why-running { background: var(--off-white); }
+.why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+.why-photo { border-radius: 8px; overflow: hidden; position: sticky; top: 100px; }
+.why-photo img { width: 100%; height: 600px; object-fit: cover; object-position: center top; display: block; }
+.why-text .section-body { max-width: 100%; color: #444; }
+.why-text .section-body p + p { margin-top: 18px; }
+.quote-pullout { border-left: 4px solid var(--coral); padding: 16px 24px; margin: 28px 0; background: white; border-radius: 0 6px 6px 0; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+.quote-pullout p { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 1.4rem; color: var(--navy); line-height: 1.3; font-style: italic; }
+
+/* ============================================
+   MEET AARON
+   ============================================ */
+.meet-aaron { background: white; }
+.aaron-intro { display: grid; grid-template-columns: 420px 1fr; gap: 60px; align-items: start; margin-bottom: 48px; }
+.aaron-portrait { border-radius: 8px; overflow: hidden; }
+.aaron-portrait img { width: 100%; height: 480px; object-fit: cover; object-position: center top; display: block; }
+.aaron-bio-text .section-body { max-width: 100%; }
+.aaron-bio-text .section-body p + p { margin-top: 16px; }
+.aaron-quote { background: var(--navy); color: white; padding: 32px 40px 28px; border-radius: 6px; margin-top: 28px; font-size: 1.15rem; font-style: italic; line-height: 1.65; position: relative; padding-top: 48px; }
+.aaron-quote::before { content: "\201C"; font-family: "Barlow Condensed", sans-serif; font-size: 5rem; color: var(--coral); position: absolute; top: 0px; left: 28px; line-height: 1.1; font-style: normal; }
+.photo-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.photo-grid-item { border-radius: 8px; overflow: hidden; position: relative; height: 220px; }
+.photo-grid-item img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; transition: transform 0.4s ease; }
+.photo-grid-item:hover img { transform: scale(1.05); }
+.photo-caption { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.72)); color: white; padding: 24px 14px 12px; font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; }
+
+/* ============================================
+   ISSUES / COMMITMENT
+   ============================================ */
+.commitment { background: var(--light-gray); }
+.commitment-intro { max-width: 700px; margin-bottom: 56px; }
+.issue-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.issue-card { background: white; border-radius: 8px; padding: 36px; border-top: 4px solid var(--navy); transition: transform 0.25s, box-shadow 0.25s; }
+.issue-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.09); }
+.issue-card:nth-child(2) { border-top-color: var(--coral); }
+.issue-card:nth-child(3) { border-top-color: #2a7a4b; }
+.issue-card:nth-child(4) { border-top-color: #7b4fa0; }
+.issue-icon { font-size: 2.2rem; margin-bottom: 14px; display: block; }
+.issue-title { font-family: "Barlow Condensed", sans-serif; font-weight: 800; font-size: 1.45rem; color: var(--navy); text-transform: uppercase; letter-spacing: 0.02em; margin-bottom: 12px; }
+.issue-desc { color: #555; line-height: 1.65; font-size: 0.95rem; margin-bottom: 14px; }
+.issue-points { list-style: none; padding: 0; }
+.issue-points li { padding: 4px 0 4px 18px; position: relative; font-size: 0.9rem; color: #444; line-height: 1.5; }
+.issue-points li::before { content: "→"; position: absolute; left: 0; color: var(--coral); font-weight: 700; }
+
+/* ============================================
+   HOW WE WIN
+   ============================================ */
+.how-we-win { background: var(--navy); color: white; text-align: center; }
+.caucus-date-badge { display: inline-block; background: var(--coral); color: white; font-family: "Barlow Condensed", sans-serif; font-weight: 800; font-size: 1rem; letter-spacing: 0.18em; text-transform: uppercase; padding: 9px 24px; border-radius: 4px; margin-bottom: 20px; }
+.caucus-location { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 22px 48px; display: inline-block; margin: 28px auto; font-family: "Barlow Condensed", sans-serif; }
+.caucus-location .loc-title { font-weight: 800; font-size: 1.5rem; color: var(--coral); text-transform: uppercase; letter-spacing: 0.05em; }
+.caucus-location .loc-address { font-size: 1.05rem; color: rgba(255,255,255,0.78); margin-top: 4px; }
+.steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin: 52px 0; text-align: left; }
+.step-card { background: rgba(255,255,255,0.06); border-radius: 8px; padding: 36px; border: 1px solid rgba(255,255,255,0.1); }
+.step-number { font-family: "Barlow Condensed", sans-serif; font-weight: 900; font-size: 4rem; color: var(--coral); line-height: 1; margin-bottom: 10px; }
+.step-title { font-family: "Barlow Condensed", sans-serif; font-weight: 800; font-size: 1.4rem; color: white; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 12px; }
+.step-desc { color: rgba(255,255,255,0.7); line-height: 1.65; font-size: 0.95rem; }
+.virtual-note { color: rgba(255,255,255,0.55); font-size: 0.9rem; margin-top: 18px; }
+.virtual-note a { color: var(--coral); text-decoration: underline; }
+
+/* ============================================
+   GET INVOLVED / SIGNUP FORM
+   ============================================ */
+.get-involved { background: var(--off-white); }
+.involved-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+.form-wrapper { background: white; border-radius: 10px; padding: 44px; box-shadow: 0 4px 30px rgba(0,0,0,0.07); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-group { margin-bottom: 18px; }
+.form-group label { display: block; font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--navy); margin-bottom: 6px; }
+.form-group input { width: 100%; padding: 11px 14px; border: 2px solid #e0ddd8; border-radius: 4px; font-family: "Barlow", sans-serif; font-size: 0.95rem; color: var(--text); transition: border-color 0.2s; background: #faf9f7; }
+.form-group input:focus { outline: none; border-color: var(--navy); }
+.checkboxes { margin: 20px 0; }
+.checkbox-item { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+.checkbox-item input[type="checkbox"] { width: 18px; height: 18px; margin-top: 3px; accent-color: var(--coral); flex-shrink: 0; cursor: pointer; }
+.checkbox-item .cb-label { font-size: 0.92rem; line-height: 1.4; color: var(--text); cursor: pointer; }
+.checkbox-item .cb-label strong { display: block; font-weight: 600; color: var(--navy); font-size: 0.95rem; }
+.checkbox-item .cb-label span { color: #777; font-size: 0.85rem; }
+.btn-submit { width: 100%; background: var(--coral); color: white; border: none; padding: 17px; font-family: "Barlow Condensed", sans-serif; font-weight: 800; font-size: 1.15rem; letter-spacing: 0.1em; text-transform: uppercase; border-radius: 4px; cursor: pointer; transition: background 0.2s, transform 0.2s; margin-top: 6px; }
+.btn-submit:hover { background: var(--coral-light); transform: translateY(-2px); }
+.why-join-list { margin-top: 36px; list-style: none; }
+.why-join-list li { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 24px; }
+.wj-icon { font-size: 1.8rem; flex-shrink: 0; margin-top: 2px; }
+.wj-text strong { display: block; font-family: "Barlow Condensed", sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--navy); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 3px; }
+.wj-text span { font-size: 0.9rem; color: #666; line-height: 1.5; }
+
+/* ============================================
+   FOOTER
+   ============================================ */
+footer { background: #0a1e3d; color: rgba(255,255,255,0.65); padding: 64px 8vw 36px; }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 60px; padding-bottom: 44px; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 28px; }
+.footer-logo img { height: 44px; margin-bottom: 16px; display: block; }
+.footer-tagline { font-family: "Barlow Condensed", sans-serif; font-weight: 800; font-size: 1rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--coral); margin-bottom: 10px; }
+.footer-email { color: rgba(255,255,255,0.55); font-size: 0.88rem; text-decoration: none; }
+.footer-email:hover { color: white; }
+.footer-social { display: flex; gap: 10px; margin-top: 18px; }
+.footer-social a { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.65); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: background 0.2s, color 0.2s; border: 1px solid rgba(255,255,255,0.1); }
+.footer-social a:hover { background: var(--coral); color: white; border-color: var(--coral); }
+.footer-nav h4 { font-family: "Barlow Condensed", sans-serif; font-weight: 700; font-size: 0.78rem; letter-spacing: 0.2em; text-transform: uppercase; color: white; margin-bottom: 16px; }
+.footer-nav ul { list-style: none; }
+.footer-nav ul li { margin-bottom: 10px; }
+.footer-nav ul a { color: rgba(255,255,255,0.55); text-decoration: none; font-size: 0.88rem; transition: color 0.2s; }
+.footer-nav ul a:hover { color: var(--coral); }
+.footer-bottom { text-align: center; font-size: 0.78rem; color: rgba(255,255,255,0.3); letter-spacing: 0.05em; }
+
+/* ============================================
+   FORM SUCCESS STATE
+   ============================================ */
+.form-success { display: none; text-align: center; padding: 48px 24px; }
+.form-success .success-icon { font-size: 3rem; margin-bottom: 16px; }
+.form-success h3 { font-family: "Barlow Condensed", sans-serif; font-weight: 900; font-size: 2.2rem; color: var(--navy); text-transform: uppercase; }
+.form-success p { color: #666; margin-top: 10px; line-height: 1.6; }
+.form-success .chant { margin-top: 20px; font-family: "Barlow Condensed", sans-serif; font-weight: 800; font-size: 1.4rem; color: var(--coral); letter-spacing: 0.05em; }
+
+/* ============================================
+   SCROLL REVEAL ANIMATIONS
+   ============================================ */
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+
+/* ============================================
+   MOBILE RESPONSIVE
+   ============================================ */
+@media (max-width: 900px) {
+  section { padding: 70px 6vw; }
+  .movement, .how-we-win { padding: 70px 6vw; }
+  nav { padding: 0 20px; }
+  .nav-links, .nav-right { display: none; }
+  .hamburger { display: flex; }
+  .movement-grid, .why-grid, .aaron-intro, .involved-grid, .footer-grid { grid-template-columns: 1fr; gap: 40px; }
+  .issue-cards, .steps-grid { grid-template-columns: 1fr; }
+  .photo-grid { grid-template-columns: 1fr 1fr; }
+  .aaron-intro { grid-template-columns: 1fr; }
+  .aaron-portrait img { height: 360px; }
+  .why-photo { position: static; }
+  .why-photo img { height: 380px; }
+  .form-row { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+  .movement-photos { grid-template-rows: 220px 160px; }
+}
