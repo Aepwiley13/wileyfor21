@@ -39,7 +39,7 @@
        CANDIDATES PAGE SPECIFIC STYLES
        ============================================ */
     .candidates-hero {
-      background: #1B3A6B;
+      background: #034A76;
       padding: 80px 8vw 60px;
       text-align: center;
     }
@@ -53,7 +53,7 @@
       line-height: 1;
       margin-bottom: 16px;
     }
-    .candidates-hero h1 .accent { color: #E8553E; }
+    .candidates-hero h1 .accent { color: #F36F6B; }
     .candidates-hero p {
       color: rgba(255,255,255,0.75);
       font-size: 1.1rem;
@@ -91,7 +91,7 @@
       border-left: 1px solid #e0ddd8;
     }
     .search-row button {
-      background: #E8553E;
+      background: #F36F6B;
       color: white;
       border: none;
       border-radius: 6px;
@@ -105,7 +105,7 @@
       transition: background 0.2s;
       white-space: nowrap;
     }
-    .search-row button:hover { background: #f07060; }
+    .search-row button:hover { background: #F58A88; }
 
     .filter-row {
       display: flex;
@@ -130,9 +130,9 @@
     }
     .filter-btn:hover,
     .filter-btn.active {
-      background: #E8553E;
+      background: #F36F6B;
       color: white;
-      border-color: #E8553E;
+      border-color: #F36F6B;
     }
 
     /* Results section */
@@ -157,7 +157,7 @@
       text-transform: uppercase;
       color: #555555;
     }
-    .results-count strong { color: #1B3A6B; }
+    .results-count strong { color: #034A76; }
 
     /* Candidate cards grid */
     .candidates-grid {
@@ -186,7 +186,7 @@
     .candidate-card-photo-placeholder {
       width: 100%;
       height: 220px;
-      background: linear-gradient(135deg, #1B3A6B 0%, #0f2347 100%);
+      background: linear-gradient(135deg, #034A76 0%, #00456F 100%);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -200,7 +200,7 @@
     .candidate-card-body { padding: 24px; }
     .candidate-district-badge {
       display: inline-block;
-      background: #1B3A6B;
+      background: #034A76;
       color: white;
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 800;
@@ -211,14 +211,14 @@
       border-radius: 3px;
       margin-bottom: 12px;
     }
-    .candidate-party-dem { background: #1B3A6B; }
+    .candidate-party-dem { background: #034A76; }
     .candidate-party-rep { background: #8B1A1A; }
     .candidate-party-ind { background: #2a7a4b; }
     .candidate-name {
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 900;
       font-size: 1.8rem;
-      color: #1B3A6B;
+      color: #034A76;
       text-transform: uppercase;
       letter-spacing: -0.01em;
       line-height: 1;
@@ -226,7 +226,7 @@
     }
     .candidate-tagline {
       font-size: 0.9rem;
-      color: #E8553E;
+      color: #F36F6B;
       font-weight: 600;
       font-family: "Barlow Condensed", sans-serif;
       letter-spacing: 0.04em;
@@ -250,7 +250,7 @@
     }
     .issue-tag {
       background: #eeecea;
-      color: #1B3A6B;
+      color: #034A76;
       font-size: 0.75rem;
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 700;
@@ -265,7 +265,7 @@
       align-items: center;
     }
     .candidate-links a.btn-card {
-      background: #E8553E;
+      background: #F36F6B;
       color: white;
       text-decoration: none;
       font-family: "Barlow Condensed", sans-serif;
@@ -277,7 +277,7 @@
       border-radius: 4px;
       transition: background 0.2s;
     }
-    .candidate-links a.btn-card:hover { background: #f07060; }
+    .candidate-links a.btn-card:hover { background: #F58A88; }
     .candidate-links a.social-link {
       color: #555555;
       display: flex;
@@ -291,8 +291,8 @@
       text-decoration: none;
     }
     .candidate-links a.social-link:hover {
-      color: #1B3A6B;
-      border-color: #1B3A6B;
+      color: #034A76;
+      border-color: #034A76;
     }
 
     /* Empty state */
@@ -305,7 +305,7 @@
       font-family: "Barlow Condensed", sans-serif;
       font-weight: 800;
       font-size: 1.8rem;
-      color: #1B3A6B;
+      color: #034A76;
       text-transform: uppercase;
       margin-bottom: 12px;
     }
@@ -313,7 +313,7 @@
 
     /* Add your candidate CTA */
     .add-candidate-banner {
-      background: #1B3A6B;
+      background: #034A76;
       padding: 48px 8vw;
       text-align: center;
     }
@@ -331,7 +331,7 @@
     }
     .add-candidate-banner a {
       display: inline-block;
-      background: #E8553E;
+      background: #F36F6B;
       color: white;
       text-decoration: none;
       font-family: "Barlow Condensed", sans-serif;
@@ -343,7 +343,7 @@
       border-radius: 4px;
       transition: background 0.2s;
     }
-    .add-candidate-banner a:hover { background: #f07060; }
+    .add-candidate-banner a:hover { background: #F58A88; }
 
     @media (max-width: 600px) {
       .search-row { flex-direction: column; }
@@ -408,7 +408,7 @@
 <section class="candidates-section" aria-label="Candidate search results">
   <div class="results-header">
     <p class="results-count" id="resultsCount" aria-live="polite">Showing <strong id="countNum">0</strong> candidate(s)</p>
-    <a href="#add-your-campaign" style="font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:0.85rem; letter-spacing:0.1em; text-transform:uppercase; color:#E8553E; text-decoration:none;">+ Add Your Campaign</a>
+    <a href="#add-your-campaign" style="font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:0.85rem; letter-spacing:0.1em; text-transform:uppercase; color:#F36F6B; text-decoration:none;">+ Add Your Campaign</a>
   </div>
   <div class="candidates-grid" id="candidatesGrid" role="list">
     <!-- Candidates are rendered by JavaScript below -->
@@ -554,7 +554,7 @@
 
     const caucusInfo = c.caucus ? `
       <div style="margin-bottom:14px; padding:10px 14px; background:#f8f6f2; border-radius:6px; font-size:0.82rem; color:#555;">
-        <strong style="color:#1B3A6B; font-family:'Barlow Condensed',sans-serif; font-weight:700; letter-spacing:0.05em; text-transform:uppercase;">Caucus:</strong>
+        <strong style="color:#034A76; font-family:'Barlow Condensed',sans-serif; font-weight:700; letter-spacing:0.05em; text-transform:uppercase;">Caucus:</strong>
         ${c.caucus.date} · ${c.caucus.location}
       </div>
     ` : '';
