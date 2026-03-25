@@ -67,9 +67,37 @@ export default function ContactLogModal({ delegate, method: initialMethod, onClo
     };
 
     if (!useMock && db) {
-      const { collection, addDoc, serverTimestamp } = await import("firebase/firestore");
-      logEntry.timestamp = serverTimestamp();
+      const { collection, addDoc, doc, updateDoc, arrayUnion, serverTimestamp } = await import("firebase/firestore");
+      const ts = serverTimestamp();
+      logEntry.timestamp = ts;
       await addDoc(collection(db, "contactLogs"), logEntry);
+
+      // Update the delegate document so lastContactedAt persists for all volunteers
+      const delegateUpdates = {
+        lastContactedAt: new Date().toISOString(),
+        lastContactedBy: user.name || user.displayName || user.email,
+        stage: stageAfter,
+        contactHistory: arrayUnion({
+          date: new Date().toISOString(),
+          method: form.method,
+          outcome: form.outcome,
+          loggedBy: user.name || user.displayName || user.email,
+        }),
+      };
+      if (form.issuesRaised.length) {
+        delegateUpdates.issuesRaised = arrayUnion(...form.issuesRaised);
+      }
+      if (form.exactWords) {
+        delegateUpdates.exactWordsLogged = arrayUnion({
+          text: form.exactWords,
+          by: user.name || user.displayName || user.email,
+          date: new Date().toISOString(),
+        });
+      }
+      if (form.wasOrdSupporter) {
+        delegateUpdates.wasOrdSupporter = true;
+      }
+      await updateDoc(doc(db, "delegates", delegate.id), delegateUpdates);
     }
 
     onSubmitted?.(logEntry, stageAfter);

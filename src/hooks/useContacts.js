@@ -41,6 +41,7 @@ export function useContacts() {
   }, [user]);
 
   const updateContact = (id, updates) => {
+    // Optimistic local update — Firestore onSnapshot will also refresh from server
     setContacts((prev) =>
       sortByPriority(prev.map((c) => (c.id === id ? { ...c, ...updates } : c)))
     );
