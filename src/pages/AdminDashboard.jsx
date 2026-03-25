@@ -1,7 +1,94 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useCampaignStats } from "@/hooks/useCampaignStats";
 import { db } from "@/lib/firebase";
+
+function parseCSV(text) {
+  const lines = text.trim().split("\n");
+  const headers = lines[0].split(",").map((h) => h.trim().replace(/^"|"$/g, ""));
+  return lines.slice(1).map((line) => {
+    // Handle quoted fields (addresses with commas)
+    const fields = [];
+    let cur = "", inQuote = false;
+    for (const ch of line) {
+      if (ch === '"') { inQuote = !inQuote; }
+      else if (ch === "," && !inQuote) { fields.push(cur); cur = ""; }
+      else { cur += ch; }
+    }
+    fields.push(cur);
+    return Object.fromEntries(headers.map((h, i) => [h, (fields[i] || "").trim()]));
+  });
+}
+
+function CsvImporter({ onImported }) {
+  const fileRef = useRef();
+  const [status, setStatus] = useState(null); // null | "importing" | "done" | "error"
+  const [counts, setCounts] = useState({ done: 0, total: 0 });
+
+  async function handleFile(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    setStatus("importing");
+    setCounts({ done: 0, total: 0 });
+    try {
+      const text = await file.text();
+      const rows = parseCSV(text);
+      setCounts({ done: 0, total: rows.length });
+      const { collection, addDoc } = await import("firebase/firestore");
+      let done = 0;
+      for (const row of rows) {
+        const name = (row.name || "").trim();
+        const isVacant = !name;
+        const role = (row.role || "").trim();
+        const isPLEO = role.toUpperCase().includes("PLEO");
+        const isLock = name === "Jeneanne Lock";
+        await addDoc(collection(db, "delegates"), {
+          name,
+          precinct: (row.precinct || "").trim(),
+          role,
+          phone: (row.phone || "").trim(),
+          email: (row.email || "").trim(),
+          address: (row.address || "").trim(),
+          district: "HD21",
+          stage: "unknown",
+          stageHistory: [],
+          currentLeaning: "undecided",
+          leaningHistory: [],
+          assignedTo: null,
+          lastContactedAt: null,
+          totalContacts: 0,
+          conflictOfInterest: isLock,
+          isOpposingCandidate: isLock,
+          isPLEO,
+          isVacant,
+        });
+        done++;
+        setCounts({ done, total: rows.length });
+      }
+      setStatus("done");
+      onImported?.();
+    } catch (err) {
+      console.error(err);
+      setStatus("error");
+    }
+    fileRef.current.value = "";
+  }
+
+  return (
+    <div className="flex items-center gap-3">
+      <input ref={fileRef} type="file" accept=".csv" onChange={handleFile} className="hidden" />
+      <button
+        onClick={() => fileRef.current.click()}
+        disabled={status === "importing"}
+        className="px-4 py-2 text-sm font-semibold rounded-lg border border-navy text-navy hover:bg-navy hover:text-white transition-colors disabled:opacity-50"
+      >
+        {status === "importing" ? `Importing… ${counts.done}/${counts.total}` : "Import CSV"}
+      </button>
+      {status === "done" && <span className="text-green-600 text-sm font-medium">Imported {counts.total} delegates</span>}
+      {status === "error" && <span className="text-red-600 text-sm">Import failed — check console</span>}
+    </div>
+  );
+}
 
 const CONVENTION_DATE = new Date("2026-04-11T09:00:00");
 const STAGES = ["locked", "committed", "leaning", "engaged", "identified", "unknown", "not_winnable"];
@@ -170,6 +257,7 @@ export default function AdminDashboard() {
         <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
           <div className="flex flex-wrap items-center gap-3 mb-6">
             <h2 className="font-bold text-navy text-lg">All Delegates</h2>
+            <CsvImporter onImported={() => {}} />
             <div className="flex flex-wrap gap-2">
               {["all", "unassigned", "vacant", ...STAGES].map((f) => (
                 <button key={f} onClick={() => setFilter(f)}
