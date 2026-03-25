@@ -1,0 +1,59 @@
+rules_version = "2";
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper: check if the requesting user has the admin role
+    function isAdmin() {
+      return get(/databases/$(database)/documents/volunteers/$(request.auth.uid))
+             .data.role == "admin";
+    }
+
+    // /delegates — all authenticated users can read; only admins can write
+    match /delegates/{delegateId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && isAdmin();
+    }
+
+    // /contactLogs — any authenticated user can create their own log;
+    //               all authenticated users can read; only admins can update/delete
+    match /contactLogs/{logId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+        && request.resource.data.volunteerId == request.auth.uid;
+      allow update, delete: if isAdmin();
+    }
+
+    // /volunteers — users read/write their own doc; admins read all
+    match /volunteers/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read: if isAdmin();
+    }
+
+    // /surveyResponses — anyone can submit (no login required for survey);
+    //                   authenticated users can read
+    match /surveyResponses/{responseId} {
+      allow create: if true;
+      allow read: if request.auth != null;
+    }
+
+    // /campaignStats — authenticated users can read;
+    //                 writes come from Cloud Functions only (service account)
+    match /campaignStats/{doc} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+
+    // /candidates — authenticated users can read; only admins can write
+    match /candidates/{candidateId} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+
+    // /milestones — authenticated users can read;
+    //              writes come from Cloud Functions only
+    match /milestones/{milestoneId} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+  }
+}
