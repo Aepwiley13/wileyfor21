@@ -13,6 +13,11 @@
   status = 200
 
 [[redirects]]
+  from = "/admin"
+  to = "/app.html"
+  status = 200
+
+[[redirects]]
   from = "/volunteer"
   to = "/app.html"
   status = 200

@@ -4,6 +4,7 @@ import ProtectedRoute from "@/components/ui/ProtectedRoute";
 import LoginPage from "@/pages/LoginPage";
 import SignupPage from "@/pages/SignupPage";
 import VolunteerDashboard from "@/pages/VolunteerDashboard";
+import AdminDashboard from "@/pages/AdminDashboard";
 import DelegateSurveyPage from "@/pages/DelegateSurveyPage";
 import VolunteerSurveyPage from "@/pages/VolunteerSurveyPage";
 
@@ -21,6 +22,11 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/admin" element={
+          <ProtectedRoute>
+            <AdminDashboard />
+          </ProtectedRoute>
+        } />
         <Route path="/survey/delegate" element={<DelegateSurveyPage />} />
         <Route path="/survey/volunteer" element={<VolunteerSurveyPage />} />
         <Route path="*" element={<Navigate to="/login" replace />} />
