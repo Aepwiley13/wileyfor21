@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@theme {
+  --color-navy: #034A76;
+  --color-navy-dark: #00456F;
+  --color-navy-darker: #002A52;
+  --color-coral: #F36F6B;
+  --color-cream: #f8f6f2;
+  --color-light-gray: #eeecea;
+  --font-sans: "Barlow", sans-serif;
+  --font-condensed: "Barlow Condensed", sans-serif;
+}
