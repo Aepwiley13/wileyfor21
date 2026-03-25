@@ -3,27 +3,98 @@ import { useAuth } from "@/hooks/useAuth";
 import { useCampaignStats } from "@/hooks/useCampaignStats";
 import { db } from "@/lib/firebase";
 
-function parseCSV(text) {
+function parseCSVLines(text) {
   const lines = text.trim().split("\n");
-  const headers = lines[0].split(",").map((h) => h.trim().replace(/^"|"$/g, ""));
+  const headers = [];
+  // Parse header row respecting quotes
+  let cur = "", inQuote = false;
+  for (const ch of lines[0]) {
+    if (ch === '"') { inQuote = !inQuote; }
+    else if (ch === "," && !inQuote) { headers.push(cur.trim()); cur = ""; }
+    else { cur += ch; }
+  }
+  headers.push(cur.trim());
+
   return lines.slice(1).map((line) => {
-    // Handle quoted fields (addresses with commas)
     const fields = [];
-    let cur = "", inQuote = false;
+    cur = ""; inQuote = false;
     for (const ch of line) {
       if (ch === '"') { inQuote = !inQuote; }
-      else if (ch === "," && !inQuote) { fields.push(cur); cur = ""; }
+      else if (ch === "," && !inQuote) { fields.push(cur.trim()); cur = ""; }
       else { cur += ch; }
     }
-    fields.push(cur);
-    return Object.fromEntries(headers.map((h, i) => [h, (fields[i] || "").trim()]));
+    fields.push(cur.trim());
+    return { _headers: headers, ...Object.fromEntries(headers.map((h, i) => [h, (fields[i] || "").trim()])) };
   });
+}
+
+// Finds a column by partial case-insensitive match
+function col(row, ...patterns) {
+  for (const pattern of patterns) {
+    const key = row._headers.find((h) => h.toLowerCase().includes(pattern.toLowerCase()));
+    if (key && row[key]) return row[key].trim();
+  }
+  return "";
+}
+
+function mapRow(row) {
+  const headers = row._headers.map((h) => h.toLowerCase());
+  const isNewFormat = headers.some((h) => h.includes("first name"));
+
+  let name, precinct, role, phone, email, address;
+
+  if (isNewFormat) {
+    // New format: First Name, Middle Name, Last Name, Precinct ABC, Precinct Offic, Phone #, Email, Street Addre, City, State, Zip
+    const first = col(row, "First Name");
+    const middle = col(row, "Middle Name");
+    const last = col(row, "Last Name");
+    name = [first, middle, last].filter(Boolean).join(" ");
+
+    // "Precinct ABC" has codes like SLC001; "Precinct Offic" has roles like P Chair
+    const precinctAbcKey = row._headers.find((h) => /precinct.*a/i.test(h) && !/offic/i.test(h));
+    precinct = precinctAbcKey ? (row[precinctAbcKey] || "").trim() : "";
+
+    const roleKey = row._headers.find((h) => /precinct.*o/i.test(h) || /offic/i.test(h));
+    role = roleKey ? (row[roleKey] || "").trim() : "";
+
+    phone = col(row, "Phone");
+    email = col(row, "Email");
+    const street = col(row, "Street");
+    const city = col(row, "City");
+    const state = col(row, "State");
+    const zip = col(row, "Zip");
+    address = [street, city, state, zip].filter(Boolean).join(", ");
+  } else {
+    // Original format: name, precinct, role, phone, email, address
+    name = (row.name || "").trim();
+    precinct = (row.precinct || "").trim();
+    role = (row.role || "").trim();
+    phone = (row.phone || "").trim();
+    email = (row.email || "").trim();
+    address = (row.address || "").trim();
+  }
+
+  return { name, precinct, role, phone, email, address };
 }
 
 function CsvImporter({ onImported }) {
   const fileRef = useRef();
-  const [status, setStatus] = useState(null); // null | "importing" | "done" | "error"
+  const [status, setStatus] = useState(null);
   const [counts, setCounts] = useState({ done: 0, total: 0 });
+  const [clearing, setClearing] = useState(false);
+
+  async function clearDelegates() {
+    if (!window.confirm("Delete ALL existing delegates before reimporting? This cannot be undone.")) return;
+    setClearing(true);
+    try {
+      const { collection, getDocs, deleteDoc } = await import("firebase/firestore");
+      const snap = await getDocs(collection(db, "delegates"));
+      await Promise.all(snap.docs.map((d) => deleteDoc(d.ref)));
+    } finally {
+      setClearing(false);
+    }
+    onImported?.();
+  }
 
   async function handleFile(e) {
     const file = e.target.files[0];
@@ -32,23 +103,17 @@ function CsvImporter({ onImported }) {
     setCounts({ done: 0, total: 0 });
     try {
       const text = await file.text();
-      const rows = parseCSV(text);
+      const rows = parseCSVLines(text);
       setCounts({ done: 0, total: rows.length });
       const { collection, addDoc } = await import("firebase/firestore");
       let done = 0;
       for (const row of rows) {
-        const name = (row.name || "").trim();
+        const { name, precinct, role, phone, email, address } = mapRow(row);
         const isVacant = !name;
-        const role = (row.role || "").trim();
         const isPLEO = role.toUpperCase().includes("PLEO");
         const isLock = name === "Jeneanne Lock";
         await addDoc(collection(db, "delegates"), {
-          name,
-          precinct: (row.precinct || "").trim(),
-          role,
-          phone: (row.phone || "").trim(),
-          email: (row.email || "").trim(),
-          address: (row.address || "").trim(),
+          name, precinct, role, phone, email, address,
           district: "HD21",
           stage: "unknown",
           stageHistory: [],
@@ -75,14 +140,21 @@ function CsvImporter({ onImported }) {
   }
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-3 flex-wrap">
       <input ref={fileRef} type="file" accept=".csv" onChange={handleFile} className="hidden" />
       <button
         onClick={() => fileRef.current.click()}
-        disabled={status === "importing"}
+        disabled={status === "importing" || clearing}
         className="px-4 py-2 text-sm font-semibold rounded-lg border border-navy text-navy hover:bg-navy hover:text-white transition-colors disabled:opacity-50"
       >
         {status === "importing" ? `Importing… ${counts.done}/${counts.total}` : "Import CSV"}
+      </button>
+      <button
+        onClick={clearDelegates}
+        disabled={status === "importing" || clearing}
+        className="px-4 py-2 text-sm font-semibold rounded-lg border border-red-400 text-red-500 hover:bg-red-50 transition-colors disabled:opacity-50"
+      >
+        {clearing ? "Clearing…" : "Clear All Delegates"}
       </button>
       {status === "done" && <span className="text-green-600 text-sm font-medium">Imported {counts.total} delegates</span>}
       {status === "error" && <span className="text-red-600 text-sm">Import failed — check console</span>}
