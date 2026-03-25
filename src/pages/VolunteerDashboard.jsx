@@ -55,6 +55,7 @@ export default function VolunteerDashboard() {
             delegate={d}
             onOpenLog={handleOpenLog}
             onOpenBriefing={setBriefingDelegate}
+            volunteerName={user?.name || user?.displayName}
           />
         ))
       )}

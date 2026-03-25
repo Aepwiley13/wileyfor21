@@ -52,7 +52,7 @@ export const CALL_SCRIPTS = {
       "Aaron was the first paid employee on Barack Obama's campaign in Utah.",
       "He's a Rose Park youth coach running to make sure the west side finally gets",
       "the investment it deserves \u2014 in housing, healthcare, and our future.",
-      "Reach me at [YOUR NUMBER] or visit hub.wileyfor21.com. Thanks!",
+      "Reach me at [YOUR NUMBER] or visit wileyfor21.com. Thanks!",
     ],
   },
 };
