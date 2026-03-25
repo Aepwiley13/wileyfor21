@@ -64,7 +64,11 @@ export default function LoginPage() {
         </form>
 
         <p className="text-center text-xs text-gray-400 mt-4">
-          Convention: April 11, 2026 &middot; hub.wileyfor21.com
+          Convention: April 11, 2026 &middot; wileyfor21.com
+        </p>
+        <p className="text-center text-xs text-gray-400 mt-2">
+          New volunteer?{" "}
+          <a href="/signup" className="text-navy underline">Create an account</a>
         </p>
       </div>
     </div>
