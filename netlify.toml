@@ -8,6 +8,11 @@
   SECRETS_SCAN_SMART_DETECTION_ENABLED = "false"
 
 [[redirects]]
+  from = "/signup"
+  to = "/app.html"
+  status = 200
+
+[[redirects]]
   from = "/volunteer"
   to = "/app.html"
   status = 200
