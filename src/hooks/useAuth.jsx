@@ -16,10 +16,12 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     if (useMock) return;
-    const { onAuthStateChanged } = require("firebase/auth");
-    return onAuthStateChanged(auth, (u) => {
-      setUser(u ? { uid: u.uid, displayName: u.displayName, email: u.email, name: u.displayName } : null);
-      setLoading(false);
+    import("firebase/auth").then(({ onAuthStateChanged }) => {
+      const unsub = onAuthStateChanged(auth, (u) => {
+        setUser(u ? { uid: u.uid, displayName: u.displayName, email: u.email, name: u.displayName } : null);
+        setLoading(false);
+      });
+      return unsub;
     });
   }, []);
 
