@@ -764,11 +764,287 @@ footer {
 .reveal-delay-3 { transition-delay: 0.3s; }
 
 /* ============================================
+   CONVENTION SECTION  (dark teal background)
+   ============================================ */
+.convention {
+  background-color: #0c3247;
+  color: #ffffff;
+  text-align: center;
+  padding: 100px 8vw;
+}
+.conv-badge {
+  display: inline-block;
+  background-color: #e86042;
+  color: #ffffff;
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 800;
+  font-size: 0.88rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 9px 24px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+.conv-steps-grid {
+  grid-template-columns: repeat(4, 1fr);
+}
+.conv-venue {
+  background: rgba(255,255,255,0.06);
+  border: 1.5px solid rgba(232,96,66,0.4);
+  border-radius: 8px;
+  padding: 28px 48px;
+  display: inline-block;
+  margin: 40px auto;
+  font-family: "Barlow Condensed", sans-serif;
+  text-align: center;
+}
+.conv-venue-label {
+  display: inline-block;
+  background: #e86042;
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 5px 16px;
+  border-radius: 3px;
+  margin-bottom: 14px;
+}
+.conv-venue-name {
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: #e86042;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+.conv-venue-address {
+  font-size: 1rem;
+  color: rgba(255,255,255,0.82);
+  margin-bottom: 4px;
+}
+.conv-venue-detail {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.6);
+}
+.conv-cta-row {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.btn-outline {
+  background: transparent;
+  color: #ffffff;
+  padding: 16px 36px;
+  border-radius: 4px;
+  border: 2px solid rgba(255,255,255,0.55);
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: border-color 0.2s, transform 0.2s;
+  display: inline-block;
+}
+.btn-outline:hover { border-color: #ffffff; transform: translateY(-2px); }
+
+/* ============================================
+   CONVENTION DAY TIMELINE
+   ============================================ */
+.conv-timeline {
+  background-color: #0f3a52;
+  color: #ffffff;
+  text-align: center;
+  padding: 100px 8vw;
+}
+.timeline-list {
+  max-width: 640px;
+  margin: 0 auto;
+  text-align: left;
+  position: relative;
+}
+.timeline-list::before {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: rgba(232,96,66,0.3);
+}
+.timeline-item {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 36px;
+  position: relative;
+}
+.timeline-item.tl-last { margin-bottom: 0; }
+.tl-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: rgba(232,96,66,0.4);
+  border: 2px solid #e86042;
+  flex-shrink: 0;
+  margin-top: 4px;
+  position: relative;
+  z-index: 1;
+}
+.tl-dot-highlight {
+  background: #e86042;
+  width: 18px;
+  height: 18px;
+  box-shadow: 0 0 0 4px rgba(232,96,66,0.2);
+}
+.tl-content { flex: 1; }
+.tl-time {
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #e86042;
+  margin-bottom: 4px;
+}
+.tl-label {
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+.tl-desc { color: rgba(255,255,255,0.72); font-size: 0.92rem; line-height: 1.65; }
+.tl-callout {
+  border-left: 3px solid #e86042;
+  background: rgba(232,96,66,0.1);
+  padding: 12px 16px;
+  margin-top: 12px;
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.85);
+  line-height: 1.6;
+  border-radius: 0 4px 4px 0;
+}
+
+/* ============================================
+   DONATE SECTION
+   ============================================ */
+.donate {
+  background-color: #0c3247;
+  color: #ffffff;
+  text-align: center;
+  padding: 100px 8vw;
+}
+.donate-amounts {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+.amount-pill {
+  background: rgba(255,255,255,0.08);
+  border: 1.5px solid rgba(255,255,255,0.2);
+  color: #ffffff;
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.05em;
+  padding: 10px 22px;
+  border-radius: 4px;
+  display: inline-block;
+}
+.btn-donate {
+  display: block;
+  max-width: 500px;
+  margin: 0 auto 16px;
+  background: #e86042;
+  color: #ffffff;
+  padding: 18px 36px;
+  border-radius: 4px;
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 800;
+  font-size: 1.15rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background-color 0.2s, transform 0.2s;
+}
+.btn-donate:hover { background: #f07055; transform: translateY(-2px); }
+.donate-disclaimer {
+  max-width: 500px;
+  margin: 0 auto;
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.4);
+  line-height: 1.6;
+}
+
+/* ============================================
+   WEST SIDE NEEDS YOU (INVOLVE)
+   ============================================ */
+.involve {
+  background-color: #0f3a52;
+  color: #ffffff;
+  text-align: center;
+  padding: 100px 8vw;
+}
+.involve-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 20px;
+  text-align: left;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.involve-card {
+  background: #163d55;
+  border-radius: 8px;
+  padding: 32px 28px;
+  border: 1px solid rgba(255,255,255,0.08);
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+.involve-card:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,0.25); }
+.involve-card-cta { border: 2px solid rgba(232,96,66,0.5); }
+.involve-cta-arrow {
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 900;
+  font-size: 3rem;
+  color: #e86042;
+  line-height: 1;
+  margin-bottom: 10px;
+}
+
+/* ============================================
+   CAUCUS ARCHIVE NOTICE (used on /caucus page)
+   ============================================ */
+.caucus-archive-notice {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-left: 4px solid #e86042;
+  border-radius: 0 8px 8px 0;
+  padding: 18px 28px;
+  margin: 0 auto 40px;
+  max-width: 680px;
+  color: rgba(255,255,255,0.8);
+  font-size: 0.95rem;
+  line-height: 1.65;
+  text-align: left;
+}
+.caucus-archive-notice a { color: #e86042; text-decoration: underline; }
+
+/* ============================================
    MOBILE RESPONSIVE
    ============================================ */
 @media (max-width: 900px) {
   section { padding: 70px 6vw; }
-  .movement, .how-we-win { padding: 70px 6vw; }
+  .movement, .how-we-win, .convention, .conv-timeline, .donate, .involve { padding: 70px 6vw; }
   nav { padding: 0 20px; }
   .nav-links, .nav-right { display: none; }
   .hamburger { display: flex; }
@@ -778,6 +1054,8 @@ footer {
   .involved-grid,
   .footer-grid { grid-template-columns: 1fr; gap: 40px; }
   .issue-cards, .steps-grid { grid-template-columns: 1fr; }
+  .conv-steps-grid { grid-template-columns: 1fr 1fr; }
+  .involve-grid { grid-template-columns: 1fr 1fr; }
   .photo-grid { grid-template-columns: 1fr 1fr; }
   .aaron-portrait img { height: 360px; }
   .why-photo { position: static; }
@@ -785,4 +1063,6 @@ footer {
   .form-row { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr; gap: 32px; }
   .movement-photos { grid-template-rows: 220px 160px; }
+  .conv-venue { padding: 22px 24px; }
+  .timeline-list::before { display: none; }
 }
