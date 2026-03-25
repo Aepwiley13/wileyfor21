@@ -44,25 +44,27 @@ function mapRow(row) {
   let name, precinct, role, phone, email, address;
 
   if (isNewFormat) {
-    // New format: First Name, Middle Name, Last Name, Precinct ABC, Precinct Offic, Phone #, Email, Street Addre, City, State, Zip
-    const first = col(row, "First Name");
-    const middle = col(row, "Middle Name");
-    const last = col(row, "Last Name");
-    name = [first, middle, last].filter(Boolean).join(" ");
+    // Exact column names: "First Name:", "Middle Name:", "Last Name:",
+    // "Precinct ABCXXX:", "Precinct Office:", "Phone #:", "Email:",
+    // "Street Address:", "City:", "State:", "Zip:"
+    const get = (exact) => {
+      // Try exact, then with/without trailing colon
+      const key = row._headers.find(
+        (h) => h === exact || h === exact + ":" || h === exact.replace(/:$/, "")
+      );
+      return key ? (row[key] || "").trim() : "";
+    };
 
-    // "Precinct ABC" has codes like SLC001; "Precinct Offic" has roles like P Chair
-    const precinctAbcKey = row._headers.find((h) => /precinct.*a/i.test(h) && !/offic/i.test(h));
-    precinct = precinctAbcKey ? (row[precinctAbcKey] || "").trim() : "";
-
-    const roleKey = row._headers.find((h) => /precinct.*o/i.test(h) || /offic/i.test(h));
-    role = roleKey ? (row[roleKey] || "").trim() : "";
-
-    phone = col(row, "Phone");
-    email = col(row, "Email");
-    const street = col(row, "Street");
-    const city = col(row, "City");
-    const state = col(row, "State");
-    const zip = col(row, "Zip");
+    name = [get("First Name:"), get("Middle Name:"), get("Last Name:")].filter(Boolean).join(" ");
+    precinct = get("Precinct ABCXXX:");
+    role = get("Precinct Office:");
+    phone = get("Phone #:");
+    email = get("Email:");
+    const street = get("Street Address:");
+    const city = get("City:");
+    // Use exact "State:" to avoid matching "State House District" etc.
+    const state = get("State:");
+    const zip = get("Zip:");
     address = [street, city, state, zip].filter(Boolean).join(", ");
   } else {
     // Original format: name, precinct, role, phone, email, address
