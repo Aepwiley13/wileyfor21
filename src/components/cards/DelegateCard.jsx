@@ -125,6 +125,56 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
               {[delegate.address, delegate.city, delegate.state].filter(Boolean).join(", ")}
             </p>
           )}
+          {/* Contact info visible on card */}
+          <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1">
+            {phone && (
+              <a
+                href={`tel:${phone.replace(/\D/g, "")}`}
+                className="text-xs text-navy font-medium hover:underline"
+              >
+                &#128222; {phone}
+              </a>
+            )}
+            {email && (
+              <a
+                href={`mailto:${email}`}
+                className="text-xs text-navy font-medium hover:underline truncate max-w-[180px]"
+                title={email}
+              >
+                &#9993; {email}
+              </a>
+            )}
+            {delegate.facebook && (
+              <a
+                href={delegate.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-blue-700 font-medium hover:underline"
+              >
+                &#x1F465; Facebook
+              </a>
+            )}
+            {delegate.instagram && (
+              <a
+                href={delegate.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-pink-600 font-medium hover:underline"
+              >
+                &#128247; Instagram
+              </a>
+            )}
+            {delegate.twitter && (
+              <a
+                href={delegate.twitter}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-sky-600 font-medium hover:underline"
+              >
+                &#x1D54F; Twitter
+              </a>
+            )}
+          </div>
           <div className="flex gap-2 mt-1 flex-wrap">
             {delegate.isPLEO && (
               <span className="inline-block bg-amber-100 text-amber-800 text-xs font-semibold px-2 py-0.5 rounded-full">
