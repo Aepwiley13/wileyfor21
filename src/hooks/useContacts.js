@@ -28,7 +28,7 @@ export function useContacts() {
       const { collection, query, where, onSnapshot } = await import("firebase/firestore");
       const q = query(
         collection(db, "delegates"),
-        where("assignedTo", "==", user.uid)
+        where("assignedTo", "array-contains", user.uid)
       );
       unsubscribe = onSnapshot(q, (snap) => {
         const docs = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
