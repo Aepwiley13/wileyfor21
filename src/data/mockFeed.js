@@ -1,0 +1,25 @@
+const now = Date.now();
+const h = (hours) => new Date(now - hours * 60 * 60 * 1000).toISOString();
+
+export const mockFeed = [
+  { id: "f01", volunteerName: "Marcus T.", delegateName: "Maria Gonzalez", method: "call", outcome: "great", stageBeforeContact: "engaged", stageAfterContact: "leaning", wasOrdSupporter: false, leaningToward: "Aaron Wiley", timestamp: h(0.5) },
+  { id: "f02", volunteerName: "Janelle R.", delegateName: "Patricia Vasquez", method: "call", outcome: "great", stageBeforeContact: "leaning", stageAfterContact: "committed", wasOrdSupporter: false, leaningToward: "Aaron Wiley", timestamp: h(1) },
+  { id: "f03", volunteerName: "Demo Volunteer", delegateName: "Ahmad Hassan", method: "call", outcome: "good", stageBeforeContact: "engaged", stageAfterContact: "leaning", wasOrdSupporter: true, leaningToward: "Aaron Wiley", timestamp: h(1.5) },
+  { id: "f04", volunteerName: "Sarah K.", delegateName: "David Nguyen", method: "email", outcome: "good", stageBeforeContact: "identified", stageAfterContact: "engaged", wasOrdSupporter: false, leaningToward: "Aaron Wiley", timestamp: h(2) },
+  { id: "f05", volunteerName: "Demo Volunteer", delegateName: "Robert Chen", method: "text", outcome: "good", stageBeforeContact: "identified", stageAfterContact: "engaged", wasOrdSupporter: true, leaningToward: "Undecided", timestamp: h(3) },
+  { id: "f06", volunteerName: "Marcus T.", delegateName: "Linda Thompson", method: "call", outcome: "no_answer", stageBeforeContact: "unknown", stageAfterContact: "unknown", wasOrdSupporter: false, leaningToward: null, timestamp: h(4) },
+  { id: "f07", volunteerName: "Janelle R.", delegateName: "James Washington", method: "call", outcome: "neutral", stageBeforeContact: "unknown", stageAfterContact: "identified", wasOrdSupporter: false, leaningToward: "Undecided", timestamp: h(5) },
+  { id: "f08", volunteerName: "Sarah K.", delegateName: "Michael Rivera", method: "call", outcome: "great", stageBeforeContact: "committed", stageAfterContact: "locked", wasOrdSupporter: false, leaningToward: "Aaron Wiley", timestamp: h(6) },
+  { id: "f09", volunteerName: "Demo Volunteer", delegateName: "Sarah Kim", method: "call", outcome: "neutral", stageBeforeContact: "unknown", stageAfterContact: "identified", wasOrdSupporter: false, leaningToward: "Undecided", timestamp: h(7) },
+  { id: "f10", volunteerName: "Marcus T.", delegateName: "Ahmad Hassan", method: "text", outcome: "good", stageBeforeContact: "identified", stageAfterContact: "engaged", wasOrdSupporter: true, leaningToward: "Aaron Wiley", timestamp: h(8) },
+  { id: "f11", volunteerName: "Janelle R.", delegateName: "Maria Gonzalez", method: "call", outcome: "good", stageBeforeContact: "identified", stageAfterContact: "engaged", wasOrdSupporter: false, leaningToward: "Aaron Wiley", timestamp: h(10) },
+  { id: "f12", volunteerName: "Sarah K.", delegateName: "Robert Chen", method: "call", outcome: "neutral", stageBeforeContact: "unknown", stageAfterContact: "identified", wasOrdSupporter: true, leaningToward: "Undecided", timestamp: h(12) },
+  { id: "f13", volunteerName: "Demo Volunteer", delegateName: "Patricia Vasquez", method: "text", outcome: "good", stageBeforeContact: "engaged", stageAfterContact: "leaning", wasOrdSupporter: false, leaningToward: "Aaron Wiley", timestamp: h(14) },
+  { id: "f14", volunteerName: "Marcus T.", delegateName: "David Nguyen", method: "call", outcome: "good", stageBeforeContact: "unknown", stageAfterContact: "identified", wasOrdSupporter: false, leaningToward: "Undecided", timestamp: h(18) },
+  { id: "f15", volunteerName: "Janelle R.", delegateName: "Linda Thompson", method: "call", outcome: "no_answer", stageBeforeContact: "unknown", stageAfterContact: "unknown", wasOrdSupporter: false, leaningToward: null, timestamp: h(20) },
+  { id: "f16", volunteerName: "Sarah K.", delegateName: "James Washington", method: "text", outcome: "neutral", stageBeforeContact: "unknown", stageAfterContact: "identified", wasOrdSupporter: false, leaningToward: "Undecided", timestamp: h(24) },
+  { id: "f17", volunteerName: "Demo Volunteer", delegateName: "Ahmad Hassan", method: "call", outcome: "good", stageBeforeContact: "unknown", stageAfterContact: "identified", wasOrdSupporter: true, leaningToward: "Was Ord \u2192 now undecided", timestamp: h(30) },
+  { id: "f18", volunteerName: "Marcus T.", delegateName: "Sarah Kim", method: "email", outcome: "neutral", stageBeforeContact: "unknown", stageAfterContact: "identified", wasOrdSupporter: false, leaningToward: "Undecided", timestamp: h(36) },
+  { id: "f19", volunteerName: "Janelle R.", delegateName: "Maria Gonzalez", method: "call", outcome: "neutral", stageBeforeContact: "unknown", stageAfterContact: "identified", wasOrdSupporter: false, leaningToward: "Undecided", timestamp: h(48) },
+  { id: "f20", volunteerName: "Demo Volunteer", delegateName: "Michael Rivera", method: "call", outcome: "great", stageBeforeContact: "leaning", stageAfterContact: "committed", wasOrdSupporter: false, leaningToward: "Aaron Wiley", timestamp: h(72) },
+];
