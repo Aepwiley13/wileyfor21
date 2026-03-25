@@ -1,18 +1,13 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
 
-// Paste your Firebase project config here:
-// Firebase console → Project Settings → Your apps → Web app → SDK setup
 const firebaseConfig = {
-  apiKey: "PASTE_YOUR_API_KEY",
-  authDomain: "PASTE_YOUR_AUTH_DOMAIN",
-  projectId: "PASTE_YOUR_PROJECT_ID",
-  storageBucket: "PASTE_YOUR_STORAGE_BUCKET",
-  messagingSenderId: "PASTE_YOUR_MESSAGING_SENDER_ID",
-  appId: "PASTE_YOUR_APP_ID",
+  apiKey: "AIzaSyBVcOxsLMVXmArR3-QnMkP2ZahtWgTV1-c",
+  authDomain: "wileyfor21.firebaseapp.com",
+  projectId: "wileyfor21",
+  storageBucket: "wileyfor21.firebasestorage.app",
+  messagingSenderId: "795212808472",
+  appId: "1:795212808472:web:f09bdf51a9c9352ba79e6d",
+  measurementId: "G-FNZPY3QNEK"
 };
 
 export const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app);
-export const auth = getAuth(app);
