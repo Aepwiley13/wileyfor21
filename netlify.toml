@@ -2,6 +2,11 @@
   command = "npm run build"
   publish = "dist"
 
+# Firebase web API keys are public client-side identifiers (security comes from
+# Firestore rules, not key obscurity). Tell Netlify's scanner to skip smart detection.
+[build.environment]
+  SECRETS_SCAN_SMART_DETECTION_ENABLED = "false"
+
 [[redirects]]
   from = "/volunteer"
   to = "/app.html"
