@@ -1,55 +1,48 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { daysSince } from "@/lib/utils";
 import StageBadge from "@/components/ui/StageBadge";
 import ConflictWarningCard from "./ConflictWarningCard";
-import { TEXT_TEMPLATES, getRecommendedScript } from "@/lib/scripts";
+import { CALL_SCRIPTS, TEXT_TEMPLATES, MESSAGE_TOPICS, getRecommendedScript } from "@/lib/scripts";
 
-function LastContactedLine({ delegate }) {
-  if (!delegate.lastContactedAt) {
-    return <p className="text-sm text-amber-600 font-medium">Never contacted &mdash; first outreach needed</p>;
+// ── helpers ──────────────────────────────────────────────────────────────────
+
+const SCRIPT_ORDER = [
+  CALL_SCRIPTS.firstContact,
+  CALL_SCRIPTS.followUp,
+  CALL_SCRIPTS.commitmentAsk,
+  CALL_SCRIPTS.voicemail,
+];
+
+function initialScriptIdx(stage, wasOrdSupporter) {
+  if (wasOrdSupporter) return 0;
+  switch (stage) {
+    case "engaged": return 1;
+    case "leaning":
+    case "committed": return 2;
+    default: return 0;
   }
-  const days = daysSince(delegate.lastContactedAt);
-  const color = days > 14 ? "text-red-600" : days > 7 ? "text-amber-600" : "text-gray-500";
-  return (
-    <p className={`text-sm ${color}`}>
-      Last contact: {days} day{days !== 1 ? "s" : ""} ago by {delegate.lastContactedBy}
-    </p>
-  );
 }
 
-function getSmsTemplate(delegate, volunteerName) {
-  const name = delegate.name?.split(" ")[0] || delegate.name;
+function getInitialTopicId(stage, wasOrdSupporter) {
+  if (wasOrdSupporter) return "ord";
+  return null; // stage-based default message
+}
+
+function stageBasedMessage(delegate, volunteerName) {
+  const name = delegate.firstName || delegate.name?.split(" ")[0] || delegate.name;
   const vol = volunteerName || "your volunteer";
   const stage = delegate.stage;
-  let template;
-  if (stage === "leaning" || stage === "engaged") {
-    template = TEXT_TEMPLATES.followUp;
-  } else if (stage === "committed" || stage === "locked") {
-    template = TEXT_TEMPLATES.finalPush;
-  } else {
-    template = TEXT_TEMPLATES.firstOutreach;
-  }
-  return template
-    .replace(/\[NAME\]/g, name)
-    .replace(/\[YOUR NAME\]/g, vol)
-    .replace("hub.wileyfor21.com", "wileyfor21.com");
+  let t;
+  if (stage === "leaning" || stage === "engaged") t = TEXT_TEMPLATES.followUp;
+  else if (stage === "committed" || stage === "locked") t = TEXT_TEMPLATES.finalPush;
+  else t = TEXT_TEMPLATES.firstOutreach;
+  return t.replace(/\[NAME\]/g, name).replace(/\[YOUR NAME\]/g, vol);
 }
 
-function getEmailContent(delegate, volunteerName) {
-  const firstName = delegate.firstName || delegate.name?.split(" ")[0] || delegate.name;
-  const vol = volunteerName || "a volunteer";
-  const script = getRecommendedScript(delegate.stage, delegate.wasOrdSupporter);
-  const issuesMention = delegate.issuesRaised?.length
-    ? `\n\nI noted that you care about ${delegate.issuesRaised.join(" and ")} — those are exactly the issues Aaron is fighting for.`
-    : "";
-  const subject = `Aaron Wiley for HD 21 — following up, ${firstName}`;
-  const body =
-    `Hi ${firstName},\n\n` +
-    `My name is ${vol}, and I'm a volunteer with Aaron Wiley's campaign for House District 21. Aaron is running in the Democratic convention on April 11th.${issuesMention}\n\n` +
-    `Aaron was the first paid employee on Barack Obama's campaign in Utah, a Rose Park youth coach for 20 years, and has spent decades organizing for housing affordability, healthcare access, and investment on the West Side.\n\n` +
-    `I'd love to answer any questions or connect you directly with Aaron before the convention. You can also learn more at wileyfor21.com.\n\n` +
-    `Thank you for your time,\n${vol}`;
-  return { subject, body };
+function topicMessage(topic, delegate, volunteerName) {
+  const name = delegate.firstName || delegate.name?.split(" ")[0] || delegate.name;
+  const vol = volunteerName || "your volunteer";
+  return topic.text.replace(/\[NAME\]/g, name).replace(/\[YOUR NAME\]/g, vol);
 }
 
 function buildMapsUrl(delegate) {
@@ -59,7 +52,6 @@ function buildMapsUrl(delegate) {
 }
 
 function buildCalendarUrl(delegate) {
-  // Default: tomorrow at 10am local, 30 minutes
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   tomorrow.setHours(10, 0, 0, 0);
@@ -72,49 +64,126 @@ function buildCalendarUrl(delegate) {
     String(d.getHours()).padStart(2, "0") +
     String(d.getMinutes()).padStart(2, "0") +
     "00";
-  const dates = `${fmt(tomorrow)}/${fmt(end)}`;
   const text = encodeURIComponent(`Follow up with ${delegate.name} — Aaron Wiley HD21`);
   const details = encodeURIComponent(
-    `Outreach follow-up for Aaron Wiley HD21 campaign.\nDelegate: ${delegate.name} | ${delegate.precinct} | ${delegate.role}`
+    `Outreach for Aaron Wiley HD21.\nDelegate: ${delegate.name} | ${delegate.precinct} | ${delegate.role}`
   );
-  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${dates}&details=${details}`;
+  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${fmt(tomorrow)}/${fmt(end)}&details=${details}`;
 }
+
+// ── sub-components ────────────────────────────────────────────────────────────
+
+function ScriptLine({ line }) {
+  // Highlight [PLACEHOLDER] parts in amber
+  const parts = line.split(/(\[[^\]]+\])/g);
+  return (
+    <p className={`text-sm leading-snug ${line.startsWith("[") && !line.includes("]") ? "text-gray-400 italic" : "text-gray-700"}`}>
+      {parts.map((part, i) =>
+        /^\[.+\]$/.test(part) ? (
+          <span key={i} className="bg-amber-100 text-amber-800 font-semibold px-0.5 rounded">
+            {part}
+          </span>
+        ) : (
+          part
+        )
+      )}
+    </p>
+  );
+}
+
+function IntelStrip({ delegate }) {
+  const leaning = delegate.leaningToward;
+  const leaningColor =
+    leaning === "Aaron Wiley" ? "text-green-700 font-bold" :
+    !leaning || leaning === "Undecided" || leaning === "Was Ord → now undecided" ? "text-amber-600 font-semibold" :
+    "text-red-600 font-semibold";
+
+  const days = delegate.lastContactedAt ? daysSince(delegate.lastContactedAt) : null;
+  const lastContactColor = days === null ? "text-amber-600 font-bold" :
+    days > 14 ? "text-red-600 font-bold" :
+    days > 7 ? "text-amber-600 font-semibold" : "text-gray-700";
+  const lastContactText = days === null ? "Never" : `${days}d ago`;
+
+  const priority = delegate.isPLEO
+    ? { label: "HIGH — PLEO x3", cls: "text-amber-700 font-bold" }
+    : delegate.wasOrdSupporter
+    ? { label: "HIGH — Ord lead", cls: "text-purple-700 font-bold" }
+    : delegate.stage === "leaning" || delegate.stage === "committed" || delegate.stage === "locked"
+    ? { label: "HIGH", cls: "text-navy font-bold" }
+    : { label: "Standard", cls: "text-gray-500" };
+
+  return (
+    <div className="grid grid-cols-4 gap-1 py-2 px-0 border-t border-b border-gray-100 my-2 text-xs">
+      <div>
+        <p className="text-gray-400 uppercase tracking-wide text-[10px] mb-0.5">Leaning Toward</p>
+        <p className={leaningColor}>{leaning || "Unknown"}</p>
+      </div>
+      <div>
+        <p className="text-gray-400 uppercase tracking-wide text-[10px] mb-0.5">Last Contact</p>
+        <p className={lastContactColor}>{lastContactText}</p>
+      </div>
+      <div>
+        <p className="text-gray-400 uppercase tracking-wide text-[10px] mb-0.5">Issues Raised</p>
+        {delegate.issuesRaised?.length ? (
+          <div className="flex flex-wrap gap-0.5">
+            {delegate.issuesRaised.slice(0, 3).map((issue) => (
+              <span key={issue} className="bg-navy/10 text-navy text-[10px] px-1.5 py-0.5 rounded-full font-medium">
+                {issue}
+              </span>
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-400 italic">None yet</p>
+        )}
+      </div>
+      <div>
+        <p className="text-gray-400 uppercase tracking-wide text-[10px] mb-0.5">Priority</p>
+        <p className={priority.cls}>{priority.label}</p>
+      </div>
+    </div>
+  );
+}
+
+// ── main component ────────────────────────────────────────────────────────────
 
 export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volunteerName }) {
   const [expandedAction, setExpandedAction] = useState(null); // 'text' | 'email' | null
+  const [scriptIdx, setScriptIdx] = useState(() => initialScriptIdx(delegate.stage, delegate.wasOrdSupporter));
+  const [topicId, setTopicId] = useState(() => getInitialTopicId(delegate.stage, delegate.wasOrdSupporter));
+  const textareaRef = useRef(null);
 
-  if (delegate.isOpposingCandidate) {
-    return <ConflictWarningCard delegate={delegate} />;
-  }
+  if (delegate.isOpposingCandidate) return <ConflictWarningCard delegate={delegate} />;
 
   const phone = delegate.phone;
   const email = delegate.email;
   const mapsUrl = buildMapsUrl(delegate);
   const calendarUrl = buildCalendarUrl(delegate);
-  const smsMessage = getSmsTemplate(delegate, volunteerName);
-  const { subject: emailSubject, body: emailBody } = getEmailContent(delegate, volunteerName);
+
+  const currentScript = SCRIPT_ORDER[scriptIdx] || SCRIPT_ORDER[0];
+  const selectedTopic = MESSAGE_TOPICS.find((t) => t.id === topicId) || null;
+  const currentMessage = selectedTopic
+    ? topicMessage(selectedTopic, delegate, volunteerName)
+    : stageBasedMessage(delegate, volunteerName);
 
   function handleCall() {
-    if (phone) {
-      window.open(`tel:${phone.replace(/\D/g, "")}`);
-    }
+    if (phone) window.open(`tel:${phone.replace(/\D/g, "")}`);
     onOpenLog?.("call", delegate);
   }
+  function handleText() { setExpandedAction(expandedAction === "text" ? null : "text"); }
+  function handleEmail() { setExpandedAction(expandedAction === "email" ? null : "email"); }
+  function cycleScript() { setScriptIdx((i) => (i + 1) % SCRIPT_ORDER.length); }
 
-  function handleText() {
-    setExpandedAction(expandedAction === "text" ? null : "text");
-  }
-
-  function handleEmail() {
-    setExpandedAction(expandedAction === "email" ? null : "email");
-  }
+  const emailSubject = `Aaron Wiley for HD 21 — following up, ${delegate.firstName || delegate.name?.split(" ")[0]}`;
+  const emailBody = currentMessage +
+    `\n\nI'd love to answer any questions or connect you with Aaron directly. Convention is April 11.\n\nLearn more: wileyfor21.com\n\n${volunteerName || "Your volunteer"}`;
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-3">
-      {/* Header */}
-      <div className="flex items-start justify-between gap-2 mb-2">
-        <div className="min-w-0">
-          <h3 className="font-condensed font-bold text-navy text-lg leading-tight truncate">
+
+      {/* ── Header ── */}
+      <div className="flex items-start justify-between gap-2 mb-1">
+        <div className="min-w-0 flex-1">
+          <h3 className="font-condensed font-bold text-navy text-xl leading-tight">
             {delegate.name}
           </h3>
           <p className="text-xs text-gray-500">
@@ -125,60 +194,34 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
               {[delegate.address, delegate.city, delegate.state].filter(Boolean).join(", ")}
             </p>
           )}
-          {/* Contact info visible on card */}
+          {/* Contact links */}
           <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1">
             {phone && (
-              <a
-                href={`tel:${phone.replace(/\D/g, "")}`}
-                className="text-xs text-navy font-medium hover:underline"
-              >
+              <a href={`tel:${phone.replace(/\D/g, "")}`} className="text-xs text-navy font-medium hover:underline">
                 &#128222; {phone}
               </a>
             )}
             {email && (
-              <a
-                href={`mailto:${email}`}
-                className="text-xs text-navy font-medium hover:underline truncate max-w-[180px]"
-                title={email}
-              >
+              <a href={`mailto:${email}`} className="text-xs text-navy font-medium hover:underline truncate max-w-[180px]" title={email}>
                 &#9993; {email}
               </a>
             )}
             {delegate.facebook && (
-              <a
-                href={delegate.facebook}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs text-blue-700 font-medium hover:underline"
-              >
+              <a href={delegate.facebook} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 font-medium hover:underline">
                 &#x1F465; Facebook
               </a>
             )}
             {delegate.instagram && (
-              <a
-                href={delegate.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs text-pink-600 font-medium hover:underline"
-              >
+              <a href={delegate.instagram} target="_blank" rel="noopener noreferrer" className="text-xs text-pink-600 font-medium hover:underline">
                 &#128247; Instagram
               </a>
             )}
-            {delegate.twitter && (
-              <a
-                href={delegate.twitter}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs text-sky-600 font-medium hover:underline"
-              >
-                &#x1D54F; Twitter
-              </a>
-            )}
           </div>
+          {/* Badges */}
           <div className="flex gap-2 mt-1 flex-wrap">
             {delegate.isPLEO && (
               <span className="inline-block bg-amber-100 text-amber-800 text-xs font-semibold px-2 py-0.5 rounded-full">
-                &#9733; PLEO
+                &#9733; PLEO x3
               </span>
             )}
             {delegate.wasOrdSupporter && (
@@ -191,112 +234,153 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
         <StageBadge stage={delegate.stage} />
       </div>
 
-      {/* Last contacted */}
-      <div className="mb-3">
-        <LastContactedLine delegate={delegate} />
-      </div>
+      {/* ── Fix 3: Intelligence strip ── */}
+      <IntelStrip delegate={delegate} />
 
-      {/* Primary contact buttons */}
+      {/* ── Primary action buttons ── */}
       <div className="flex gap-2 mb-2">
         <button
           onClick={handleCall}
           className="flex-1 bg-navy text-white text-sm font-medium py-2 rounded-lg hover:bg-navy-dark active:scale-95 transition-all"
           title={phone ? `Call ${phone}` : "No phone on file"}
         >
-          &#128222; Call{phone ? "" : "*"}
+          &#128222; Call{!phone ? "*" : ""}
         </button>
         <button
           onClick={handleText}
           className={`flex-1 text-sm font-medium py-2 rounded-lg active:scale-95 transition-all ${
-            expandedAction === "text"
-              ? "bg-blue-600 text-white"
-              : "bg-navy text-white hover:bg-navy-dark"
+            expandedAction === "text" ? "bg-blue-600 text-white" : "bg-navy text-white hover:bg-navy-dark"
           }`}
-          title={phone ? `Text ${phone}` : "No phone on file"}
         >
-          &#128172; Text{phone ? "" : "*"}
+          &#128172; Text{!phone ? "*" : ""}
         </button>
         <button
           onClick={handleEmail}
           className={`flex-1 text-sm font-medium py-2 rounded-lg active:scale-95 transition-all ${
-            expandedAction === "email"
-              ? "bg-blue-600 text-white"
-              : "bg-navy text-white hover:bg-navy-dark"
+            expandedAction === "email" ? "bg-green-700 text-white" : "bg-navy text-white hover:bg-navy-dark"
           }`}
-          title={email ? `Email ${email}` : "No email on file"}
         >
-          &#9993;&#65039; Email{email ? "" : "*"}
+          &#9993;&#65039; Email{!email ? "*" : ""}
         </button>
       </div>
 
-      {/* SMS composer panel */}
-      {expandedAction === "text" && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-2">
-          <p className="text-xs font-semibold text-blue-800 mb-1">Suggested message</p>
-          <textarea
-            className="w-full text-sm text-gray-800 bg-white border border-blue-200 rounded p-2 resize-none focus:outline-none focus:ring-1 focus:ring-blue-400"
-            rows={4}
-            defaultValue={smsMessage}
-            id={`sms-text-${delegate.id}`}
-          />
+      {/* ── Fix 4: Script selector (always visible) ── */}
+      <div className="bg-navy/5 border border-navy/10 rounded-lg p-3 mb-2">
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-xs font-bold text-navy uppercase tracking-wide">
+            Script &mdash; {currentScript.label}
+          </p>
+          <button
+            onClick={cycleScript}
+            className="text-xs text-blue-600 hover:text-blue-800 font-medium transition-colors"
+          >
+            Different script &rarr;
+          </button>
+        </div>
+        <p className="text-[10px] text-gray-400 italic mb-2">{currentScript.useWhen}</p>
+        <div className="space-y-1 max-h-40 overflow-y-auto">
+          {currentScript.lines.map((line, i) => (
+            <ScriptLine key={i} line={line} />
+          ))}
+        </div>
+      </div>
+
+      {/* ── Fix 5: Topic pills + message composer (text or email) ── */}
+      {(expandedAction === "text" || expandedAction === "email") && (
+        <div className={`rounded-lg p-3 mb-2 border ${expandedAction === "text" ? "bg-blue-50 border-blue-200" : "bg-green-50 border-green-200"}`}>
+          {/* Topic pill selector */}
+          <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">Choose a message topic</p>
+          <div className="flex flex-wrap gap-1.5 mb-3">
+            {MESSAGE_TOPICS.map((topic) => {
+              const isSelected = topicId === topic.id || (!topicId && topic.id === "custom");
+              const isAutoSelected = !topicId && topic.id !== "custom";
+              return (
+                <button
+                  key={topic.id}
+                  onClick={() => setTopicId(topicId === topic.id ? null : topic.id)}
+                  className={`text-xs px-2.5 py-1 rounded-full border font-medium transition-colors ${
+                    topicId === topic.id
+                      ? "bg-navy text-white border-navy"
+                      : "bg-white text-gray-600 border-gray-300 hover:border-navy/40 hover:text-navy"
+                  }`}
+                >
+                  {topic.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Email subject line */}
+          {expandedAction === "email" && (
+            <p className="text-xs text-green-700 mb-1 font-medium">
+              <strong>Subject:</strong> {emailSubject}
+            </p>
+          )}
+
+          {/* Message textarea */}
+          {topicId === "custom" ? (
+            <textarea
+              ref={textareaRef}
+              className={`w-full text-sm text-gray-800 bg-white rounded p-2 resize-none focus:outline-none focus:ring-1 ${
+                expandedAction === "text" ? "border border-blue-200 focus:ring-blue-400" : "border border-green-200 focus:ring-green-400"
+              }`}
+              rows={5}
+              placeholder="Write your own message..."
+              id={`msg-${delegate.id}`}
+            />
+          ) : (
+            <textarea
+              ref={textareaRef}
+              key={`${topicId}-${expandedAction}`}
+              className={`w-full text-sm text-gray-800 bg-white rounded p-2 resize-none focus:outline-none focus:ring-1 ${
+                expandedAction === "text" ? "border border-blue-200 focus:ring-blue-400" : "border border-green-200 focus:ring-green-400"
+              }`}
+              rows={expandedAction === "email" ? 6 : 4}
+              defaultValue={expandedAction === "email" ? emailBody : currentMessage}
+              id={`msg-${delegate.id}`}
+            />
+          )}
+
+          {/* Action buttons */}
           <div className="flex gap-2 mt-2">
-            {phone ? (
+            {expandedAction === "text" && phone && (
               <a
                 href={`sms:${phone.replace(/\D/g, "")}?body=${encodeURIComponent(
-                  document.getElementById(`sms-text-${delegate.id}`)?.value || smsMessage
+                  document.getElementById(`msg-${delegate.id}`)?.value || currentMessage
                 )}`}
                 onClick={() => onOpenLog?.("text", delegate)}
                 className="flex-1 text-center bg-blue-600 text-white text-sm font-medium py-1.5 rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Open Messages App &#8599;
               </a>
-            ) : (
-              <p className="text-xs text-blue-600 italic">No phone number on file — copy message manually.</p>
             )}
-            <button
-              onClick={() => {
-                const el = document.getElementById(`sms-text-${delegate.id}`);
-                if (el) navigator.clipboard?.writeText(el.value).catch(() => {});
-              }}
-              className="px-3 py-1.5 text-sm text-blue-700 border border-blue-300 rounded-lg hover:bg-blue-100 transition-colors"
-            >
-              Copy
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Email composer panel */}
-      {expandedAction === "email" && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-2">
-          <p className="text-xs font-semibold text-green-800 mb-1">Suggested email</p>
-          <p className="text-xs text-green-700 mb-1">
-            <strong>Subject:</strong> {emailSubject}
-          </p>
-          <textarea
-            className="w-full text-sm text-gray-800 bg-white border border-green-200 rounded p-2 resize-none focus:outline-none focus:ring-1 focus:ring-green-400"
-            rows={6}
-            defaultValue={emailBody}
-            id={`email-body-${delegate.id}`}
-          />
-          <div className="flex gap-2 mt-2">
-            {email ? (
+            {expandedAction === "email" && email && (
               <a
-                href={`mailto:${email}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`}
+                href={`mailto:${email}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(
+                  document.getElementById(`msg-${delegate.id}`)?.value || emailBody
+                )}`}
                 onClick={() => onOpenLog?.("email", delegate)}
-                className="flex-1 text-center bg-green-600 text-white text-sm font-medium py-1.5 rounded-lg hover:bg-green-700 transition-colors"
+                className="flex-1 text-center bg-green-700 text-white text-sm font-medium py-1.5 rounded-lg hover:bg-green-800 transition-colors"
               >
                 Open Email App &#8599;
               </a>
-            ) : (
-              <p className="text-xs text-green-600 italic">No email on file — copy message manually.</p>
+            )}
+            {!phone && expandedAction === "text" && (
+              <p className="text-xs text-blue-600 italic flex-1">No phone number on file.</p>
+            )}
+            {!email && expandedAction === "email" && (
+              <p className="text-xs text-green-600 italic flex-1">No email on file.</p>
             )}
             <button
               onClick={() => {
-                const el = document.getElementById(`email-body-${delegate.id}`);
-                if (el) navigator.clipboard?.writeText(`Subject: ${emailSubject}\n\n${el.value}`).catch(() => {});
+                const el = document.getElementById(`msg-${delegate.id}`);
+                if (el) navigator.clipboard?.writeText(el.value).catch(() => {});
               }}
-              className="px-3 py-1.5 text-sm text-green-700 border border-green-300 rounded-lg hover:bg-green-100 transition-colors"
+              className={`px-3 py-1.5 text-sm border rounded-lg transition-colors ${
+                expandedAction === "text"
+                  ? "text-blue-700 border-blue-300 hover:bg-blue-100"
+                  : "text-green-700 border-green-300 hover:bg-green-100"
+              }`}
             >
               Copy
             </button>
@@ -304,59 +388,27 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
         </div>
       )}
 
-      {/* Secondary action row: Directions + Calendar + Social */}
+      {/* ── Secondary row: Directions + Calendar + Social ── */}
       <div className="flex gap-2 mb-2 flex-wrap">
         {mapsUrl && (
-          <a
-            href={mapsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 text-xs text-gray-600 border border-gray-200 px-2.5 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
-          >
+          <a href={mapsUrl} target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-1 text-xs text-gray-600 border border-gray-200 px-2.5 py-1.5 rounded-lg hover:bg-gray-50 transition-colors">
             &#128205; Directions
           </a>
         )}
-        <a
-          href={calendarUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-1 text-xs text-gray-600 border border-gray-200 px-2.5 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
-        >
+        <a href={calendarUrl} target="_blank" rel="noopener noreferrer"
+          className="flex items-center gap-1 text-xs text-gray-600 border border-gray-200 px-2.5 py-1.5 rounded-lg hover:bg-gray-50 transition-colors">
           &#128197; Schedule follow-up
         </a>
-        {delegate.facebook && (
-          <a
-            href={delegate.facebook}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 text-xs text-blue-700 border border-blue-200 px-2.5 py-1.5 rounded-lg hover:bg-blue-50 transition-colors"
-          >
-            &#x1F465; Facebook
-          </a>
-        )}
-        {delegate.instagram && (
-          <a
-            href={delegate.instagram}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 text-xs text-pink-700 border border-pink-200 px-2.5 py-1.5 rounded-lg hover:bg-pink-50 transition-colors"
-          >
-            &#128247; Instagram
-          </a>
-        )}
         {delegate.twitter && (
-          <a
-            href={delegate.twitter}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 text-xs text-sky-700 border border-sky-200 px-2.5 py-1.5 rounded-lg hover:bg-sky-50 transition-colors"
-          >
-            &#128038; X / Twitter
+          <a href={delegate.twitter} target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-1 text-xs text-sky-700 border border-sky-200 px-2.5 py-1.5 rounded-lg hover:bg-sky-50 transition-colors">
+            &#128038; Twitter
           </a>
         )}
       </div>
 
-      {/* Bottom actions */}
+      {/* ── Bottom actions ── */}
       <div className="flex gap-2">
         <button
           onClick={() => onOpenBriefing?.(delegate)}
