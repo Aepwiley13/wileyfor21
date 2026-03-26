@@ -87,12 +87,65 @@ export const OBJECTIONS = [
 
 export const TEXT_TEMPLATES = {
   firstOutreach:
-    "Hi [NAME], this is [YOUR NAME] \u2014 volunteer for Aaron Wiley (HD21 convention, April 11). Aaron was the first paid Obama employee in Utah, Rose Park coach for 20 years, fighting for housing & healthcare on the West Side. hub.wileyfor21.com",
+    "Hi [NAME], this is [YOUR NAME] \u2014 volunteer for Aaron Wiley (HD21 convention, April 11). Aaron was the first paid Obama employee in Utah, Rose Park coach for 20 years, fighting for housing & healthcare on the West Side. wileyfor21.com",
   followUp:
     "Hi [NAME] \u2014 following up from our call. Convention is April 11 and Aaron would love your support. Any questions? Happy to connect you directly with him.",
   finalPush:
     "Hi [NAME] \u2014 one week until the District 21 convention (April 11)! Aaron Wiley is the West Side's candidate \u2014 with the record and the relationships to back it up. Can we count on your vote?",
 };
+
+export const MESSAGE_TOPICS = [
+  {
+    id: "obama",
+    label: "Obama credential",
+    text: "Hi [NAME], this is [YOUR NAME] \u2014 volunteer for Aaron Wiley (HD21). In 2007, Aaron was the first paid employee on Barack Obama\u2019s campaign in Utah. That same organizing energy is what he\u2019s bringing to House District 21. Convention is April 11. wileyfor21.com",
+  },
+  {
+    id: "stericycle",
+    label: "Stericycle win",
+    text: "Hi [NAME], this is [YOUR NAME] with the Aaron Wiley campaign. Aaron organized the shutdown of Stericycle \u2014 a medical waste facility poisoning the air above North Salt Lake. He brought Erin Brockovich to Salt Lake City and won. That\u2019s the kind of fighter we need in HD21. Convention April 11. wileyfor21.com",
+  },
+  {
+    id: "housing",
+    label: "Housing",
+    text: "Hi [NAME], this is [YOUR NAME] with Aaron Wiley for HD21. The West Side is facing a housing crisis \u2014 rents are up, families are being displaced, and developers are calling the shots. Aaron is running to make sure our community controls what our neighborhood becomes. Convention April 11. wileyfor21.com",
+  },
+  {
+    id: "healthcare",
+    label: "Healthcare",
+    text: "Hi [NAME], this is [YOUR NAME] with the Aaron Wiley campaign for HD21. Aaron believes healthcare is a right, not a privilege \u2014 and the West Side deserves the same access as the east side. He\u2019s been fighting for this community for 20 years. Convention April 11. wileyfor21.com",
+  },
+  {
+    id: "pnut",
+    label: "PNUT Board",
+    text: "Hi [NAME], this is [YOUR NAME] with Aaron Wiley for HD21. Right now, Aaron is on the Salt Lake PNUT Board fighting for West Side investment \u2014 parks, trails, and open space our neighborhood has been denied for decades. He\u2019s not waiting for a title to do the work. Convention April 11. wileyfor21.com",
+  },
+  {
+    id: "michelle",
+    label: "Michelle Obama",
+    text: "Hi [NAME], this is [YOUR NAME] with the Aaron Wiley campaign. Aaron brought Michelle Obama to Salt Lake City. He has national relationships and local roots \u2014 that combination is exactly what HD21 needs. Convention is April 11. wileyfor21.com",
+  },
+  {
+    id: "westside",
+    label: "West Side contrast",
+    text: "Hi [NAME], this is [YOUR NAME] with Aaron Wiley for HD21. The West Side has been told to wait long enough. Aaron\u2019s contrast: a prison instead of a school, ICE instead of an ER, a camp instead of housing. He\u2019s running to change that. Convention April 11. wileyfor21.com",
+  },
+  {
+    id: "brockovich",
+    label: "Brockovich",
+    text: "Hi [NAME], this is [YOUR NAME] with the Aaron Wiley campaign. Aaron brought Erin Brockovich to Salt Lake City to fight for our community\u2019s air quality. He\u2019s been winning environmental fights on the West Side for 20 years. Convention is April 11. wileyfor21.com",
+  },
+  {
+    id: "ord",
+    label: "Was Ord supporter",
+    text: "Hi [NAME], this is [YOUR NAME] with the Aaron Wiley campaign. James Ord was a great candidate \u2014 we respect his choice to step back. Everything Ord supporters cared about, Aaron is running on. He\u2019s the West Side candidate still in this race. Convention April 11. Can we count on your support? wileyfor21.com",
+  },
+  {
+    id: "custom",
+    label: "Write my own",
+    text: "",
+  },
+];
 
 export function getRecommendedScript(stage, wasOrdSupporter) {
   if (wasOrdSupporter) {
