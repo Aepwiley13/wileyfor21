@@ -7,11 +7,15 @@ import VolunteerDashboard from "@/pages/VolunteerDashboard";
 import AdminDashboard from "@/pages/AdminDashboard";
 import DelegateSurveyPage from "@/pages/DelegateSurveyPage";
 import VolunteerSurveyPage from "@/pages/VolunteerSurveyPage";
+import DelegateLoginPage from "@/pages/DelegateLoginPage";
+import DelegateSignupPage from "@/pages/DelegateSignupPage";
+import DelegateDashboard from "@/pages/DelegateDashboard";
 
 export default function App() {
   return (
     <AuthProvider>
       <Routes>
+        {/* Volunteer routes */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route
@@ -29,6 +33,19 @@ export default function App() {
         } />
         <Route path="/survey/delegate" element={<DelegateSurveyPage />} />
         <Route path="/survey/volunteer" element={<VolunteerSurveyPage />} />
+
+        {/* Delegate Hub routes */}
+        <Route path="/delegate/login" element={<DelegateLoginPage />} />
+        <Route path="/delegate/signup" element={<DelegateSignupPage />} />
+        <Route
+          path="/delegate/dashboard"
+          element={
+            <ProtectedRoute>
+              <DelegateDashboard />
+            </ProtectedRoute>
+          }
+        />
+
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </AuthProvider>

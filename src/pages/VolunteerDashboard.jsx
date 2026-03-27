@@ -5,6 +5,7 @@ import { useActivityFeed } from "@/hooks/useActivityFeed";
 import { useLeaderboard } from "@/hooks/useLeaderboard";
 import { useMilestones } from "@/hooks/useMilestones";
 import { useStageSummary } from "@/hooks/useStageSummary";
+import { useDelegateInsights } from "@/hooks/useDelegateInsights";
 import TopBar from "@/components/layout/TopBar";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import DelegateCard from "@/components/cards/DelegateCard";
@@ -22,6 +23,7 @@ export default function VolunteerDashboard() {
   const leaderboard = useLeaderboard(user?.uid);
   const milestone = useMilestones();
   const summary = useStageSummary();
+  const { insights } = useDelegateInsights();
 
   const [showRight, setShowRight] = useState(false);
   const [logModal, setLogModal] = useState(null);
@@ -61,9 +63,30 @@ export default function VolunteerDashboard() {
     </div>
   );
 
+  const delegateSurveyPanel = insights.completedCount > 0 && (
+    <div className="bg-white rounded-xl border border-gray-200 p-4">
+      <div className="flex items-baseline justify-between mb-3">
+        <h3 className="font-condensed font-bold text-navy text-sm tracking-widest uppercase">
+          Delegate Survey
+        </h3>
+        <span className="text-xs text-gray-400">{insights.completedCount} completed</span>
+      </div>
+      <div className="space-y-2">
+        {insights.topIssues.map(({ label, count }) => (
+          <div key={label} className="flex items-center gap-2">
+            <span className="text-xs text-gray-600 flex-1 leading-snug">{label}</span>
+            <span className="text-xs font-semibold text-coral flex-shrink-0">{count}</span>
+          </div>
+        ))}
+      </div>
+      <p className="text-xs text-gray-400 mt-3">Top issues delegates care about</p>
+    </div>
+  );
+
   const rightPanel = (
     <div className="space-y-4">
       <ScoreboardPanel summary={summary} />
+      {delegateSurveyPanel}
       <Leaderboard data={leaderboard} currentUserId={user?.uid} />
       <ActivityFeed items={feed} />
     </div>
