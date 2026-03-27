@@ -41,3 +41,28 @@
   from = "/survey/*"
   to = "/app.html"
   status = 200
+
+[[redirects]]
+  from = "/delegate/survey"
+  to = "/app.html"
+  status = 200
+
+[[redirects]]
+  from = "/delegate/login"
+  to = "/app.html"
+  status = 200
+
+[[redirects]]
+  from = "/delegate/signup"
+  to = "/app.html"
+  status = 200
+
+[[redirects]]
+  from = "/delegate/dashboard"
+  to = "/app.html"
+  status = 200
+
+[[redirects]]
+  from = "/delegate/*"
+  to = "/app.html"
+  status = 200
