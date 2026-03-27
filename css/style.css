@@ -735,8 +735,8 @@ footer {
   color: #ffffff;
   margin-bottom: 16px;
 }
-.footer-nav ul { list-style: none; }
-.footer-nav ul li { margin-bottom: 10px; }
+.footer-nav ul { list-style: none; padding: 0; margin: 0; }
+.footer-nav ul li { margin-bottom: 12px; }
 .footer-nav ul a { color: rgba(255,255,255,0.55); text-decoration: none; font-size: 0.88rem; transition: color 0.2s; }
 .footer-nav ul a:hover { color: #F36F6B; }
 .footer-bottom {
