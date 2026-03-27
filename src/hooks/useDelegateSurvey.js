@@ -25,8 +25,46 @@ export const EMPTY_SURVEY = {
   lastUpdated: null,
 };
 
+/**
+ * Resolves the actual Firestore delegates/{docId} for a given Firebase auth uid.
+ *
+ * Two cases:
+ *   1. Self-registered delegate (no prior Hub record) → doc lives at delegates/{uid}
+ *   2. Matched to existing volunteer-managed record → doc has uid field set,
+ *      but its Firestore ID is the original volunteer-imported ID
+ *
+ * Strategy: try delegates/{uid} first. If the doc doesn't exist, query the
+ * collection for a doc where uid == the auth uid (set during signup matching).
+ */
+async function resolveDocId(uid) {
+  const { doc, getDoc, collection, query, where, getDocs, limit } =
+    await import("firebase/firestore");
+
+  // Step 1 — direct lookup
+  const directSnap = await getDoc(doc(db, "delegates", uid));
+  if (directSnap.exists()) {
+    return { docId: uid, data: directSnap.data() };
+  }
+
+  // Step 2 — query by uid field (delegate was matched to an existing Hub record)
+  const q = query(
+    collection(db, "delegates"),
+    where("uid", "==", uid),
+    limit(1)
+  );
+  const results = await getDocs(q);
+  if (!results.empty) {
+    const snap = results.docs[0];
+    return { docId: snap.id, data: snap.data() };
+  }
+
+  // No record found yet — will be created on first save
+  return { docId: uid, data: null };
+}
+
 export function useDelegateSurvey(uid) {
   const [survey, setSurvey] = useState(EMPTY_SURVEY);
+  const [delegateDocId, setDelegateDocId] = useState(uid);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -39,10 +77,10 @@ export function useDelegateSurvey(uid) {
       return;
     }
     (async () => {
-      const { doc, getDoc } = await import("firebase/firestore");
-      const snap = await getDoc(doc(db, "delegates", uid));
-      if (snap.exists() && snap.data().survey) {
-        setSurvey({ ...EMPTY_SURVEY, ...snap.data().survey });
+      const { docId, data } = await resolveDocId(uid);
+      setDelegateDocId(docId);
+      if (data?.survey) {
+        setSurvey({ ...EMPTY_SURVEY, ...data.survey });
       }
       setLoading(false);
     })();
@@ -53,12 +91,9 @@ export function useDelegateSurvey(uid) {
     setSurvey(next);
     if (!uid || useMock) return;
     const { doc, setDoc, serverTimestamp } = await import("firebase/firestore");
-    const ref = doc(db, "delegates", uid);
-    // Write startedAt only once
+    const ref = doc(db, "delegates", delegateDocId);
     const surveyToWrite = { ...next, lastUpdated: serverTimestamp() };
-    if (!next.startedAt) {
-      surveyToWrite.startedAt = serverTimestamp();
-    }
+    if (!next.startedAt) surveyToWrite.startedAt = serverTimestamp();
     await setDoc(ref, { survey: surveyToWrite }, { merge: true });
   }
 
@@ -67,7 +102,7 @@ export function useDelegateSurvey(uid) {
     setSurvey(next);
     if (!uid || useMock) return;
     const { doc, setDoc, serverTimestamp } = await import("firebase/firestore");
-    const ref = doc(db, "delegates", uid);
+    const ref = doc(db, "delegates", delegateDocId);
     await setDoc(
       ref,
       { survey: { ...next, completedAt: serverTimestamp(), lastUpdated: serverTimestamp() } },
@@ -75,5 +110,5 @@ export function useDelegateSurvey(uid) {
     );
   }
 
-  return { survey, save, complete, loading };
+  return { survey, save, complete, loading, delegateDocId };
 }

@@ -1,8 +1,50 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { doc, setDoc, updateDoc, collection, query, where, getDocs, limit, serverTimestamp } from "firebase/firestore";
 import { auth, db, useMock } from "@/lib/firebase";
+
+/**
+ * Looks up an existing volunteer-managed delegate doc by email or phone.
+ * Returns the Firestore doc ID if a match is found, otherwise null.
+ */
+async function findExistingDelegate(email, phone) {
+  // Check email first (most reliable)
+  if (email) {
+    const emailQ = query(
+      collection(db, "delegates"),
+      where("email", "==", email.trim()),
+      limit(1)
+    );
+    const emailSnap = await getDocs(emailQ);
+    if (!emailSnap.empty) return emailSnap.docs[0].id;
+  }
+
+  // Fall back to phone
+  if (phone) {
+    const normalized = phone.replace(/\D/g, "");
+    const phoneQ = query(
+      collection(db, "delegates"),
+      where("phone", "==", phone.trim()),
+      limit(1)
+    );
+    const phoneSnap = await getDocs(phoneQ);
+    if (!phoneSnap.empty) return phoneSnap.docs[0].id;
+
+    // Also try digits-only in case the Hub stores it without formatting
+    if (normalized !== phone.trim()) {
+      const phoneQ2 = query(
+        collection(db, "delegates"),
+        where("phone", "==", normalized),
+        limit(1)
+      );
+      const phoneSnap2 = await getDocs(phoneQ2);
+      if (!phoneSnap2.empty) return phoneSnap2.docs[0].id;
+    }
+  }
+
+  return null;
+}
 
 export default function DelegateSignupPage() {
   const navigate = useNavigate();
@@ -51,7 +93,8 @@ export default function DelegateSignupPage() {
       const fullName = `${form.firstName.trim()} ${form.lastName.trim()}`;
       const { user } = await createUserWithEmailAndPassword(auth, form.email, form.password);
       await updateProfile(user, { displayName: fullName });
-      await setDoc(doc(db, "delegates", user.uid), {
+
+      const accountFields = {
         firstName: form.firstName.trim(),
         lastName: form.lastName.trim(),
         name: fullName,
@@ -61,16 +104,36 @@ export default function DelegateSignupPage() {
         precinct: form.precinct.trim(),
         role: "delegate",
         preferredMethod: form.preferredMethod,
-        // Volunteer tracking fields (managed by volunteers)
-        stage: "identified",
-        currentLeaning: null,
-        lastContactedAt: null,
-        totalContacts: 0,
-        leaningHistory: [],
-        topIssues: [],
-        assignedTo: [],
-        joinedAt: serverTimestamp(),
-      });
+        uid: user.uid,
+        linkedAt: serverTimestamp(),
+      };
+
+      // Match to an existing volunteer-managed delegate record by email or phone.
+      // If found: enrich that record with the auth uid so the Hub stays in sync.
+      // If not found: create a new record at delegates/{uid}.
+      const existingDocId = await findExistingDelegate(
+        form.email.trim(),
+        form.phone.trim()
+      );
+
+      if (existingDocId) {
+        // Merge account fields into the existing volunteer-managed doc
+        await updateDoc(doc(db, "delegates", existingDocId), accountFields);
+      } else {
+        // No existing record — create a fresh one
+        await setDoc(doc(db, "delegates", user.uid), {
+          ...accountFields,
+          // Volunteer tracking defaults
+          stage: "identified",
+          currentLeaning: null,
+          lastContactedAt: null,
+          totalContacts: 0,
+          leaningHistory: [],
+          topIssues: [],
+          assignedTo: [],
+          joinedAt: serverTimestamp(),
+        });
+      }
 
       navigate("/delegate/dashboard");
     } catch (err) {
