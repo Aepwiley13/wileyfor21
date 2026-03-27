@@ -28,6 +28,7 @@ export default function VolunteerDashboard() {
   const [showRight, setShowRight] = useState(false);
   const [logModal, setLogModal] = useState(null);
   const [briefingDelegate, setBriefingDelegate] = useState(null);
+  const [surveyFilter, setSurveyFilter] = useState(false); // "incomplete surveys only"
 
   function handleOpenLog(method, delegate) {
     setLogModal({ delegate, method });
@@ -42,15 +43,42 @@ export default function VolunteerDashboard() {
     updateContact(logEntry.delegateId, patch);
   }
 
+  // Survey filter: delegates who started but haven't completed
+  const incompleteSurveyCount = contacts.filter(
+    (d) => d.survey?.startedAt && !d.survey?.completed
+  ).length;
+
+  const visibleContacts = surveyFilter
+    ? contacts.filter((d) => d.survey?.startedAt && !d.survey?.completed)
+    : contacts;
+
   const leftPanel = (
     <div>
-      <h2 className="font-condensed font-bold text-navy text-sm tracking-widest uppercase mb-3">
-        Your Contacts Today &mdash; Sorted by Priority
-      </h2>
-      {contacts.length === 0 ? (
-        <p className="text-gray-500 text-sm">No delegates assigned yet.</p>
+      <div className="flex items-center justify-between mb-3 gap-2 flex-wrap">
+        <h2 className="font-condensed font-bold text-navy text-sm tracking-widest uppercase">
+          Your Contacts Today &mdash; Sorted by Priority
+        </h2>
+        {incompleteSurveyCount > 0 && (
+          <button
+            onClick={() => setSurveyFilter((v) => !v)}
+            className={`text-xs font-medium px-2.5 py-1 rounded-full border transition-colors ${
+              surveyFilter
+                ? "bg-yellow-100 text-yellow-700 border-yellow-300"
+                : "text-gray-500 border-gray-200 hover:border-gray-400"
+            }`}
+          >
+            {surveyFilter
+              ? `Showing ${incompleteSurveyCount} incomplete — clear filter`
+              : `${incompleteSurveyCount} incomplete survey${incompleteSurveyCount > 1 ? "s" : ""} — follow up`}
+          </button>
+        )}
+      </div>
+      {visibleContacts.length === 0 ? (
+        <p className="text-gray-500 text-sm">
+          {surveyFilter ? "No delegates with incomplete surveys." : "No delegates assigned yet."}
+        </p>
       ) : (
-        contacts.map((d) => (
+        visibleContacts.map((d) => (
           <DelegateCard
             key={d.id}
             delegate={d}

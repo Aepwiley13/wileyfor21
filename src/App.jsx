@@ -10,6 +10,7 @@ import VolunteerSurveyPage from "@/pages/VolunteerSurveyPage";
 import DelegateLoginPage from "@/pages/DelegateLoginPage";
 import DelegateSignupPage from "@/pages/DelegateSignupPage";
 import DelegateDashboard from "@/pages/DelegateDashboard";
+import DelegateSurveyDirectPage from "@/pages/DelegateSurveyDirectPage";
 
 export default function App() {
   return (
@@ -37,6 +38,8 @@ export default function App() {
         {/* Delegate Hub routes */}
         <Route path="/delegate/login" element={<DelegateLoginPage />} />
         <Route path="/delegate/signup" element={<DelegateSignupPage />} />
+        {/* Unauthenticated unique-link survey — /delegate/survey?delegate=abc123 */}
+        <Route path="/delegate/survey" element={<DelegateSurveyDirectPage />} />
         <Route
           path="/delegate/dashboard"
           element={
