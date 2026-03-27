@@ -51,7 +51,7 @@ body {
 /* ============================================
    NAV
    ============================================ */
-nav {
+nav.site-nav {
   background-color: #034A76;
   position: sticky;
   top: 0;
@@ -1059,7 +1059,7 @@ footer {
 @media (max-width: 900px) {
   section { padding: 70px 6vw; }
   .movement, .how-we-win, .convention, .conv-timeline, .donate, .involve { padding: 70px 6vw; }
-  nav { padding: 0 20px; }
+  nav.site-nav { padding: 0 20px; }
   .nav-links, .nav-right { display: none; }
   .hamburger { display: flex; }
   .movement-grid,
