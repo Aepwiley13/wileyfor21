@@ -1,34 +1,22 @@
-import SurveyForm from "@/components/survey/SurveyForm";
-import { delegateSurveyQuestions } from "@/data/surveyQuestions";
+import CallScriptWizard from "@/components/survey/CallScriptWizard";
 import { useMock, db } from "@/lib/firebase";
 
 export default function DelegateSurveyPage() {
-  async function handleSubmit(answers) {
+  async function handleSubmit({ stage, method, notes }) {
     const payload = {
-      respondentType: "delegate",
-      respondentId: null,
-      name: answers.q8?.name || "Anonymous",
-      email: answers.q8?.email || "",
-      phone: answers.q8?.phone || "",
-      answers,
-      topIssues: answers.q1 || [],
-      supportLevel: answers.q3 || 0,
-      source: "public_link",
+      type: "call_script",
+      stage,
+      method,
+      notes,
       submittedAt: new Date().toISOString(),
     };
 
     if (!useMock && db) {
       const { collection, addDoc, serverTimestamp } = await import("firebase/firestore");
       payload.submittedAt = serverTimestamp();
-      await addDoc(collection(db, "surveyResponses"), payload);
+      await addDoc(collection(db, "callScriptLogs"), payload);
     }
   }
 
-  return (
-    <SurveyForm
-      title="Delegate Survey"
-      questions={delegateSurveyQuestions}
-      onSubmit={handleSubmit}
-    />
-  );
+  return <CallScriptWizard stage="connect" onSubmit={handleSubmit} />;
 }

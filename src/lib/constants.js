@@ -96,3 +96,15 @@ export const MILESTONE_MESSAGES = {
 };
 
 export const TARGET_DELEGATES = 53;
+
+// Call script stages — one stage per phase of outreach, call-only.
+// Text and email scripts will be added separately when ready.
+export const CALL_SCRIPT_STAGES = {
+  connect: {
+    id: "connect",
+    label: "Connect",
+    description: "First call — introduce Aaron, build rapport, learn their issues",
+    method: "call",
+  },
+  // Future stages added here: persuade, commit, gotv
+};
