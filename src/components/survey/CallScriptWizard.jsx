@@ -2,7 +2,7 @@ import { useState } from "react";
 import { callScripts } from "@/data/surveyQuestions";
 import { CALL_SCRIPT_STAGES } from "@/lib/constants";
 
-export default function CallScriptWizard({ stage = "connect", onSubmit }) {
+export default function CallScriptWizard({ stage = "connect", delegate, onSubmit, onClose }) {
   const steps = callScripts[stage] ?? [];
   const stageInfo = CALL_SCRIPT_STAGES[stage];
 
@@ -14,6 +14,7 @@ export default function CallScriptWizard({ stage = "connect", onSubmit }) {
 
   const step = steps[currentStep];
   const isLast = currentStep === steps.length - 1;
+  const delegateName = delegate?.firstName || delegate?.name?.split(" ")[0] || delegate?.name || "Delegate";
 
   function setNote(id, val) {
     setNotes((n) => ({ ...n, [id]: val }));
@@ -37,35 +38,37 @@ export default function CallScriptWizard({ stage = "connect", onSubmit }) {
 
   async function handleSubmit() {
     setSubmitting(true);
-    await onSubmit({ stage, method: "call", notes });
+    await onSubmit?.({ stage, method: "call", notes, delegate });
     setSubmitting(false);
     setSubmitted(true);
   }
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-[#F5F2EC] flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 max-w-md w-full text-center">
-          <div className="text-4xl mb-4">✅</div>
-          <h2 className="font-bold text-[#1B2B4B] text-2xl mb-2">Call logged</h2>
-          <p className="text-gray-500 text-sm">Notes saved. Thanks for making the call.</p>
-        </div>
+      <div className="flex flex-col items-center justify-center h-full p-8 text-center">
+        <div className="text-4xl mb-4">✅</div>
+        <h2 className="font-bold text-[#1B2B4B] text-2xl mb-2">Call logged</h2>
+        <p className="text-gray-500 text-sm mb-6">Notes saved for {delegateName}.</p>
+        <button
+          onClick={onClose}
+          className="px-6 py-2.5 rounded-xl bg-[#1B2B4B] text-white text-sm font-bold hover:bg-[#162240] transition-colors"
+        >
+          Done
+        </button>
       </div>
     );
   }
 
   if (reviewing) {
     return (
-      <div className="min-h-screen bg-[#F5F2EC]">
-        {/* Progress — all filled */}
-        <ProgressBar total={steps.length} current={steps.length} />
-
-        <div className="max-w-lg mx-auto px-4 pt-5 pb-24 space-y-4">
-          <div className="mb-2">
+      <div className="flex flex-col h-full">
+        <ProgressBar total={steps.length} current={steps.length} onClose={onClose} />
+        <div className="flex-1 overflow-y-auto px-4 pt-4 pb-6 space-y-3">
+          <div className="mb-1">
             <p className="text-xs font-semibold tracking-widest text-[#3A7D44] uppercase mb-1">
-              Review call
+              Review call — {delegateName}
             </p>
-            <h2 className="font-bold text-[#1B2B4B] text-2xl">Your notes</h2>
+            <h2 className="font-bold text-[#1B2B4B] text-xl">Your notes</h2>
           </div>
 
           {steps.map((s) => (
@@ -103,10 +106,10 @@ export default function CallScriptWizard({ stage = "connect", onSubmit }) {
   }
 
   return (
-    <div className="min-h-screen bg-[#F5F2EC]">
-      <ProgressBar total={steps.length} current={currentStep} />
+    <div className="flex flex-col h-full">
+      <ProgressBar total={steps.length} current={currentStep} onClose={onClose} />
 
-      <div className="max-w-lg mx-auto px-4 pt-5 pb-24">
+      <div className="flex-1 overflow-y-auto px-4 pt-4 pb-6">
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 space-y-4">
           {/* Step label + title */}
           <div>
@@ -114,11 +117,16 @@ export default function CallScriptWizard({ stage = "connect", onSubmit }) {
               Step {currentStep + 1} — {step.stepLabel}
             </p>
             <h2 className="font-bold text-[#1B2B4B] text-xl">{step.title}</h2>
+            {delegate && (
+              <p className="text-xs text-gray-400 mt-0.5">Calling: {delegate.name}</p>
+            )}
           </div>
 
           {/* Script blockquote */}
           <div className="border-l-4 border-[#3A7D44] pl-4 bg-[#F5F2EC] rounded-r-lg py-3 pr-3">
-            <p className="text-sm text-gray-800 leading-relaxed">{step.script}</p>
+            <p className="text-sm text-gray-800 leading-relaxed">
+              {step.script.replace(/\[Delegate Name\]/g, delegateName)}
+            </p>
           </div>
 
           {/* Tips */}
@@ -162,17 +170,28 @@ export default function CallScriptWizard({ stage = "connect", onSubmit }) {
   );
 }
 
-function ProgressBar({ total, current }) {
+function ProgressBar({ total, current, onClose }) {
   return (
-    <div className="sticky top-0 z-10 bg-[#F5F2EC] px-4 pt-4 pb-3">
-      <div className="max-w-lg mx-auto flex gap-1.5">
-        {Array.from({ length: total }).map((_, i) => (
-          <div
-            key={i}
-            className="flex-1 h-1.5 rounded-full transition-colors duration-300"
-            style={{ backgroundColor: i <= current ? "#3A7D44" : "#D1D5DB" }}
-          />
-        ))}
+    <div className="bg-[#F5F2EC] px-4 pt-4 pb-3 shrink-0">
+      <div className="flex items-center gap-3">
+        <div className="flex flex-1 gap-1.5">
+          {Array.from({ length: total }).map((_, i) => (
+            <div
+              key={i}
+              className="flex-1 h-1.5 rounded-full transition-colors duration-300"
+              style={{ backgroundColor: i <= current ? "#3A7D44" : "#D1D5DB" }}
+            />
+          ))}
+        </div>
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 text-xl leading-none shrink-0"
+            aria-label="Close"
+          >
+            ×
+          </button>
+        )}
       </div>
     </div>
   );
