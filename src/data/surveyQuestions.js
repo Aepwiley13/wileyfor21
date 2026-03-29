@@ -1,3 +1,89 @@
+// Call scripts keyed by stage — only "connect" exists now.
+// Each stage is call-only; text/email scripts are separate.
+export const callScripts = {
+  connect: [
+    {
+      id: "opening",
+      stepLabel: "OPENING",
+      title: "Introduction",
+      script:
+        "Hi, is this [Delegate Name]? Great! My name is [Your Name] and I'm a volunteer with Aaron Wiley's campaign for House District 21. Aaron is running for the Utah House and the Democratic convention is coming up on April 11th. Do you have just a few minutes to chat?",
+      tips: [
+        "Smile — they can hear it",
+        "If they say no, ask when is a better time",
+        "Confirm they are a registered delegate for HD21",
+      ],
+      notesPlaceholder: "Notes on how they responded...",
+    },
+    {
+      id: "rapport",
+      stepLabel: "BUILD RAPPORT",
+      title: "Why did you want to be a delegate?",
+      script:
+        "I'd love to hear a little about you first — what made you want to become a delegate this year? What inspired you to get involved?",
+      tips: [
+        "Listen more than you talk here",
+        "Note themes: community, specific issues, party loyalty, first time",
+        "Affirm their answer warmly before moving on",
+      ],
+      notesPlaceholder: "Why they became a delegate...",
+    },
+    {
+      id: "issues",
+      stepLabel: "ISSUES",
+      title: "What issues do you care about most?",
+      script:
+        "That's really meaningful — thank you for sharing that. So what are the issues that matter most to you right now? What do you most want to see action on from your state rep?",
+      tips: [
+        "Common answers: housing, education, healthcare, immigration, environment",
+        "Connect their issues to Aaron's platform when you can",
+        "Don't argue — just listen and affirm",
+      ],
+      notesPlaceholder: "Issues they mentioned...",
+    },
+    {
+      id: "their_questions",
+      stepLabel: "THEIR QUESTIONS",
+      title: "What questions do you have?",
+      script:
+        "Aaron has a strong background — over 20 years in the community, coaching youth sports in Rose Park and Glendale, and he actually ran Barack Obama's first Utah campaign back in 2007. Do you have any questions about Aaron or the race that I can try to answer for you?",
+      tips: [
+        'If you don\'t know the answer, say "Great question — let me get that to you"',
+        "You can direct them to wileyfor21.com for more info",
+        "Note any tough questions so the team can follow up",
+      ],
+      notesPlaceholder: "Questions they asked, concerns raised...",
+    },
+    {
+      id: "the_ask",
+      stepLabel: "THE ASK",
+      title: "Do you know who you're voting for?",
+      script:
+        "I really appreciate you taking the time to talk with me. As we get closer to the April 11th convention, can I ask — do you have a sense of who you're planning to support? We'd love to count on your vote for Aaron Wiley.",
+      tips: [
+        'Soft commit: "Leaning toward Aaron" is a win — note it',
+        "Undecided: offer to send more info, ask what would help",
+        "Already supporting: ask if they'd be willing to talk to other delegates",
+      ],
+      notesPlaceholder: "Their response — committed, undecided, supporting someone else...",
+    },
+    {
+      id: "close",
+      stepLabel: "CLOSE",
+      title: "Closing the call",
+      script:
+        "Thank you so much, [Name] — this really means a lot to Aaron and to our whole team. The convention is April 11th and we'll make sure you have everything you need. Is it okay if someone from our team follows up with you before then?",
+      tips: [
+        "Confirm their contact info if they agree to follow-up",
+        "Mention wileyfor21.com one more time",
+        "End warmly — even undecideds can be won over",
+      ],
+      notesPlaceholder: "Follow-up agreed? Contact info? Final impressions...",
+    },
+  ],
+  // Future stages: persuade, commit, gotv
+};
+
 export const delegateSurveyQuestions = [
   {
     id: "q1",
