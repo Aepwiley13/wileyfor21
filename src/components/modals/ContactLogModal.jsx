@@ -45,6 +45,7 @@ export default function ContactLogModal({ delegate, method: initialMethod, onClo
       stageAfter = stageOrder[currentIdx + 1];
     }
     if (form.outcome === "hostile") stageAfter = "not_winnable";
+    else if (stageAfter === "unknown" && form.outcome !== "no_answer") stageAfter = "identified";
 
     const logEntry = {
       delegateId: delegate.id,
