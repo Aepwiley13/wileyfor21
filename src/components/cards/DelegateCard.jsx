@@ -2,31 +2,14 @@ import { useState, useRef } from "react";
 import { daysSince, calculateNextContactDate } from "@/lib/utils";
 import StageBadge from "@/components/ui/StageBadge";
 import ConflictWarningCard from "./ConflictWarningCard";
-import { CALL_SCRIPTS, TEXT_TEMPLATES, MESSAGE_TOPICS, getRecommendedScript } from "@/lib/scripts";
-import { callScripts } from "@/data/surveyQuestions";
+import { CALL_SCRIPTS, TEXT_TEMPLATES, MESSAGE_TOPICS } from "@/lib/scripts";
+import { callScripts, stageCoaching } from "@/data/surveyQuestions";
 import { OUTCOMES, CANDIDATES, ISSUES, STAGES, NEXT_ACTIONS, ACTIVE_CANDIDATES } from "@/lib/constants";
 import { db, useMock } from "@/lib/firebase";
 
 const SURVEY_BASE_URL = "https://wileyfor21.com/delegate/survey";
 
 // ── helpers ──────────────────────────────────────────────────────────────────
-
-const SCRIPT_ORDER = [
-  CALL_SCRIPTS.firstContact,
-  CALL_SCRIPTS.followUp,
-  CALL_SCRIPTS.commitmentAsk,
-  CALL_SCRIPTS.voicemail,
-];
-
-function initialScriptIdx(stage, wasOrdSupporter) {
-  if (wasOrdSupporter) return 0;
-  switch (stage) {
-    case "engaged": return 1;
-    case "leaning":
-    case "committed": return 2;
-    default: return 0;
-  }
-}
 
 function getInitialTopicId(stage, wasOrdSupporter) {
   if (wasOrdSupporter) return "ord";
@@ -316,7 +299,6 @@ function SurveyPanel({ delegate, onSurveySent }) {
 
 export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volunteerName, onSurveySent, onCallScriptSave }) {
   const [expandedAction, setExpandedAction] = useState(null); // 'text' | 'email' | null
-  const [scriptIdx, setScriptIdx] = useState(() => initialScriptIdx(delegate.stage, delegate.wasOrdSupporter));
   const [topicId, setTopicId] = useState(() => getInitialTopicId(delegate.stage, delegate.wasOrdSupporter));
   const textareaRef = useRef(null);
 
@@ -476,7 +458,6 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
   const mapsUrl = buildMapsUrl(delegate);
   const calendarUrl = buildCalendarUrl(delegate);
 
-  const currentScript = SCRIPT_ORDER[scriptIdx] || SCRIPT_ORDER[0];
   const selectedTopic = MESSAGE_TOPICS.find((t) => t.id === topicId) || null;
   const currentMessage = selectedTopic
     ? topicMessage(selectedTopic, delegate, volunteerName)
@@ -491,7 +472,6 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
   }
   function handleText() { setExpandedAction(expandedAction === "text" ? null : "text"); }
   function handleEmail() { setExpandedAction(expandedAction === "email" ? null : "email"); }
-  function cycleScript() { setScriptIdx((i) => (i + 1) % SCRIPT_ORDER.length); }
 
   const emailSubject = `Aaron Wiley for HD 21 — following up, ${delegate.firstName || delegate.name?.split(" ")[0]}`;
   const emailBody = currentMessage +
@@ -727,24 +707,34 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
             )}
           </div>
         </div>
-      ) : (
-        <div className="bg-navy/5 border border-navy/10 rounded-lg p-3 mb-2">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-xs font-bold text-navy uppercase tracking-wide">
-              Script &mdash; {currentScript.label}
-            </p>
-            <button onClick={cycleScript} className="text-xs text-blue-600 hover:text-blue-800 font-medium transition-colors">
-              Different script &rarr;
-            </button>
+      ) : (() => {
+        const coaching = stageCoaching.connect;
+        return (
+          <div className="bg-navy/5 border border-navy/10 rounded-lg p-3 mb-2">
+            <p className="text-[10px] font-bold text-navy uppercase tracking-wide mb-2">{coaching.label}</p>
+            <p className="text-xs font-semibold text-navy mb-0.5">🎯 Goal</p>
+            <p className="text-xs text-gray-700 mb-2">{coaching.goal}</p>
+            <p className="text-xs font-semibold text-navy mb-0.5">💡 Why it matters</p>
+            <p className="text-xs text-gray-700 mb-2">{coaching.why}</p>
+            <p className="text-xs font-semibold text-navy mb-1">✅ What to accomplish</p>
+            <ul className="space-y-0.5 mb-2">
+              {coaching.accomplish.map((item, i) => (
+                <li key={i} className="flex items-start gap-1.5 text-xs text-gray-700">
+                  <span className="text-navy shrink-0 mt-0.5">▸</span>{item}
+                </li>
+              ))}
+            </ul>
+            <p className="text-xs font-semibold text-navy mb-1">📋 Tips</p>
+            <ul className="space-y-0.5">
+              {coaching.tips.map((tip, i) => (
+                <li key={i} className="flex items-start gap-1.5 text-xs text-gray-500 italic">
+                  <span className="text-gray-400 shrink-0 mt-0.5">▸</span>{tip}
+                </li>
+              ))}
+            </ul>
           </div>
-          <p className="text-[10px] text-gray-400 italic mb-2">{currentScript.useWhen}</p>
-          <div className="space-y-1 max-h-40 overflow-y-auto">
-            {currentScript.lines.map((line, i) => (
-              <ScriptLine key={i} line={line} />
-            ))}
-          </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* ── Fix 5: Topic pills + message composer (text or email) ── */}
       {(expandedAction === "text" || expandedAction === "email") && (
