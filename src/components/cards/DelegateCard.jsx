@@ -1,9 +1,10 @@
 import { useState, useRef } from "react";
-import { daysSince } from "@/lib/utils";
+import { daysSince, calculateNextContactDate } from "@/lib/utils";
 import StageBadge from "@/components/ui/StageBadge";
 import ConflictWarningCard from "./ConflictWarningCard";
 import { CALL_SCRIPTS, TEXT_TEMPLATES, MESSAGE_TOPICS, getRecommendedScript } from "@/lib/scripts";
 import { callScripts } from "@/data/surveyQuestions";
+import { OUTCOMES, CANDIDATES, ISSUES, STAGES, NEXT_ACTIONS } from "@/lib/constants";
 import { db, useMock } from "@/lib/firebase";
 
 const SURVEY_BASE_URL = "https://wileyfor21.com/delegate/survey";
@@ -271,6 +272,70 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
   const [wizardReviewing, setWizardReviewing] = useState(false);
   const [wizardSaved, setWizardSaved] = useState(false);
 
+  // ── Inline contact log state ──
+  const [logOpen, setLogOpen] = useState(false);
+  const [logSubmitting, setLogSubmitting] = useState(false);
+  const [logSaved, setLogSaved] = useState(false);
+  const [logForm, setLogForm] = useState({
+    outcome: "",
+    leaningToward: "",
+    issuesRaised: [],
+    exactWords: "",
+    mentionedOtherCandidate: false,
+    otherCandidateNamed: "",
+    nextAction: "",
+  });
+  function setLog(key, val) { setLogForm((f) => ({ ...f, [key]: val })); }
+  function toggleLogIssue(issue) {
+    setLogForm((f) => ({
+      ...f,
+      issuesRaised: f.issuesRaised.includes(issue)
+        ? f.issuesRaised.filter((i) => i !== issue)
+        : [...f.issuesRaised, issue],
+    }));
+  }
+  async function submitLog() {
+    if (!logForm.outcome) return;
+    setLogSubmitting(true);
+    const stageOrder = STAGES;
+    const currentIdx = stageOrder.indexOf(delegate.stage);
+    let stageAfter = delegate.stage;
+    if (logForm.outcome === "hostile") stageAfter = "not_winnable";
+
+    const logEntry = {
+      delegateId: delegate.id,
+      delegateName: delegate.name,
+      method: wizardActive || wizardSaved ? "call" : "call",
+      outcome: logForm.outcome,
+      stageBeforeContact: delegate.stage,
+      stageAfterContact: stageAfter,
+      leaningToward: logForm.leaningToward,
+      issuesRaised: logForm.issuesRaised,
+      exactWords: logForm.exactWords,
+      mentionedOtherCandidate: logForm.mentionedOtherCandidate,
+      otherCandidateNamed: logForm.otherCandidateNamed || "",
+      nextAction: logForm.nextAction,
+      nextContactDate: calculateNextContactDate(logForm.nextAction),
+      timestamp: new Date().toISOString(),
+    };
+    if (!useMock && db) {
+      const { collection, addDoc, doc, updateDoc, arrayUnion, serverTimestamp } = await import("firebase/firestore");
+      logEntry.timestamp = serverTimestamp();
+      await addDoc(collection(db, "contactLogs"), logEntry);
+      const delegateUpdates = {
+        lastContactedAt: new Date().toISOString(),
+        stage: stageAfter,
+        contactHistory: arrayUnion({ date: new Date().toISOString(), method: "call", outcome: logForm.outcome }),
+      };
+      if (logForm.issuesRaised.length) delegateUpdates.issuesRaised = arrayUnion(...logForm.issuesRaised);
+      if (logForm.exactWords) delegateUpdates.exactWordsLogged = arrayUnion({ text: logForm.exactWords, date: new Date().toISOString() });
+      await updateDoc(doc(db, "delegates", delegate.id), delegateUpdates);
+    }
+    onCallScriptSave?.(delegate.id);
+    setLogSubmitting(false);
+    setLogSaved(true);
+  }
+
   function wizardNext() {
     if (wizardStep === wizardSteps.length - 1) setWizardReviewing(true);
     else setWizardStep((s) => s + 1);
@@ -299,6 +364,7 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
     }
     onCallScriptSave?.(delegate.id);
     setWizardSaved(true);
+    setLogOpen(true);
   }
   function wizardReset() {
     setWizardActive(false);
@@ -643,6 +709,97 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
       {/* ── Survey panel ── */}
       <SurveyPanel delegate={delegate} onSurveySent={onSurveySent} />
 
+      {/* ── Inline contact log ── */}
+      {logOpen && (
+        <div className="border border-gray-200 rounded-lg p-3 mb-2 bg-white">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-xs font-bold text-navy uppercase tracking-wide">Log Contact — {delegate.name.split(" ")[0]}</p>
+            {!logSaved && <button onClick={() => setLogOpen(false)} className="text-gray-400 hover:text-gray-600 text-lg leading-none">×</button>}
+          </div>
+
+          {logSaved ? (
+            <div className="text-center py-2">
+              <p className="text-sm font-semibold text-[#3A7D44]">✅ Contact logged</p>
+              <button onClick={() => { setLogOpen(false); setLogSaved(false); setLogForm({ outcome: "", leaningToward: "", issuesRaised: [], exactWords: "", mentionedOtherCandidate: false, otherCandidateNamed: "", nextAction: "" }); }}
+                className="mt-2 text-xs text-gray-500 underline">Done</button>
+            </div>
+          ) : (
+            <>
+              {/* Outcome */}
+              <p className="text-xs font-semibold text-gray-700 mb-1.5">How did it go?</p>
+              <div className="grid grid-cols-2 gap-1.5 mb-3">
+                {OUTCOMES.map((o) => (
+                  <button key={o.value} type="button" onClick={() => setLog("outcome", o.value)}
+                    className={`px-2 py-1.5 rounded-lg text-xs text-left border transition-colors ${
+                      logForm.outcome === o.value ? "bg-navy text-white border-navy" : "bg-white text-gray-700 border-gray-200 hover:border-navy/40"
+                    }`}>
+                    {o.icon} {o.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Leaning toward */}
+              <p className="text-xs font-semibold text-gray-700 mb-1.5">Who are they leaning toward?</p>
+              <select value={logForm.leaningToward} onChange={(e) => setLog("leaningToward", e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs mb-3 focus:outline-none focus:ring-2 focus:ring-navy/30">
+                <option value="">Select...</option>
+                {CANDIDATES.map((c) => <option key={c} value={c}>{c}</option>)}
+              </select>
+
+              {/* Issues */}
+              <p className="text-xs font-semibold text-gray-700 mb-1.5">Issues they raised</p>
+              <div className="flex flex-wrap gap-1.5 mb-3">
+                {ISSUES.map((issue) => (
+                  <button key={issue} type="button" onClick={() => toggleLogIssue(issue)}
+                    className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-colors ${
+                      logForm.issuesRaised.includes(issue) ? "bg-coral text-white border-coral" : "bg-white text-gray-600 border-gray-300 hover:border-coral/40"
+                    }`}>
+                    {issue}
+                  </button>
+                ))}
+              </div>
+
+              {/* Exact words */}
+              <p className="text-xs font-semibold text-gray-700 mb-1">What did they say? <span className="font-normal text-gray-400">Exact words matter</span></p>
+              <textarea value={logForm.exactWords} onChange={(e) => setLog("exactWords", e.target.value)}
+                placeholder="e.g. She said she's worried about rent and hasn't committed yet."
+                rows={3} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs resize-none focus:outline-none focus:ring-2 focus:ring-navy/30 mb-3" />
+
+              {/* Mentioned other candidate */}
+              <div className="flex items-center gap-3 mb-2">
+                <p className="text-xs font-semibold text-gray-700 flex-1">Did they mention another candidate?</p>
+                <button type="button" onClick={() => setLog("mentionedOtherCandidate", !logForm.mentionedOtherCandidate)}
+                  className={`relative w-10 h-5 rounded-full transition-colors shrink-0 ${logForm.mentionedOtherCandidate ? "bg-navy" : "bg-gray-300"}`}>
+                  <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${logForm.mentionedOtherCandidate ? "translate-x-5" : ""}`} />
+                </button>
+              </div>
+              {logForm.mentionedOtherCandidate && (
+                <input type="text" value={logForm.otherCandidateNamed} onChange={(e) => setLog("otherCandidateNamed", e.target.value)}
+                  placeholder="Which candidate?" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs mb-3 focus:outline-none focus:ring-2 focus:ring-navy/30" />
+              )}
+
+              {/* Next action */}
+              <p className="text-xs font-semibold text-gray-700 mb-1.5">Next action</p>
+              <div className="grid grid-cols-2 gap-1.5 mb-3">
+                {NEXT_ACTIONS.map((action) => (
+                  <button key={action} type="button" onClick={() => setLog("nextAction", action)}
+                    className={`px-2 py-1.5 rounded-lg text-xs text-left border transition-colors ${
+                      logForm.nextAction === action ? "bg-navy text-white border-navy" : "bg-white text-gray-700 border-gray-200 hover:border-navy/40"
+                    }`}>
+                    {action}
+                  </button>
+                ))}
+              </div>
+
+              <button onClick={submitLog} disabled={logSubmitting || !logForm.outcome}
+                className="w-full py-2.5 rounded-xl text-sm font-bold text-white bg-coral hover:bg-coral/90 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+                {logSubmitting ? "Saving..." : "Save Contact Log"}
+              </button>
+            </>
+          )}
+        </div>
+      )}
+
       {/* ── Bottom actions ── */}
       <div className="flex gap-2">
         <button
@@ -652,10 +809,10 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
           View briefing &#8599;
         </button>
         <button
-          onClick={() => onOpenLog?.(null, delegate)}
+          onClick={() => setLogOpen((v) => !v)}
           className="flex-1 text-sm text-coral font-medium py-1.5 border border-coral/20 rounded-lg hover:bg-coral/5 transition-colors"
         >
-          Log contact
+          {logOpen ? "Hide log" : "Log contact"}
         </button>
       </div>
     </div>
