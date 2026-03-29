@@ -28,5 +28,8 @@
     "react-router-dom": "^7.13.2",
     "tailwindcss": "^4.2.2",
     "vite": "^8.0.2"
+  },
+  "devDependencies": {
+    "vite-plugin-pwa": "^1.2.0"
   }
 }
