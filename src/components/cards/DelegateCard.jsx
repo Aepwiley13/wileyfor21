@@ -460,7 +460,6 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
     : stageBasedMessage(delegate, volunteerName);
 
   function handleCall() {
-    if (phone) window.open(`tel:${phone.replace(/\D/g, "")}`);
     setWizardActive(true);
     setWizardStep(0);
     setWizardNotes({});
@@ -636,6 +635,14 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
                     </li>
                   ))}
                 </ul>
+                {wizardStep === 0 && phone && (
+                  <a
+                    href={`tel:${phone.replace(/\D/g, "")}`}
+                    className="flex items-center justify-center gap-2 w-full py-2.5 mb-3 rounded-lg bg-[#3A7D44] text-white text-xs font-bold hover:bg-[#2f6838] transition-colors"
+                  >
+                    📞 Dial now — {phone}
+                  </a>
+                )}
                 <textarea
                   value={wizardNotes[wizardSteps[wizardStep].id] || ""}
                   onChange={(e) => setWizardNotes((n) => ({ ...n, [wizardSteps[wizardStep].id]: e.target.value }))}
