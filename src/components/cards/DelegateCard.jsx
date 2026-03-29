@@ -3,6 +3,7 @@ import { daysSince } from "@/lib/utils";
 import StageBadge from "@/components/ui/StageBadge";
 import ConflictWarningCard from "./ConflictWarningCard";
 import { CALL_SCRIPTS, TEXT_TEMPLATES, MESSAGE_TOPICS, getRecommendedScript } from "@/lib/scripts";
+import { callScripts } from "@/data/surveyQuestions";
 import { db, useMock } from "@/lib/firebase";
 
 const SURVEY_BASE_URL = "https://wileyfor21.com/delegate/survey";
@@ -256,11 +257,56 @@ function SurveyPanel({ delegate, onSurveySent }) {
 
 // ── main component ────────────────────────────────────────────────────────────
 
-export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, onOpenCallScript, volunteerName, onSurveySent }) {
+export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volunteerName, onSurveySent, onCallScriptSave }) {
   const [expandedAction, setExpandedAction] = useState(null); // 'text' | 'email' | null
   const [scriptIdx, setScriptIdx] = useState(() => initialScriptIdx(delegate.stage, delegate.wasOrdSupporter));
   const [topicId, setTopicId] = useState(() => getInitialTopicId(delegate.stage, delegate.wasOrdSupporter));
   const textareaRef = useRef(null);
+
+  // ── Inline call script wizard state ──
+  const wizardSteps = callScripts.connect ?? [];
+  const [wizardActive, setWizardActive] = useState(false);
+  const [wizardStep, setWizardStep] = useState(0);
+  const [wizardNotes, setWizardNotes] = useState({});
+  const [wizardReviewing, setWizardReviewing] = useState(false);
+  const [wizardSaved, setWizardSaved] = useState(false);
+
+  function wizardNext() {
+    if (wizardStep === wizardSteps.length - 1) setWizardReviewing(true);
+    else setWizardStep((s) => s + 1);
+  }
+  function wizardBack() {
+    if (wizardReviewing) setWizardReviewing(false);
+    else setWizardStep((s) => Math.max(0, s - 1));
+  }
+  async function wizardSave() {
+    const payload = {
+      type: "call_script",
+      stage: "connect",
+      method: "call",
+      notes: wizardNotes,
+      delegateId: delegate.id,
+      delegateName: delegate.name,
+      submittedAt: new Date().toISOString(),
+    };
+    if (!useMock && db) {
+      const { collection, addDoc, doc, updateDoc, serverTimestamp } = await import("firebase/firestore");
+      payload.submittedAt = serverTimestamp();
+      await addDoc(collection(db, "callScriptLogs"), payload);
+      await updateDoc(doc(db, "delegates", delegate.id), {
+        lastContactedAt: new Date().toISOString(),
+      });
+    }
+    onCallScriptSave?.(delegate.id);
+    setWizardSaved(true);
+  }
+  function wizardReset() {
+    setWizardActive(false);
+    setWizardStep(0);
+    setWizardNotes({});
+    setWizardReviewing(false);
+    setWizardSaved(false);
+  }
 
   if (delegate.isOpposingCandidate) return <ConflictWarningCard delegate={delegate} />;
 
@@ -277,7 +323,11 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, onOp
 
   function handleCall() {
     if (phone) window.open(`tel:${phone.replace(/\D/g, "")}`);
-    onOpenCallScript?.(delegate);
+    setWizardActive(true);
+    setWizardStep(0);
+    setWizardNotes({});
+    setWizardReviewing(false);
+    setWizardSaved(false);
   }
   function handleText() { setExpandedAction(expandedAction === "text" ? null : "text"); }
   function handleEmail() { setExpandedAction(expandedAction === "email" ? null : "email"); }
@@ -374,26 +424,98 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, onOp
         </button>
       </div>
 
-      {/* ── Fix 4: Script selector (always visible) ── */}
-      <div className="bg-navy/5 border border-navy/10 rounded-lg p-3 mb-2">
-        <div className="flex items-center justify-between mb-2">
-          <p className="text-xs font-bold text-navy uppercase tracking-wide">
-            Script &mdash; {currentScript.label}
-          </p>
-          <button
-            onClick={cycleScript}
-            className="text-xs text-blue-600 hover:text-blue-800 font-medium transition-colors"
-          >
-            Different script &rarr;
-          </button>
+      {/* ── Script area: inline call wizard when active, static script otherwise ── */}
+      {wizardActive ? (
+        <div className="border border-[#3A7D44]/30 rounded-lg mb-2 overflow-hidden">
+          {/* Mini progress bar */}
+          <div className="flex gap-1 p-2 bg-[#F5F2EC]">
+            {wizardSteps.map((_, i) => (
+              <div key={i} className="flex-1 h-1 rounded-full transition-colors duration-200"
+                style={{ backgroundColor: i <= (wizardReviewing ? wizardSteps.length : wizardStep) ? "#3A7D44" : "#D1D5DB" }} />
+            ))}
+            <button onClick={wizardReset} className="text-gray-400 hover:text-gray-600 text-base leading-none ml-1">×</button>
+          </div>
+
+          <div className="p-3">
+            {wizardSaved ? (
+              <div className="text-center py-2">
+                <p className="text-sm font-semibold text-[#3A7D44]">✅ Notes saved</p>
+                <button onClick={wizardReset} className="mt-2 text-xs text-gray-500 underline">Done</button>
+              </div>
+            ) : wizardReviewing ? (
+              <>
+                <p className="text-xs font-bold text-[#3A7D44] uppercase tracking-wide mb-2">Review call notes</p>
+                <div className="space-y-2 max-h-48 overflow-y-auto mb-3">
+                  {wizardSteps.map((s) => (
+                    <div key={s.id}>
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">{s.stepLabel}</p>
+                      <p className="text-xs text-gray-700">{wizardNotes[s.id] || <span className="italic text-gray-400">No notes</span>}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex gap-2">
+                  <button onClick={wizardBack} className="flex-1 py-2 text-xs font-semibold border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">← Back</button>
+                  <button onClick={wizardSave} className="flex-1 py-2 text-xs font-bold bg-[#3A7D44] text-white rounded-lg hover:bg-[#2f6838]">Save call log</button>
+                </div>
+              </>
+            ) : (
+              <>
+                <p className="text-[10px] font-bold text-[#3A7D44] uppercase tracking-wide mb-0.5">
+                  Step {wizardStep + 1} — {wizardSteps[wizardStep].stepLabel}
+                </p>
+                <p className="text-sm font-bold text-navy mb-2">{wizardSteps[wizardStep].title}</p>
+                <div className="border-l-2 border-[#3A7D44] pl-3 bg-[#F5F2EC] rounded-r py-2 pr-2 mb-2">
+                  <p className="text-xs text-gray-700 leading-relaxed">
+                    {wizardSteps[wizardStep].script.replace(/\[Delegate Name\]/g,
+                      delegate.firstName || delegate.name?.split(" ")[0] || delegate.name)}
+                  </p>
+                </div>
+                <ul className="space-y-0.5 mb-2">
+                  {wizardSteps[wizardStep].tips.map((tip, i) => (
+                    <li key={i} className="flex items-start gap-1.5 text-xs text-gray-500">
+                      <span className="text-[#3A7D44] shrink-0">▸</span>{tip}
+                    </li>
+                  ))}
+                </ul>
+                <textarea
+                  value={wizardNotes[wizardSteps[wizardStep].id] || ""}
+                  onChange={(e) => setWizardNotes((n) => ({ ...n, [wizardSteps[wizardStep].id]: e.target.value }))}
+                  placeholder={wizardSteps[wizardStep].notesPlaceholder}
+                  rows={3}
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[#3A7D44]/30 resize-none bg-white mb-2"
+                />
+                <div className="flex gap-2">
+                  <button onClick={wizardBack} disabled={wizardStep === 0}
+                    className="flex-1 py-2 text-xs font-semibold border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-30">
+                    ← Back
+                  </button>
+                  <button onClick={wizardNext}
+                    className="flex-1 py-2 text-xs font-bold bg-navy text-white rounded-lg hover:bg-navy-dark">
+                    {wizardStep === wizardSteps.length - 1 ? "Review call →" : "Next →"}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
-        <p className="text-[10px] text-gray-400 italic mb-2">{currentScript.useWhen}</p>
-        <div className="space-y-1 max-h-40 overflow-y-auto">
-          {currentScript.lines.map((line, i) => (
-            <ScriptLine key={i} line={line} />
-          ))}
+      ) : (
+        <div className="bg-navy/5 border border-navy/10 rounded-lg p-3 mb-2">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs font-bold text-navy uppercase tracking-wide">
+              Script &mdash; {currentScript.label}
+            </p>
+            <button onClick={cycleScript} className="text-xs text-blue-600 hover:text-blue-800 font-medium transition-colors">
+              Different script &rarr;
+            </button>
+          </div>
+          <p className="text-[10px] text-gray-400 italic mb-2">{currentScript.useWhen}</p>
+          <div className="space-y-1 max-h-40 overflow-y-auto">
+            {currentScript.lines.map((line, i) => (
+              <ScriptLine key={i} line={line} />
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* ── Fix 5: Topic pills + message composer (text or email) ── */}
       {(expandedAction === "text" || expandedAction === "email") && (
