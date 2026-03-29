@@ -256,7 +256,7 @@ function SurveyPanel({ delegate, onSurveySent }) {
 
 // ── main component ────────────────────────────────────────────────────────────
 
-export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volunteerName, onSurveySent }) {
+export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, onOpenCallScript, volunteerName, onSurveySent }) {
   const [expandedAction, setExpandedAction] = useState(null); // 'text' | 'email' | null
   const [scriptIdx, setScriptIdx] = useState(() => initialScriptIdx(delegate.stage, delegate.wasOrdSupporter));
   const [topicId, setTopicId] = useState(() => getInitialTopicId(delegate.stage, delegate.wasOrdSupporter));
@@ -277,7 +277,7 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
 
   function handleCall() {
     if (phone) window.open(`tel:${phone.replace(/\D/g, "")}`);
-    onOpenLog?.("call", delegate);
+    onOpenCallScript?.(delegate);
   }
   function handleText() { setExpandedAction(expandedAction === "text" ? null : "text"); }
   function handleEmail() { setExpandedAction(expandedAction === "email" ? null : "email"); }
