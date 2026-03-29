@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useContacts } from "@/hooks/useContacts";
 import { useActivityFeed } from "@/hooks/useActivityFeed";
@@ -132,8 +133,14 @@ export default function VolunteerDashboard() {
             rel="noopener noreferrer"
             className="text-coral text-sm font-semibold hover:text-white transition-colors hidden sm:inline"
           >
-            wileyfor21.com
+            Main Site
           </a>
+          <Link
+            to="/delegate/dashboard"
+            className="text-coral text-sm font-semibold hover:text-white transition-colors hidden sm:inline"
+          >
+            Delegate Hub
+          </Link>
           <span className="text-white/70 text-sm hidden sm:inline">{user?.name || user?.displayName}</span>
           <button
             onClick={signOut}

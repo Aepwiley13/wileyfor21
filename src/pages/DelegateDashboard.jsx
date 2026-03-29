@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useDelegateSurvey, EMPTY_SURVEY } from "@/hooks/useDelegateSurvey";
 import HD21Survey from "@/components/survey/HD21Survey";
@@ -188,6 +188,20 @@ export default function DelegateDashboard() {
           WILEY FOR 21
         </h1>
         <div className="flex items-center gap-4">
+          <a
+            href="https://wileyfor21.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-coral text-sm font-semibold hover:text-white transition-colors hidden sm:inline"
+          >
+            Main Site
+          </a>
+          <Link
+            to="/volunteer"
+            className="text-coral text-sm font-semibold hover:text-white transition-colors hidden sm:inline"
+          >
+            Volunteer Hub
+          </Link>
           <span className="text-white/70 text-sm hidden sm:inline">{displayName}</span>
           <button
             onClick={signOut}
