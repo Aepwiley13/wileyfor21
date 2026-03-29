@@ -1,3 +1,12 @@
+// Active candidates in the HD21 race — used for delegate ranking
+export const ACTIVE_CANDIDATES = [
+  "Aaron Wiley",
+  "Darin Mann",
+  "Anthony Washburn",
+  "Stephen Otterstrom",
+  "Jeneanne Lock",
+];
+
 export const CAUCUS_DATE = new Date("2026-04-11");
 
 export const STAGES = [
