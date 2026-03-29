@@ -1,3 +1,24 @@
+// Coaching shown on the delegate card (not a script — that lives in callScripts).
+// Tells volunteers what to accomplish and why, per stage.
+export const stageCoaching = {
+  connect: {
+    label: "Connect Stage",
+    goal: "Build a real relationship and get the survey filled out.",
+    why: "This is your first impression. Delegates who feel heard become supporters. The survey tells us exactly where they stand so the whole team can follow up with the right message.",
+    accomplish: [
+      "Find out what issues matter most to them",
+      "Learn where Aaron ranks in their mind",
+      "Get them to fill out the survey — or fill it out for them based on the conversation",
+    ],
+    tips: [
+      "Listen more than you talk — this call is about them, not about Aaron",
+      "If they're already with us, still get the survey — it helps us understand why",
+      "If they won't commit, find out what's holding them back",
+    ],
+  },
+  // Future stages: persuade, commit, gotv
+};
+
 // Call scripts keyed by stage — only "connect" exists now.
 // Each stage is call-only; text/email scripts are separate.
 export const callScripts = {
