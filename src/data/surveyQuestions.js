@@ -46,7 +46,7 @@ export const callScripts = {
       stepLabel: "THEIR QUESTIONS",
       title: "What questions do you have?",
       script:
-        "Aaron has a strong background — over 20 years in the community, coaching youth sports in Rose Park and Glendale, and he actually ran Barack Obama's first Utah campaign back in 2007. Do you have any questions about Aaron or the race that I can try to answer for you?",
+        "Aaron has been deeply involved in this community for over 20 years — from coaching youth sports in Rose Park and Glendale to building strong relationships across the district. He's not new to this — he's worked on campaigns for years, including serving as Utah's field and political director for Barack Obama's first presidential campaign, where he helped lead efforts across the state. He's also been on the ballot before, running against Todd Weiler and proving that a Democrat can compete and build real momentum in this district. Now, Aaron is stepping up again to continue the work and progress that leaders like Representative Hollins have started — and he's spent years preparing for this moment. Do you have any questions about Aaron or the race that I can answer for you?",
       tips: [
         'If you don\'t know the answer, say "Great question — let me get that to you"',
         "You can direct them to wileyfor21.com for more info",
