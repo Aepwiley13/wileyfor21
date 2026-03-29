@@ -377,6 +377,7 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
     const currentIdx = stageOrder.indexOf(delegate.stage);
     let stageAfter = delegate.stage;
     if (logForm.outcome === "hostile") stageAfter = "not_winnable";
+    else if (stageAfter === "unknown" && logForm.outcome !== "no_answer") stageAfter = "identified";
 
     const logEntry = {
       delegateId: delegate.id,
