@@ -16,7 +16,6 @@ import Leaderboard from "@/components/feed/Leaderboard";
 import ScoreboardPanel from "@/components/ui/ScoreboardPanel";
 import ContactLogModal from "@/components/modals/ContactLogModal";
 import BriefingDrawer from "@/components/modals/BriefingDrawer";
-import CallScriptWizard from "@/components/survey/CallScriptWizard";
 import { useMock, db } from "@/lib/firebase";
 
 export default function VolunteerDashboard() {
@@ -32,32 +31,13 @@ export default function VolunteerDashboard() {
   const [logModal, setLogModal] = useState(null);
   const [briefingDelegate, setBriefingDelegate] = useState(null);
   const [surveyFilter, setSurveyFilter] = useState(false); // "incomplete surveys only"
-  const [callScriptDelegate, setCallScriptDelegate] = useState(null);
 
   function handleOpenLog(method, delegate) {
     setLogModal({ delegate, method });
   }
 
-  async function handleCallScriptSubmit({ stage, method, notes, delegate }) {
-    const payload = {
-      type: "call_script",
-      stage,
-      method,
-      notes,
-      delegateId: delegate?.id || null,
-      delegateName: delegate?.name || null,
-      volunteerId: user?.uid || null,
-      volunteerName: user?.name || user?.displayName || null,
-      submittedAt: new Date().toISOString(),
-    };
-    if (!useMock && db) {
-      const { collection, addDoc, serverTimestamp } = await import("firebase/firestore");
-      payload.submittedAt = serverTimestamp();
-      await addDoc(collection(db, "callScriptLogs"), payload);
-    }
-    if (delegate) {
-      updateContact(delegate.id, { lastContactedAt: new Date().toISOString(), lastContactedBy: user?.name });
-    }
+  function handleCallScriptSave(delegateId) {
+    updateContact(delegateId, { lastContactedAt: new Date().toISOString(), lastContactedBy: user?.name });
   }
 
   function handleLogSubmitted(logEntry, newStage) {
@@ -110,7 +90,7 @@ export default function VolunteerDashboard() {
             delegate={d}
             onOpenLog={handleOpenLog}
             onOpenBriefing={setBriefingDelegate}
-            onOpenCallScript={setCallScriptDelegate}
+            onCallScriptSave={handleCallScriptSave}
             volunteerName={user?.name || user?.displayName}
           />
         ))
@@ -204,17 +184,6 @@ export default function VolunteerDashboard() {
         />
       )}
 
-      {/* Call Script Wizard overlay */}
-      {callScriptDelegate && (
-        <div className="fixed inset-0 z-50 bg-[#F5F2EC] flex flex-col">
-          <CallScriptWizard
-            stage="connect"
-            delegate={callScriptDelegate}
-            onSubmit={handleCallScriptSubmit}
-            onClose={() => setCallScriptDelegate(null)}
-          />
-        </div>
-      )}
     </div>
   );
 }
