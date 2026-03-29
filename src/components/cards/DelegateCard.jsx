@@ -328,6 +328,29 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
   const [wizardReviewing, setWizardReviewing] = useState(false);
   const [wizardSaved, setWizardSaved] = useState(false);
 
+  // ── Social links state ──
+  const [socialOpen, setSocialOpen] = useState(false);
+  const [socialForm, setSocialForm] = useState({
+    facebook: delegate.facebook || "",
+    twitter: delegate.twitter || "",
+    instagram: delegate.instagram || "",
+  });
+  const [socialSaving, setSocialSaving] = useState(false);
+
+  async function saveSocials() {
+    setSocialSaving(true);
+    if (!useMock && db) {
+      const { doc, updateDoc } = await import("firebase/firestore");
+      await updateDoc(doc(db, "delegates", delegate.id), {
+        facebook: socialForm.facebook || null,
+        twitter: socialForm.twitter || null,
+        instagram: socialForm.instagram || null,
+      });
+    }
+    setSocialSaving(false);
+    setSocialOpen(false);
+  }
+
   // ── Ranking state ──
   const [rankings, setRankings] = useState(delegate.candidateRankings || {});
   const [rankingOpen, setRankingOpen] = useState(false);
@@ -503,16 +526,25 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
                 &#9993; {email}
               </a>
             )}
-            {delegate.facebook && (
-              <a href={delegate.facebook} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 font-medium hover:underline">
-                &#x1F465; Facebook
+            {/* Social links */}
+            {socialForm.facebook && (
+              <a href={socialForm.facebook} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-700 font-medium hover:underline">
+                𝐟 Facebook
               </a>
             )}
-            {delegate.instagram && (
-              <a href={delegate.instagram} target="_blank" rel="noopener noreferrer" className="text-xs text-pink-600 font-medium hover:underline">
-                &#128247; Instagram
+            {socialForm.twitter && (
+              <a href={socialForm.twitter} target="_blank" rel="noopener noreferrer" className="text-xs text-sky-600 font-medium hover:underline">
+                𝕏 Twitter
               </a>
             )}
+            {socialForm.instagram && (
+              <a href={socialForm.instagram} target="_blank" rel="noopener noreferrer" className="text-xs text-pink-600 font-medium hover:underline">
+                📷 Instagram
+              </a>
+            )}
+            <button onClick={() => setSocialOpen((v) => !v)} className="text-xs text-gray-400 hover:text-gray-600 transition-colors" title="Edit social links">
+              ✏️ {socialForm.facebook || socialForm.twitter || socialForm.instagram ? "Edit" : "Add socials"}
+            </button>
           </div>
           {/* Badges */}
           <div className="flex gap-2 mt-1 flex-wrap">
@@ -530,6 +562,37 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
         </div>
         <StageBadge stage={delegate.stage} />
       </div>
+
+      {/* ── Social links editor ── */}
+      {socialOpen && (
+        <div className="border border-gray-200 rounded-lg p-3 mb-2 bg-gray-50">
+          <p className="text-xs font-semibold text-gray-700 mb-2">Social links</p>
+          <div className="space-y-2">
+            {[
+              { key: "facebook", label: "𝐟 Facebook", placeholder: "https://facebook.com/..." },
+              { key: "twitter", label: "𝕏 Twitter/X", placeholder: "https://twitter.com/..." },
+              { key: "instagram", label: "📷 Instagram", placeholder: "https://instagram.com/..." },
+            ].map(({ key, label, placeholder }) => (
+              <div key={key} className="flex items-center gap-2">
+                <span className="text-xs text-gray-500 w-24 shrink-0">{label}</span>
+                <input
+                  type="url"
+                  value={socialForm[key]}
+                  onChange={(e) => setSocialForm((f) => ({ ...f, [key]: e.target.value }))}
+                  placeholder={placeholder}
+                  className="flex-1 border border-gray-300 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-navy/30"
+                />
+              </div>
+            ))}
+          </div>
+          <div className="flex gap-2 mt-3">
+            <button onClick={() => setSocialOpen(false)} className="flex-1 py-1.5 text-xs border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-100">Cancel</button>
+            <button onClick={saveSocials} disabled={socialSaving} className="flex-1 py-1.5 text-xs font-bold bg-navy text-white rounded-lg hover:bg-navy-dark disabled:opacity-50">
+              {socialSaving ? "Saving..." : "Save"}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* ── Intelligence strip ── */}
       <IntelStrip delegate={delegate} />
@@ -798,12 +861,6 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
           className="flex items-center gap-1 text-xs text-gray-600 border border-gray-200 px-2.5 py-1.5 rounded-lg hover:bg-gray-50 transition-colors">
           &#128197; Schedule follow-up
         </a>
-        {delegate.twitter && (
-          <a href={delegate.twitter} target="_blank" rel="noopener noreferrer"
-            className="flex items-center gap-1 text-xs text-sky-700 border border-sky-200 px-2.5 py-1.5 rounded-lg hover:bg-sky-50 transition-colors">
-            &#128038; Twitter
-          </a>
-        )}
       </div>
 
       {/* ── Survey panel ── */}
