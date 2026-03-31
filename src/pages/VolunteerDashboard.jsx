@@ -18,6 +18,45 @@ import ContactLogModal from "@/components/modals/ContactLogModal";
 import BriefingDrawer from "@/components/modals/BriefingDrawer";
 import { useMock, db } from "@/lib/firebase";
 
+function EmailTemplateCard({ title, subject, description, href }) {
+  const [copied, setCopied] = useState(false);
+
+  function copySubject() {
+    navigator.clipboard.writeText(subject).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
+
+  return (
+    <div className="border border-gray-100 rounded-lg p-3">
+      <div className="flex items-start justify-between gap-3 mb-1.5">
+        <span className="font-semibold text-navy text-sm leading-tight">{title}</span>
+        <a
+          href={href}
+          target="_blank"
+          rel="noreferrer"
+          className="shrink-0 text-xs font-bold text-coral hover:underline"
+        >
+          Preview ↗
+        </a>
+      </div>
+      <p className="text-xs text-gray-500 leading-snug mb-2">{description}</p>
+      <div className="flex items-center gap-2 bg-gray-50 rounded px-2 py-1.5">
+        <span className="text-xs text-gray-400 shrink-0">Subject:</span>
+        <span className="text-xs text-gray-700 flex-1 truncate">{subject}</span>
+        <button
+          onClick={copySubject}
+          className="shrink-0 text-xs font-bold px-2 py-0.5 rounded transition-colors"
+          style={{ backgroundColor: copied ? "#034A76" : "#F36F6B", color: "#fff" }}
+        >
+          {copied ? "Copied!" : "Copy"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function VolunteerDashboard() {
   const { user, signOut } = useAuth();
   const { contacts, updateContact } = useContacts();
@@ -118,10 +157,25 @@ export default function VolunteerDashboard() {
     </div>
   );
 
+  const emailTemplatesPanel = (
+    <div className="bg-white rounded-xl border border-gray-200 p-4">
+      <h3 className="font-condensed font-bold text-navy text-sm tracking-widest uppercase mb-3">
+        Email Templates
+      </h3>
+      <EmailTemplateCard
+        title="Calling All Delegates"
+        subject="Aaron Wiley for HD 21 — Calling All Delegates"
+        description="Broadcast to all credentialed District 21 delegates. Drives them to fill out the survey."
+        href="/emails/calling-all-delegates.html"
+      />
+    </div>
+  );
+
   const rightPanel = (
     <div className="space-y-4">
       <ScoreboardPanel summary={summary} />
       {delegateSurveyPanel}
+      {emailTemplatesPanel}
       <Leaderboard data={leaderboard} currentUserId={user?.uid} />
       <ActivityFeed items={feed} />
     </div>
