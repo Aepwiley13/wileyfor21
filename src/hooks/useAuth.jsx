@@ -17,8 +17,21 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     if (useMock) return;
     import("firebase/auth").then(({ onAuthStateChanged }) => {
-      const unsub = onAuthStateChanged(auth, (u) => {
-        setUser(u ? { uid: u.uid, displayName: u.displayName, email: u.email, name: u.displayName } : null);
+      const unsub = onAuthStateChanged(auth, async (u) => {
+        if (u) {
+          let role = null;
+          try {
+            const { getDoc, doc } = await import("firebase/firestore");
+            const { db: firestoreDb } = await import("@/lib/firebase");
+            if (firestoreDb) {
+              const snap = await getDoc(doc(firestoreDb, "volunteers", u.uid));
+              role = snap.data()?.role ?? null;
+            }
+          } catch {}
+          setUser({ uid: u.uid, displayName: u.displayName, email: u.email, name: u.displayName, role });
+        } else {
+          setUser(null);
+        }
         setLoading(false);
       });
       return unsub;
