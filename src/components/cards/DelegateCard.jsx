@@ -932,6 +932,38 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
 
       {(expandedAction === "text" || expandedAction === "email") && !showStoryForm && (
         <div className={`rounded-lg p-3 mb-2 border ${expandedAction === "text" ? "bg-blue-50 border-blue-200" : "bg-green-50 border-green-200"}`}>
+
+          {/* HTML Template: Calling All Delegates */}
+          {expandedAction === "email" && (
+            <div className="mb-3 bg-white border border-green-200 rounded-lg px-3 py-2">
+              <div className="flex items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="text-xs font-bold text-navy truncate">Calling All Delegates</p>
+                  <p className="text-xs text-gray-400 truncate">Subject: Aaron Wiley for HD 21 — Calling All Delegates</p>
+                </div>
+                <div className="flex gap-2 shrink-0">
+                  <a
+                    href="/emails/calling-all-delegates.html"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-xs text-coral font-semibold hover:underline"
+                  >
+                    Preview ↗
+                  </a>
+                  {email && (
+                    <a
+                      href={`mailto:${email}?subject=${encodeURIComponent("Aaron Wiley for HD 21 — Calling All Delegates")}`}
+                      onClick={() => onOpenLog?.("email", delegate)}
+                      className="text-xs font-bold text-white bg-green-700 hover:bg-green-800 px-3 py-1 rounded-lg transition-colors"
+                    >
+                      Send →
+                    </a>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Story banner */}
           {volunteerStory && !topicId && (
             <div className="flex items-center justify-between mb-2 bg-white/60 rounded-lg px-2.5 py-1.5 border border-gray-200">
