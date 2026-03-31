@@ -41,6 +41,30 @@ export default function EndorsementPage() {
     setPhotoPreview(URL.createObjectURL(file));
   }
 
+  // Compress image to max 900px on longest side, JPEG 80% quality
+  function compressImage(file) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        const MAX = 900;
+        let { width, height } = img;
+        if (width > MAX || height > MAX) {
+          if (width > height) { height = Math.round((height * MAX) / width); width = MAX; }
+          else { width = Math.round((width * MAX) / height); height = MAX; }
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext("2d").drawImage(img, 0, 0, width, height);
+        canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error("Compression failed")), "image/jpeg", 0.8);
+      };
+      img.onerror = () => reject(new Error("Could not read image"));
+      img.src = url;
+    });
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     if (!form.firstName.trim() || !form.lastName.trim() || !form.email.trim()) {
@@ -64,13 +88,14 @@ export default function EndorsementPage() {
         mockEndorsements.unshift(newEndorsement);
         setEndorsements([...mockEndorsements]);
       } else {
-        // Upload photo to Firebase Storage if provided
+        // Compress then upload photo to Firebase Storage
         if (photo) {
+          const compressed = await compressImage(photo);
           const { getStorage, ref, uploadBytes, getDownloadURL } = await import("firebase/storage");
           const { getApp } = await import("firebase/app");
           const storage = getStorage(getApp());
-          const storageRef = ref(storage, `endorsements/${Date.now()}_${photo.name}`);
-          await uploadBytes(storageRef, photo);
+          const storageRef = ref(storage, `endorsements/${Date.now()}.jpg`);
+          await uploadBytes(storageRef, compressed, { contentType: "image/jpeg" });
           photoURL = await getDownloadURL(storageRef);
         }
 
@@ -89,8 +114,15 @@ export default function EndorsementPage() {
       setPhoto(null);
       setPhotoPreview(null);
     } catch (err) {
-      setError("Something went wrong. Please try again.");
       console.error(err);
+      const msg = err?.message || "";
+      if (msg.includes("storage") || msg.includes("upload") || msg.includes("compress") || msg.includes("image")) {
+        setError("Photo upload failed. Try a different image or skip the photo and submit without one.");
+      } else if (msg.includes("network") || msg.includes("fetch")) {
+        setError("Network error — check your connection and try again.");
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
     } finally {
       setSubmitting(false);
     }
@@ -219,6 +251,9 @@ export default function EndorsementPage() {
                   </div>
                 )}
                 <span className="text-xs text-gray-500">{photo ? photo.name : "Click to upload a photo"}</span>
+                {photo && (
+                  <span className="text-xs text-gray-400">Image will be automatically resized</span>
+                )}
               </div>
               <input
                 ref={fileInputRef}
