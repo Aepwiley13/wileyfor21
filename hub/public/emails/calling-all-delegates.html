@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calling All Delegates – Aaron Wiley for Utah HD21</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:ital,wght@0,400;0,600;1,400&display=swap');
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f8f6f2;
+      font-family: 'Barlow', Arial, sans-serif;
+      color: #1a1a1a;
+    }
+
+    .wrapper {
+      max-width: 620px;
+      margin: 0 auto;
+      background-color: #ffffff;
+    }
+
+    /* HEADER */
+    .header {
+      background-color: #002A52;
+      padding: 28px 40px 20px;
+      text-align: center;
+      border-bottom: 5px solid #F36F6B;
+    }
+
+    .header-eyebrow {
+      font-family: 'Barlow Condensed', Arial Narrow, sans-serif;
+      font-size: 13px;
+      letter-spacing: 4px;
+      color: #F36F6B;
+      margin: 0 0 8px;
+      text-transform: uppercase;
+    }
+
+    .header-logo {
+      font-family: 'Barlow Condensed', Arial Narrow, sans-serif;
+      font-weight: 700;
+      font-size: 34px;
+      letter-spacing: 3px;
+      color: #ffffff;
+      margin: 0;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .header-sub {
+      font-family: 'Barlow', Arial, sans-serif;
+      font-size: 13px;
+      color: #99bbcc;
+      margin: 6px 0 0;
+      font-style: italic;
+    }
+
+    /* HERO BAND */
+    .hero-band {
+      background-color: #F36F6B;
+      padding: 18px 40px;
+      text-align: center;
+    }
+
+    .hero-band p {
+      font-family: 'Barlow Condensed', Arial Narrow, sans-serif;
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: 3px;
+      color: #ffffff;
+      margin: 0;
+      text-transform: uppercase;
+    }
+
+    /* BODY */
+    .body-content {
+      padding: 40px 44px;
+    }
+
+    .greeting {
+      font-size: 22px;
+      font-weight: 600;
+      color: #034A76;
+      margin: 0 0 24px;
+    }
+
+    .body-content p {
+      font-size: 16px;
+      line-height: 1.8;
+      color: #2d2d2d;
+      margin: 0 0 18px;
+    }
+
+    .body-content p.punch {
+      font-size: 18px;
+      font-weight: 600;
+      color: #034A76;
+      border-left: 4px solid #F36F6B;
+      padding-left: 16px;
+      margin: 28px 0;
+    }
+
+    /* FACT CARD */
+    .fact-card {
+      background-color: #002A52;
+      border-radius: 6px;
+      padding: 24px 28px;
+      margin: 28px 0;
+    }
+
+    .fact-card-title {
+      font-family: 'Barlow Condensed', Arial Narrow, sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 3px;
+      color: #F36F6B;
+      margin: 0 0 12px;
+      text-transform: uppercase;
+    }
+
+    .fact-card p {
+      color: #e8eef4 !important;
+      font-size: 15px !important;
+      line-height: 1.7 !important;
+      margin: 0 0 10px !important;
+    }
+
+    .fact-card p:last-child {
+      margin: 0 !important;
+    }
+
+    /* DIVIDER */
+    .divider {
+      border: none;
+      border-top: 2px solid #eeecea;
+      margin: 32px 0;
+    }
+
+    /* CTA BLOCK */
+    .cta-block {
+      background-color: #f8f6f2;
+      border-radius: 6px;
+      padding: 28px 28px 24px;
+      margin: 28px 0;
+      text-align: center;
+    }
+
+    .cta-block-label {
+      font-family: 'Barlow Condensed', Arial Narrow, sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 3px;
+      color: #888;
+      margin: 0 0 10px;
+      text-transform: uppercase;
+    }
+
+    .cta-block h3 {
+      font-family: 'Barlow Condensed', Arial Narrow, sans-serif;
+      font-weight: 700;
+      font-size: 26px;
+      letter-spacing: 2px;
+      color: #034A76;
+      margin: 0 0 12px;
+      text-transform: uppercase;
+    }
+
+    .cta-block p {
+      font-size: 15px;
+      color: #444;
+      line-height: 1.7;
+      margin: 0 0 20px;
+    }
+
+    .cta-button {
+      display: inline-block;
+      background-color: #F36F6B;
+      color: #ffffff !important;
+      font-family: 'Barlow Condensed', Arial Narrow, sans-serif;
+      font-weight: 700;
+      font-size: 17px;
+      letter-spacing: 3px;
+      text-decoration: none;
+      padding: 14px 32px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    /* SIGN OFF */
+    .signoff {
+      padding: 0 44px 36px;
+    }
+
+    .signoff p {
+      font-size: 16px;
+      line-height: 1.8;
+      color: #2d2d2d;
+      margin: 0 0 14px;
+    }
+
+    .signoff .name {
+      font-family: 'Barlow Condensed', Arial Narrow, sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      letter-spacing: 2px;
+      color: #034A76;
+      margin: 20px 0 2px;
+      text-transform: uppercase;
+    }
+
+    .signoff .title {
+      font-size: 13px;
+      color: #888;
+      font-style: italic;
+      margin: 0;
+    }
+
+    .ps {
+      background-color: #fdf4f4;
+      border-left: 3px solid #F36F6B;
+      padding: 14px 18px;
+      margin-top: 24px;
+      font-size: 14px;
+      color: #444;
+      line-height: 1.7;
+    }
+
+    /* FOOTER */
+    .footer {
+      background-color: #002A52;
+      padding: 24px 40px;
+      text-align: center;
+    }
+
+    .footer p {
+      font-size: 12px;
+      color: #7799aa;
+      margin: 0 0 6px;
+      line-height: 1.6;
+    }
+
+    .footer a {
+      color: #F36F6B;
+      text-decoration: none;
+    }
+
+    .footer .tagline {
+      font-family: 'Barlow Condensed', Arial Narrow, sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 3px;
+      color: #ffffff;
+      margin: 14px 0 0;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+
+    <!-- HEADER -->
+    <div class="header">
+      <p class="header-eyebrow">Utah House District 21</p>
+      <p class="header-logo">Aaron Wiley</p>
+      <p class="header-sub">West Side Salt Lake City &middot; April 11, 2026</p>
+    </div>
+
+    <!-- HERO BAND -->
+    <div class="hero-band">
+      <p>&#x2709;&#xFE0F; &nbsp; Yes, Another Campaign Email. Read This One.</p>
+    </div>
+
+    <!-- BODY -->
+    <div class="body-content">
+
+      <p class="greeting">Hey [First Name],</p>
+
+      <p>I know. I <em>know</em>.</p>
+
+      <p>Your finger is hovering over the delete button right now and honestly? I respect it. You're a delegate &mdash; you've seen every flavor of campaign email there is.</p>
+
+      <p>But give me 60 seconds. I promise this is the only one worth keeping.</p>
+
+      <p class="punch">"At convention, only credentialed delegates vote. If I get 55%, I win the nomination outright. If not, the top two go to a primary. That's it. And YOU are the one who decides."</p>
+
+      <p>Not the donors. Not the consultants. Not the party machine. <strong>You.</strong> That's not a line &mdash; that's literally how the convention works. And on April 11th at Highland High School, your vote is real, binding, and more powerful than most people will ever know.</p>
+
+      <!-- FACT CARD -->
+      <div class="fact-card">
+        <p class="fact-card-title">&#x1F4CB; &nbsp; Convention Quick Facts</p>
+        <p><strong style="color:#F36F6B;">&#x1F4CD; Where:</strong> Highland High School &mdash; 2166 S 1700 E, SLC</p>
+        <p><strong style="color:#F36F6B;">&#x1F4C5; When:</strong> Saturday, April 11, 2026 &middot; Check-in opens 8:00 AM</p>
+        <p><strong style="color:#F36F6B;">&#x1F5F3;&#xFE0F; District 21 Breakout:</strong> 1:40 PM &middot; Voting begins 2:00 PM</p>
+        <p><strong style="color:#F36F6B;">&#x1F3AF; The math:</strong> 55% wins outright. Under that, top two go to primary. Multiple rounds are possible &mdash; you can change your vote between rounds.</p>
+        <p><strong style="color:#F36F6B;">&#x2705; Your credential:</strong> You're already on the delegate list. Just show up.</p>
+      </div>
+
+      <p>Here's what I'm actually asking of you right now &mdash; it's not your vote yet (okay, it is, but be cool about it). It's two minutes of your time.</p>
+
+    </div>
+
+    <!-- CTA BLOCK -->
+    <div style="padding: 0 44px;">
+      <div class="cta-block">
+        <p class="cta-block-label">Your Delegate Hub</p>
+        <h3>Take 2 Minutes. Fill Out the Survey.</h3>
+        <p>I built a delegate hub specifically for you. It has everything about the convention &mdash; and a short survey where you can tell me what issues matter most to your community. I'm taking those answers directly into conversations with other elected officials. Your feedback doesn't disappear into a spreadsheet. It shapes how I show up.</p>
+        <a class="cta-button" href="https://wileyfor21.com/delegate/survey">Open the Delegate Hub &#x2192;</a>
+      </div>
+    </div>
+
+    <div class="body-content" style="padding-top: 8px;">
+      <p>Here's the part that might surprise you: I'm using technology &mdash; including AI &mdash; to make it genuinely easier for constituents to be heard. Not in a robots-are-taking-over way. In a <em>"your rep actually reads your feedback and acts on it"</em> way. The survey is the first version of that. Simple, fast, and it actually goes somewhere.</p>
+
+      <p>As your representative, I want to make engagement as easy as possible. You shouldn't have to fight to be heard. That's the whole point.</p>
+
+      <hr class="divider" />
+    </div>
+
+    <!-- SIGN OFF -->
+    <div class="signoff">
+      <p>Your voice matters. Your feedback helps. And I need your support on April 11th.</p>
+      <p>Save this email. Tell people you were there from the beginning.</p>
+      <p>With gratitude and just a little bit of West Side pride,</p>
+      <p class="name">Aaron Wiley</p>
+      <p class="title">Candidate &middot; Utah House District 21 &middot; <a href="https://wileyfor21.com" style="color:#034A76;">wileyfor21.com</a></p>
+
+      <div class="ps">
+        <strong>P.S.</strong> &mdash; If you have questions, reply to this email. I actually read them. Wild concept, I know.
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <p class="tagline">WE ARE 21. WE ARE HERE.</p>
+      <p style="margin-top:12px;">Paid for by Utah for Wiley &middot; Aaron Wiley for Utah House District 21</p>
+      <p><a href="mailto:utahforwiley@gmail.com">utahforwiley@gmail.com</a> &middot; <a href="https://wileyfor21.com">wileyfor21.com</a></p>
+      <p style="margin-top:10px; font-size:11px; color:#557788;">You are receiving this because you are a credentialed delegate for District 21.<br/>To unsubscribe, reply with "unsubscribe" and we'll remove you immediately.</p>
+    </div>
+
+  </div>
+</body>
+</html>
