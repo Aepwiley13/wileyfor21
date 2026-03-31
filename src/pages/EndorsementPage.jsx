@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { db, useMock } from "@/lib/firebase";
+import PublicNav from "@/components/layout/PublicNav";
 
 // In-memory store for mock/dev mode
 const mockEndorsements = [];
@@ -97,16 +98,15 @@ export default function EndorsementPage() {
 
   return (
     <div className="min-h-screen bg-cream">
-      {/* Header */}
+      <PublicNav />
       <header className="bg-navy text-white py-8 px-4 text-center">
-        <h1 className="font-condensed font-black text-4xl tracking-wide">WILEY FOR 21</h1>
+        <h2 className="font-condensed font-black text-3xl tracking-wide">Endorse Aaron Wiley</h2>
         <p className="text-white/60 text-sm mt-1">Utah House District 21 · April 11, 2026</p>
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-10 space-y-10">
         {/* Intro */}
         <div className="text-center">
-          <h2 className="font-condensed font-bold text-3xl text-navy mb-2">Endorse Aaron Wiley</h2>
           <p className="text-gray-600 text-sm max-w-md mx-auto">
             Add your name to the growing list of neighbors who support Aaron's vision for a stronger District 21.
           </p>

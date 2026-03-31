@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { db, useMock } from "@/lib/firebase";
+import PublicNav from "@/components/layout/PublicNav";
 
 // Shared mock store with EndorsementPage
 const mockEndorsements = [];
@@ -33,7 +34,7 @@ export default function EndorsementsWallPage() {
 
   return (
     <div className="min-h-screen bg-cream">
-      {/* Header */}
+      <PublicNav />
       <header className="bg-navy text-white py-8 px-4 text-center">
         <h1 className="font-condensed font-black text-4xl tracking-wide">WILEY FOR 21</h1>
         <p className="text-white/60 text-sm mt-1">Utah House District 21 · April 11, 2026</p>
