@@ -5,8 +5,7 @@ import { useDelegateSurvey } from "@/hooks/useDelegateSurvey";
 import HD21Survey from "@/components/survey/HD21Survey";
 import { db, useMock } from "@/lib/firebase";
 
-// ─── Status Badge ──────────────────────────────────────────────────────────
-
+// ── Survey status badge ─────────────────────────────────────────────────────
 function SurveyStatusBadge({ survey }) {
   if (survey.completed) {
     return (
@@ -29,8 +28,7 @@ function SurveyStatusBadge({ survey }) {
   );
 }
 
-// ─── Survey Preview (before starting) ────────────────────────────────────
-
+// ── Survey preview (before starting) ───────────────────────────────────────
 const SURVEY_SECTIONS = [
   "Introduction & neighborhood",
   "Your top priorities",
@@ -69,8 +67,7 @@ function SurveyPreviewCard() {
   );
 }
 
-// ─── Personal Summary (after completing) ─────────────────────────────────
-
+// ── Personal summary (after completing) ────────────────────────────────────
 function PersonalSummaryCard({ survey }) {
   if (!survey.completed) return null;
 
@@ -93,10 +90,7 @@ function PersonalSummaryCard({ survey }) {
           </p>
           <div className="flex flex-wrap gap-2">
             {survey.topPriorities.map((p) => (
-              <span
-                key={p}
-                className="px-2.5 py-1 bg-navy/5 text-navy rounded-full text-xs font-medium"
-              >
+              <span key={p} className="px-2.5 py-1 bg-navy/5 text-navy rounded-full text-xs font-medium">
                 {p}
               </span>
             ))}
@@ -111,10 +105,7 @@ function PersonalSummaryCard({ survey }) {
           </p>
           <div className="flex flex-wrap gap-2">
             {survey.westsideChallenges.map((c) => (
-              <span
-                key={c}
-                className="px-2.5 py-1 bg-coral/10 text-coral rounded-full text-xs font-medium"
-              >
+              <span key={c} className="px-2.5 py-1 bg-coral/10 text-coral rounded-full text-xs font-medium">
                 {c}
               </span>
             ))}
@@ -129,10 +120,7 @@ function PersonalSummaryCard({ survey }) {
           </p>
           <div className="flex flex-wrap gap-2">
             {survey.engagementInterest.map((e) => (
-              <span
-                key={e}
-                className="px-2.5 py-1 bg-green-50 text-green-700 rounded-full text-xs font-medium"
-              >
+              <span key={e} className="px-2.5 py-1 bg-green-50 text-green-700 rounded-full text-xs font-medium">
                 {e}
               </span>
             ))}
@@ -147,10 +135,7 @@ function PersonalSummaryCard({ survey }) {
           </p>
           <div className="flex flex-wrap gap-2">
             {filteredLivedExp.map((e) => (
-              <span
-                key={e}
-                className="px-2.5 py-1 bg-amber-50 text-amber-700 rounded-full text-xs font-medium"
-              >
+              <span key={e} className="px-2.5 py-1 bg-amber-50 text-amber-700 rounded-full text-xs font-medium">
                 {e}
               </span>
             ))}
@@ -172,8 +157,7 @@ function PersonalSummaryCard({ survey }) {
   );
 }
 
-// ─── Community Survey Summary ─────────────────────────────────────────────
-
+// ── Community survey summary ────────────────────────────────────────────────
 const MOCK_COMMUNITY = {
   completedCount: 7,
   topPriorities: [
@@ -280,18 +264,7 @@ function CommunitySurveyPanel() {
     );
   }
 
-  if (!data || data.completedCount === 0) {
-    return (
-      <div className="bg-white rounded-2xl border border-gray-200 p-6">
-        <h3 className="font-condensed font-bold text-navy text-lg mb-2">
-          Delegate Survey Summary
-        </h3>
-        <p className="text-gray-500 text-sm">
-          Community insights will appear here once delegates complete the survey.
-        </p>
-      </div>
-    );
-  }
+  if (!data || data.completedCount === 0) return null;
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-6">
@@ -332,8 +305,7 @@ function CommunitySurveyPanel() {
   );
 }
 
-// ─── Main Dashboard ───────────────────────────────────────────────────────
-
+// ── Main dashboard ──────────────────────────────────────────────────────────
 export default function DelegateDashboard() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
@@ -357,8 +329,16 @@ export default function DelegateDashboard() {
   if (!user) return null;
 
   const displayName = user.name || user.displayName || "Delegate";
+  const firstName = displayName.split(" ")[0];
 
-  // ── Survey Mode ──
+  const mailtoHref =
+    `mailto:utahforwiley@gmail.com` +
+    `?subject=${encodeURIComponent("District 21 Delegate — Keep me updated")}` +
+    `&body=${encodeURIComponent(
+      `Hey Aaron,\n\nI'm a credentialed delegate for District 21 and I want to stay connected through April 11.\n\nName: ${displayName}\n\nKeep me in the loop on convention updates, where you stand on the issues, and anything I need to know before I walk into that room.\n\nI'm with you.\n`
+    )}`;
+
+  // ── Survey mode ─────────────────────────────────────────────────────────────
   if (showSurvey && !survey.completed) {
     return (
       <div className="min-h-screen bg-cream">
@@ -370,7 +350,7 @@ export default function DelegateDashboard() {
             onClick={() => setShowSurvey(false)}
             className="text-white/60 text-sm hover:text-white transition-colors"
           >
-            Save & exit
+            Save &amp; exit
           </button>
         </div>
         <div className="max-w-2xl mx-auto p-4 py-8">
@@ -387,11 +367,12 @@ export default function DelegateDashboard() {
     );
   }
 
-  // ── Dashboard Mode ──
+  // ── Dashboard mode ───────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-cream">
+
       {/* Nav */}
-      <div className="bg-navy-darker px-4 py-2.5 flex items-center justify-between border-b border-navy-dark/60">
+      <div className="bg-navy-darker px-4 py-3 flex items-center justify-between border-b border-navy-dark/60">
         <h1 className="font-condensed font-black text-white text-xl tracking-wide">
           WILEY FOR 21
         </h1>
@@ -410,7 +391,7 @@ export default function DelegateDashboard() {
           >
             Volunteer Hub
           </Link>
-          <span className="text-white/70 text-sm hidden sm:inline">{displayName}</span>
+          <span className="text-white/60 text-sm hidden sm:inline">{displayName}</span>
           <button
             onClick={signOut}
             className="text-white/60 text-sm hover:text-white transition-colors"
@@ -420,71 +401,238 @@ export default function DelegateDashboard() {
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto p-4 py-8 space-y-5">
-        {/* Welcome */}
-        <div>
-          <h2 className="font-condensed font-black text-navy text-3xl">
-            Welcome, {displayName.split(" ")[0]}.
-          </h2>
-          <p className="text-gray-500 text-sm mt-1">
-            HD21 Delegate Hub &middot; Convention: April 11, 2026
+      <div className="max-w-3xl mx-auto px-4 py-8 space-y-5">
+
+        {/* ── 1. Welcome strip ──────────────────────────────────────────────── */}
+        <div className="bg-navy rounded-2xl px-6 py-7 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-40 h-full opacity-5 bg-gradient-to-l from-white to-transparent pointer-events-none" />
+          <p className="text-coral font-condensed font-bold text-sm uppercase tracking-widest mb-2">
+            Delegate Hub · April 11, 2026
           </p>
+          <h2 className="font-condensed font-black text-white text-3xl sm:text-4xl leading-tight mb-3">
+            {firstName}, your vote matters<br className="hidden sm:block" /> more than most people know.
+          </h2>
+          <p className="text-white/80 text-sm sm:text-base leading-relaxed max-w-xl">
+            You earned your seat at that table. This is your hub — I built it so you have
+            everything you need before you walk into that room on April 11. I'll keep
+            updating it as we get closer. Check back.
+          </p>
+          <p className="mt-4 text-white/50 text-xs font-condensed tracking-wide">— Aaron Wiley</p>
         </div>
 
-        {/* Survey Card */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-6">
-          <div className="flex items-center gap-3 mb-2">
-            <h3 className="font-condensed font-bold text-navy text-xl">HD21 Delegate Survey</h3>
-            <SurveyStatusBadge survey={survey} />
+        {/* ── 2. Convention quick-reference card ────────────────────────────── */}
+        <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+          <div className="bg-navy-darker px-6 py-4 flex items-center gap-3">
+            <span className="text-2xl" aria-hidden="true">📋</span>
+            <div>
+              <h2 className="font-condensed font-black text-white text-xl tracking-wide">
+                Convention Quick-Reference
+              </h2>
+              <p className="text-white/60 text-xs mt-0.5">Everything you need day-of — no fluff</p>
+            </div>
           </div>
-          {survey.completed ? (
-            <p className="text-gray-600 text-sm leading-relaxed">
-              Your responses have been recorded. Thank you for shaping this campaign&rsquo;s
-              priorities.
+
+          <div className="p-6 space-y-5">
+            <div className="flex gap-4 items-start">
+              <div className="w-8 h-8 rounded-lg bg-coral/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="text-coral text-sm" aria-hidden="true">📍</span>
+              </div>
+              <div>
+                <p className="font-condensed font-bold text-navy text-base">Where &amp; When</p>
+                <p className="text-gray-700 text-sm mt-0.5">
+                  <strong>Saturday, April 11, 2026</strong> · Highland High School<br />
+                  2166 S 1700 E, Salt Lake City, UT 84106
+                </p>
+                <p className="text-gray-500 text-xs mt-1">
+                  Check-in opens 8:00 AM · District 21 breakout room at 1:40 PM · Voting at 2:00 PM
+                </p>
+                <p className="text-gray-500 text-xs mt-0.5">
+                  Can't make it in person? Virtual ballots open 8:00 AM, deadline 11:30 AM.
+                </p>
+              </div>
+            </div>
+
+            <div className="border-t border-gray-100" />
+
+            <div className="flex gap-4 items-start">
+              <div className="w-8 h-8 rounded-lg bg-coral/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="text-coral text-sm" aria-hidden="true">🪪</span>
+              </div>
+              <div>
+                <p className="font-condensed font-bold text-navy text-base">Getting Credentialed</p>
+                <p className="text-gray-700 text-sm mt-0.5">
+                  Show up, find your name on the list, get your badge. If you're not on
+                  the official delegate roster, you cannot vote — so arrive early and
+                  confirm you're checked in before anything else happens.
+                </p>
+              </div>
+            </div>
+
+            <div className="border-t border-gray-100" />
+
+            <div className="flex gap-4 items-start">
+              <div className="w-8 h-8 rounded-lg bg-coral/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="text-coral text-sm" aria-hidden="true">🗳️</span>
+              </div>
+              <div>
+                <p className="font-condensed font-bold text-navy text-base">The 60% Rule — Plain English</p>
+                <p className="text-gray-700 text-sm mt-0.5">
+                  If any candidate wins 60% or more of delegate votes, they go straight to
+                  the general election — no primary needed. Under 60%? The top two
+                  candidates advance to a June primary.
+                </p>
+                <div className="mt-2 flex gap-2 flex-wrap">
+                  <span className="px-2.5 py-1 rounded-full bg-green-100 text-green-800 text-xs font-semibold">
+                    60%+ → Straight to general
+                  </span>
+                  <span className="px-2.5 py-1 rounded-full bg-yellow-100 text-yellow-800 text-xs font-semibold">
+                    Under 60% → Primary election
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t border-gray-100" />
+
+            <div className="flex gap-4 items-start">
+              <div className="w-8 h-8 rounded-lg bg-coral/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="text-coral text-sm" aria-hidden="true">🔄</span>
+              </div>
+              <div>
+                <p className="font-condensed font-bold text-navy text-base">If It Goes Multiple Rounds</p>
+                <p className="text-gray-700 text-sm mt-0.5">
+                  If nobody hits 60% on the first ballot, the lowest-ranked candidates
+                  drop off and voting continues. You are not locked in — you can change
+                  your vote between rounds. No one can pressure you. Campaigns can
+                  persuade. That's it. Your vote is yours.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── 3. Where Aaron stands ──────────────────────────────────────────── */}
+        <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+          <div className="px-6 pt-6 pb-4">
+            <div className="flex items-center gap-2 mb-1">
+              <h2 className="font-condensed font-black text-navy text-xl">
+                Where I Stand on the Issues
+              </h2>
+              <span className="px-2.5 py-0.5 rounded-full bg-yellow-100 text-yellow-800 text-xs font-semibold">
+                Coming soon
+              </span>
+            </div>
+            <p className="text-gray-600 text-sm leading-relaxed max-w-xl">
+              I'm building this out now. Check back soon — you deserve to know exactly
+              where I stand before you walk into that room. Here's what I'll be covering:
             </p>
-          ) : (
-            <p className="text-gray-600 text-sm leading-relaxed">
-              Share your priorities for House District 21. 10 sections covering housing,
-              healthcare, Westside challenges, and more. Progress saves automatically.
-            </p>
-          )}
+          </div>
+          <div className="px-6 pb-6">
+            <div className="flex flex-wrap gap-2">
+              {[
+                { icon: "🏠", label: "Housing & Cost of Living" },
+                { icon: "🌊", label: "Clean Air & Environment" },
+                { icon: "🎓", label: "Education & Youth" },
+                { icon: "🏥", label: "Healthcare Access" },
+                { icon: "🛡️", label: "Public Safety" },
+                { icon: "🗳️", label: "Fair Representation" },
+                { icon: "💧", label: "Water & Great Salt Lake" },
+                { icon: "🏗️", label: "Westside Development" },
+              ].map(({ icon, label }) => (
+                <span
+                  key={label}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gray-200 bg-gray-50 text-gray-600 text-sm font-medium"
+                >
+                  <span aria-hidden="true">{icon}</span>
+                  {label}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* ── 4. Survey card ─────────────────────────────────────────────────── */}
+        <div className="bg-white rounded-2xl border border-gray-200 p-6">
+          <div className="flex items-start gap-4 mb-3">
+            <div className="flex-1">
+              <div className="flex items-center gap-3 flex-wrap mb-1">
+                <h2 className="font-condensed font-black text-navy text-xl">
+                  Tell Me Where You Stand
+                </h2>
+                <SurveyStatusBadge survey={survey} />
+              </div>
+              {survey.completed ? (
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  You're on record. Your responses shape how I campaign and how I govern.
+                  Thank you for taking the time.
+                </p>
+              ) : (
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  Your feedback shapes how I campaign and how I govern — not just what
+                  I say on the stump, but what I actually fight for in the Legislature.
+                  10 sections on housing, healthcare, Westside challenges, and more.
+                  Progress saves automatically.
+                </p>
+              )}
+            </div>
+          </div>
+
           {!survey.completed && (
             <button
               onClick={() => setShowSurvey(true)}
-              className="mt-4 px-6 py-2.5 rounded-xl bg-coral text-white font-condensed font-bold text-base hover:bg-coral/90 transition-colors"
+              className="mt-1 px-6 py-2.5 rounded-xl bg-coral text-white font-condensed font-bold text-base hover:bg-coral/90 active:scale-95 transition-all"
             >
-              {survey.currentStep > 0 ? "Continue Survey →" : "Begin Survey →"}
+              {survey.currentStep > 0 ? "Continue Survey →" : "Start the Survey →"}
             </button>
           )}
         </div>
 
-        {/* Survey preview — shown only before starting */}
+        {/* Survey section list — shown before starting */}
         {!survey.completed && survey.currentStep === 0 && <SurveyPreviewCard />}
 
-        {/* Community survey summary — shown at beginning AND end */}
+        {/* Community data — shown once responses exist */}
         <CommunitySurveyPanel />
 
         {/* Personal responses — shown after completing */}
         {survey.completed && <PersonalSummaryCard survey={survey} />}
 
-        {/* Convention info */}
-        <div className="bg-navy/5 rounded-2xl border border-navy/10 p-5">
-          <h3 className="font-condensed font-bold text-navy text-base mb-1">
-            Utah Democratic Convention
-          </h3>
-          <p className="text-sm text-gray-600">
-            <strong>April 11, 2026</strong> &middot; Your vote as a delegate shapes who represents
-            House District 21. Aaron Wiley is counting on your support.
+        {/* ── 5. Stay connected ──────────────────────────────────────────────── */}
+        <div className="bg-white rounded-2xl border border-gray-200 p-6">
+          <h2 className="font-condensed font-black text-navy text-xl mb-1">
+            Stay Connected
+          </h2>
+          <p className="text-gray-600 text-sm leading-relaxed max-w-xl mb-4">
+            I send updates direct from my email as convention gets closer — where I stand
+            on issues, what to expect that day, and anything you need to know. Drop me a
+            line and I'll make sure you're in the loop.
+          </p>
+          <a
+            href={mailtoHref}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-navy text-white font-condensed font-bold text-base hover:bg-navy-dark active:scale-95 transition-all"
+          >
+            <span aria-hidden="true">✉️</span>
+            Email Aaron Directly
+          </a>
+          <p className="text-gray-400 text-xs mt-3">
+            Opens a pre-filled draft in your email app · utahforwiley@gmail.com
+          </p>
+        </div>
+
+        {/* Footer */}
+        <div className="text-center pt-2 pb-6">
+          <p className="text-gray-400 text-xs">
+            Wiley for District 21 · Salt Lake County Democratic Convention · April 11, 2026
           </p>
           <a
             href="https://wileyfor21.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block mt-3 text-sm text-coral font-semibold hover:underline"
+            className="text-coral text-xs font-semibold hover:underline mt-1 inline-block"
           >
-            Learn more at wileyfor21.com &rarr;
+            wileyfor21.com →
           </a>
         </div>
+
       </div>
     </div>
   );
