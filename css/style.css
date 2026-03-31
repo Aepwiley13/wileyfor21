@@ -137,7 +137,17 @@ nav {
   gap: 5px;
   padding: 4px;
 }
-.hamburger span { display: block; width: 24px; height: 2px; background: #ffffff; }
+.hamburger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: #ffffff;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+  transform-origin: center;
+}
+.hamburger.is-open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.is-open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger.is-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
 /* ============================================
    HERO
@@ -1059,9 +1069,22 @@ footer {
 @media (max-width: 900px) {
   section { padding: 70px 6vw; }
   .movement, .how-we-win, .convention, .conv-timeline, .donate, .involve { padding: 70px 6vw; }
-  nav { padding: 0 20px; }
+  nav { padding: 0 20px; position: relative; }
   .nav-links, .nav-right { display: none; }
   .hamburger { display: flex; }
+  .nav-links.mobile-open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 68px;
+    left: 0;
+    right: 0;
+    background: var(--navy, #034A76);
+    padding: 20px 24px;
+    gap: 18px;
+    z-index: 98;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  }
   .movement-grid,
   .why-grid,
   .aaron-intro,

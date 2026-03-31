@@ -13,18 +13,35 @@ const observer = new IntersectionObserver((entries) => {
 reveals.forEach(el => observer.observe(el));
 
 // Mobile nav toggle
+function closeNav() {
+  document.querySelector('.nav-links').classList.remove('mobile-open');
+  const btn = document.querySelector('.hamburger');
+  btn.classList.remove('is-open');
+  btn.setAttribute('aria-label', 'Open navigation menu');
+}
+
 function toggleNav() {
   const links = document.querySelector('.nav-links');
-  const right = document.querySelector('.nav-right');
-  const open = links.style.display === 'flex';
-  if (open) {
-    links.style.display = 'none';
-    right.style.display = 'none';
+  const btn = document.querySelector('.hamburger');
+  const isOpen = links.classList.contains('mobile-open');
+  if (isOpen) {
+    closeNav();
   } else {
-    links.style.cssText = 'display:flex; flex-direction:column; position:absolute; top:68px; left:0; right:0; background:var(--navy); padding:20px 24px; gap:18px; z-index:98;';
-    right.style.cssText = 'display:none;';
+    links.classList.add('mobile-open');
+    btn.classList.add('is-open');
+    btn.setAttribute('aria-label', 'Close navigation menu');
   }
 }
+
+// Close menu when a nav link is clicked
+document.querySelectorAll('.nav-links a').forEach(link => {
+  link.addEventListener('click', closeNav);
+});
+
+// Close menu when clicking outside the nav
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('nav')) closeNav();
+});
 
 // Form submit with Netlify
 function handleSubmit(e) {
