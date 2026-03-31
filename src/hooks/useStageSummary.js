@@ -33,7 +33,7 @@ function computeSummary(delegates) {
 }
 
 export function useStageSummary() {
-  const [summary, setSummary] = useState(() => computeSummary(mockContacts));
+  const [summary, setSummary] = useState(() => useMock ? computeSummary(mockContacts) : null);
 
   useEffect(() => {
     if (useMock) {

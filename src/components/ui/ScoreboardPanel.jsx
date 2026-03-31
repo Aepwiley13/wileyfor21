@@ -28,7 +28,7 @@ export default function ScoreboardPanel({ summary }) {
           {committedTotal}
         </span>
         <div className="mb-1">
-          <p className="text-sm text-gray-500 leading-tight">/ {total} committed delegates</p>
+          <p className="text-sm text-gray-500 leading-tight">/ {total} delegates</p>
           {needed > 0 ? (
             <p className="text-xs font-bold" style={{ color: "#F36F6B" }}>
               {needed} needed to hit 70% target
