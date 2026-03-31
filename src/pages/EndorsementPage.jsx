@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import { db, useMock } from "@/lib/firebase";
 
 // In-memory store for mock/dev mode
 const mockEndorsements = [];
 
 export default function EndorsementPage() {
-  const [form, setForm] = useState({ firstName: "", lastName: "", email: "" });
+  const [form, setForm] = useState({ firstName: "", lastName: "", email: "", why: "" });
   const [photo, setPhoto] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
   const [endorsements, setEndorsements] = useState([]);
@@ -83,7 +84,7 @@ export default function EndorsementPage() {
       }
 
       setSubmitted(true);
-      setForm({ firstName: "", lastName: "", email: "" });
+      setForm({ firstName: "", lastName: "", email: "", why: "" });
       setPhoto(null);
       setPhotoPreview(null);
     } catch (err) {
@@ -109,6 +110,9 @@ export default function EndorsementPage() {
           <p className="text-gray-600 text-sm max-w-md mx-auto">
             Add your name to the growing list of neighbors who support Aaron's vision for a stronger District 21.
           </p>
+          <Link to="/endorsements" className="inline-block mt-3 text-coral text-sm font-semibold hover:underline">
+            See all endorsements →
+          </Link>
         </div>
 
         {/* Form / Success */}
@@ -166,6 +170,20 @@ export default function EndorsementPage() {
                 onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
                 placeholder="you@example.com"
                 className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-navy/30"
+              />
+            </div>
+
+            {/* Why endorsing */}
+            <div>
+              <label className="text-sm font-medium text-gray-700 block mb-1">
+                Why are you endorsing Aaron? <span className="text-gray-400 font-normal">(optional)</span>
+              </label>
+              <textarea
+                value={form.why}
+                onChange={(e) => setForm((f) => ({ ...f, why: e.target.value }))}
+                placeholder="Share your reason in a few words..."
+                rows={3}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-navy/30 resize-none"
               />
             </div>
 
