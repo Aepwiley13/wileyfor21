@@ -313,7 +313,7 @@ function SurveyPanel({ delegate, onSurveySent }) {
 
 const CAD_SUBJECT = "Aaron Wiley for HD 21 — Calling All Delegates";
 
-function CallAllDelegatesRow({ email, firstName, onLogged }) {
+function CallAllDelegatesRow({ email, firstName }) {
   const [status, setStatus] = useState("idle"); // idle | copying | done | error
 
   async function handleCopy() {
@@ -328,7 +328,6 @@ function CallAllDelegatesRow({ email, firstName, onLogged }) {
       ]);
 
       setStatus("done");
-      onLogged?.();
 
       // Open Gmail compose addressed to this delegate
       const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent(CAD_SUBJECT)}`;
@@ -977,7 +976,6 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
             <CallAllDelegatesRow
               email={email}
               firstName={delegate.firstName || delegate.name?.split(" ")[0] || ""}
-              onLogged={() => onOpenLog?.("email", delegate)}
             />
           )}
 
