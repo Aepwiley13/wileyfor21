@@ -120,7 +120,17 @@ export default function BriefingDrawer({ delegate, onClose }) {
             </section>
           )}
 
-          {/* Section 6: Objection responses */}
+          {/* Section 6: Notes */}
+          {delegate.notes && (
+            <section>
+              <h3 className="font-condensed font-bold text-navy text-lg mb-2">Notes</h3>
+              <div className="bg-gray-50 rounded-lg p-3">
+                <p className="text-sm text-gray-700 whitespace-pre-wrap">{delegate.notes}</p>
+              </div>
+            </section>
+          )}
+
+          {/* Section 7: Objection responses */}
           <section>
             <h3 className="font-condensed font-bold text-navy text-lg mb-2">Objection Responses</h3>
             <div className="space-y-3">
