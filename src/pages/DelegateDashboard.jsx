@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { useDelegateSurvey, EMPTY_SURVEY } from "@/hooks/useDelegateSurvey";
+import { useDelegateSurvey } from "@/hooks/useDelegateSurvey";
 import HD21Survey from "@/components/survey/HD21Survey";
 import { db, useMock } from "@/lib/firebase";
+
+// ─── Status Badge ──────────────────────────────────────────────────────────
 
 function SurveyStatusBadge({ survey }) {
   if (survey.completed) {
@@ -27,23 +29,203 @@ function SurveyStatusBadge({ survey }) {
   );
 }
 
-function InsightsPanel() {
-  const [topIssues, setTopIssues] = useState([]);
-  const [total, setTotal] = useState(0);
-  const [insightsLoading, setInsightsLoading] = useState(true);
+// ─── Survey Preview (before starting) ────────────────────────────────────
+
+const SURVEY_SECTIONS = [
+  "Introduction & neighborhood",
+  "Your top priorities",
+  "Westside challenges",
+  "Issue ranking",
+  "Housing, seniors & safety",
+  "Crime, environment & disability",
+  "Education, healthcare & labor",
+  "Policy agreement statements",
+  "Tradeoffs & open questions",
+  "Lived experience",
+  "How to stay involved",
+];
+
+function SurveyPreviewCard() {
+  return (
+    <div className="bg-navy/5 rounded-2xl border border-navy/10 p-5">
+      <h3 className="font-condensed font-bold text-navy text-base mb-2">
+        What&rsquo;s in the survey?
+      </h3>
+      <p className="text-sm text-gray-600 mb-4">
+        10 sections covering the issues that matter most in House District 21. Takes about
+        10&ndash;15 minutes. Your progress saves automatically.
+      </p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4">
+        {SURVEY_SECTIONS.map((section, i) => (
+          <div key={section} className="flex items-center gap-2 text-xs text-gray-600">
+            <span className="w-5 h-5 rounded-full bg-navy/10 text-navy font-bold text-[10px] flex items-center justify-center flex-shrink-0">
+              {i + 1}
+            </span>
+            {section}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── Personal Summary (after completing) ─────────────────────────────────
+
+function PersonalSummaryCard({ survey }) {
+  if (!survey.completed) return null;
+
+  const hasLivedExp =
+    survey.livedExperience?.length > 0 &&
+    !(survey.livedExperience.length === 1 && survey.livedExperience[0] === "Prefer not to say");
+
+  const filteredLivedExp = (survey.livedExperience || []).filter(
+    (e) => e !== "Prefer not to say"
+  );
+
+  return (
+    <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-5">
+      <h3 className="font-condensed font-bold text-navy text-lg">Your Survey Responses</h3>
+
+      {survey.topPriorities?.length > 0 && (
+        <div>
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+            Your Top Priorities
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {survey.topPriorities.map((p) => (
+              <span
+                key={p}
+                className="px-2.5 py-1 bg-navy/5 text-navy rounded-full text-xs font-medium"
+              >
+                {p}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {survey.westsideChallenges?.length > 0 && (
+        <div>
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+            Westside Challenges You Highlighted
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {survey.westsideChallenges.map((c) => (
+              <span
+                key={c}
+                className="px-2.5 py-1 bg-coral/10 text-coral rounded-full text-xs font-medium"
+              >
+                {c}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {survey.engagementInterest?.length > 0 && (
+        <div>
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+            How You Want to Stay Involved
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {survey.engagementInterest.map((e) => (
+              <span
+                key={e}
+                className="px-2.5 py-1 bg-green-50 text-green-700 rounded-full text-xs font-medium"
+              >
+                {e}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {hasLivedExp && (
+        <div>
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+            Issues That Have Affected You Personally
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {filteredLivedExp.map((e) => (
+              <span
+                key={e}
+                className="px-2.5 py-1 bg-amber-50 text-amber-700 rounded-full text-xs font-medium"
+              >
+                {e}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {survey.closingThoughts && (
+        <div>
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+            Your Closing Thoughts
+          </p>
+          <p className="text-sm text-gray-600 italic leading-relaxed">
+            &ldquo;{survey.closingThoughts}&rdquo;
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Community Survey Summary ─────────────────────────────────────────────
+
+const MOCK_COMMUNITY = {
+  completedCount: 7,
+  topPriorities: [
+    { label: "Cost of living & affordability", count: 6 },
+    { label: "Housing affordability & displacement", count: 5 },
+    { label: "Access to healthcare (including mental health)", count: 4 },
+    { label: "Public education funding", count: 3 },
+    { label: "Westside economic development & investment", count: 3 },
+  ],
+  topChallenges: [
+    { label: "Rising housing costs and longtime residents being displaced", count: 5 },
+    { label: "Worse air quality and health risks compared to the rest of the city", count: 4 },
+    { label: "Lack of economic investment compared to the Eastside", count: 4 },
+    { label: "Access to healthcare clinics and mental health services", count: 3 },
+  ],
+  topEngagement: [
+    { label: "Attend community discussion events", count: 5 },
+    { label: "Help shape policy ideas and give ongoing feedback", count: 4 },
+    { label: "Volunteer on the campaign", count: 3 },
+    { label: "Just keep me informed", count: 3 },
+  ],
+};
+
+function BarChart({ items, maxVal }) {
+  return (
+    <div className="space-y-2.5">
+      {items.map(({ label, count }) => (
+        <div key={label}>
+          <div className="flex justify-between mb-0.5">
+            <span className="text-xs text-gray-700 leading-snug pr-4">{label}</span>
+            <span className="text-xs text-gray-500 font-medium flex-shrink-0">{count}</span>
+          </div>
+          <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-coral rounded-full transition-all duration-500"
+              style={{ width: `${(count / maxVal) * 100}%` }}
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function CommunitySurveyPanel() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (useMock) {
-      // Demo data
-      setTopIssues([
-        { label: "Cost of living & affordability", count: 14 },
-        { label: "Housing affordability & displacement", count: 12 },
-        { label: "Access to healthcare (including mental health)", count: 10 },
-        { label: "Public education funding", count: 8 },
-        { label: "Westside economic development & investment", count: 7 },
-      ]);
-      setTotal(20);
-      setInsightsLoading(false);
+      setData(MOCK_COMMUNITY);
+      setLoading(false);
       return;
     }
     (async () => {
@@ -54,76 +236,103 @@ function InsightsPanel() {
           where("survey.completed", "==", true)
         );
         const snap = await getDocs(q);
-        const counts = {};
+        const priorityCounts = {};
+        const challengeCounts = {};
+        const engagementCounts = {};
+
         snap.forEach((doc) => {
-          const priorities = doc.data()?.survey?.topPriorities || [];
-          priorities.forEach((p) => {
-            counts[p] = (counts[p] || 0) + 1;
+          const s = doc.data()?.survey || {};
+          (s.topPriorities || []).forEach((p) => {
+            priorityCounts[p] = (priorityCounts[p] || 0) + 1;
+          });
+          (s.westsideChallenges || []).forEach((c) => {
+            challengeCounts[c] = (challengeCounts[c] || 0) + 1;
+          });
+          (s.engagementInterest || []).forEach((e) => {
+            engagementCounts[e] = (engagementCounts[e] || 0) + 1;
           });
         });
-        const sorted = Object.entries(counts)
-          .map(([label, count]) => ({ label, count }))
-          .sort((a, b) => b.count - a.count)
-          .slice(0, 5);
-        setTopIssues(sorted);
-        setTotal(snap.size);
+
+        const sorted = (obj) =>
+          Object.entries(obj)
+            .map(([label, count]) => ({ label, count }))
+            .sort((a, b) => b.count - a.count);
+
+        setData({
+          completedCount: snap.size,
+          topPriorities: sorted(priorityCounts).slice(0, 5),
+          topChallenges: sorted(challengeCounts).slice(0, 4),
+          topEngagement: sorted(engagementCounts).slice(0, 5),
+        });
       } catch {
-        // Firestore rules may not allow this yet — show empty state
+        // Firestore rules may restrict access — silently fail
       } finally {
-        setInsightsLoading(false);
+        setLoading(false);
       }
     })();
   }, []);
 
-  if (insightsLoading) {
+  if (loading) {
     return (
       <div className="bg-white rounded-2xl border border-gray-200 p-6">
-        <p className="text-gray-400 text-sm">Loading community insights…</p>
+        <p className="text-gray-400 text-sm">Loading community survey data…</p>
       </div>
     );
   }
 
-  if (topIssues.length === 0) {
+  if (!data || data.completedCount === 0) {
     return (
       <div className="bg-white rounded-2xl border border-gray-200 p-6">
-        <h3 className="font-condensed font-bold text-navy text-lg mb-2">Community Priorities</h3>
+        <h3 className="font-condensed font-bold text-navy text-lg mb-2">
+          Delegate Survey Summary
+        </h3>
         <p className="text-gray-500 text-sm">
-          Insights will appear here once more delegates complete the survey.
+          Community insights will appear here once delegates complete the survey.
         </p>
       </div>
     );
   }
 
-  const max = topIssues[0]?.count || 1;
-
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 p-6">
-      <div className="flex items-baseline justify-between mb-4">
-        <h3 className="font-condensed font-bold text-navy text-lg">
-          What Delegates Care About
-        </h3>
-        <span className="text-xs text-gray-400">{total} responses</span>
+    <div className="bg-white rounded-2xl border border-gray-200 p-6 space-y-6">
+      <div className="flex items-baseline justify-between">
+        <h3 className="font-condensed font-bold text-navy text-lg">Delegate Survey Summary</h3>
+        <span className="text-xs text-gray-400 font-medium">
+          {data.completedCount} {data.completedCount === 1 ? "response" : "responses"}
+        </span>
       </div>
-      <p className="text-xs text-gray-500 mb-4">Top issues from completed delegate surveys</p>
-      <div className="space-y-3">
-        {topIssues.map(({ label, count }) => (
-          <div key={label}>
-            <div className="flex justify-between text-sm mb-1">
-              <span className="text-gray-700 leading-snug pr-4">{label}</span>
-              <span className="text-gray-500 font-medium flex-shrink-0">{count}</span>
-            </div>
-            <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-coral rounded-full transition-all duration-500"
-                style={{ width: `${(count / max) * 100}%` }}
-              />
-            </div>
-          </div>
-        ))}
-      </div>
+
+      {data.topPriorities.length > 0 && (
+        <div>
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+            Top Priorities
+          </p>
+          <BarChart items={data.topPriorities} maxVal={data.topPriorities[0]?.count || 1} />
+        </div>
+      )}
+
+      {data.topChallenges.length > 0 && (
+        <div>
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+            Top Westside Challenges
+          </p>
+          <BarChart items={data.topChallenges} maxVal={data.topChallenges[0]?.count || 1} />
+        </div>
+      )}
+
+      {data.topEngagement.length > 0 && (
+        <div>
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+            How Delegates Want to Stay Involved
+          </p>
+          <BarChart items={data.topEngagement} maxVal={data.topEngagement[0]?.count || 1} />
+        </div>
+      )}
     </div>
   );
 }
+
+// ─── Main Dashboard ───────────────────────────────────────────────────────
 
 export default function DelegateDashboard() {
   const { user, signOut } = useAuth();
@@ -131,7 +340,6 @@ export default function DelegateDashboard() {
   const { survey, save, complete, loading } = useDelegateSurvey(user?.uid);
   const [showSurvey, setShowSurvey] = useState(false);
 
-  // Redirect unauthenticated users
   useEffect(() => {
     if (!loading && !user) {
       navigate("/delegate/login", { replace: true });
@@ -225,28 +433,21 @@ export default function DelegateDashboard() {
 
         {/* Survey Card */}
         <div className="bg-white rounded-2xl border border-gray-200 p-6">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-2">
-                <h3 className="font-condensed font-bold text-navy text-xl">
-                  HD21 Delegate Survey
-                </h3>
-                <SurveyStatusBadge survey={survey} />
-              </div>
-              {survey.completed ? (
-                <p className="text-gray-600 text-sm leading-relaxed">
-                  Your responses have been recorded. Thank you for shaping this campaign's
-                  priorities.
-                </p>
-              ) : (
-                <p className="text-gray-600 text-sm leading-relaxed">
-                  Share your priorities for House District 21. 10 sections covering housing,
-                  healthcare, Westside challenges, and more. Progress saves automatically.
-                </p>
-              )}
-            </div>
+          <div className="flex items-center gap-3 mb-2">
+            <h3 className="font-condensed font-bold text-navy text-xl">HD21 Delegate Survey</h3>
+            <SurveyStatusBadge survey={survey} />
           </div>
-
+          {survey.completed ? (
+            <p className="text-gray-600 text-sm leading-relaxed">
+              Your responses have been recorded. Thank you for shaping this campaign&rsquo;s
+              priorities.
+            </p>
+          ) : (
+            <p className="text-gray-600 text-sm leading-relaxed">
+              Share your priorities for House District 21. 10 sections covering housing,
+              healthcare, Westside challenges, and more. Progress saves automatically.
+            </p>
+          )}
           {!survey.completed && (
             <button
               onClick={() => setShowSurvey(true)}
@@ -255,28 +456,16 @@ export default function DelegateDashboard() {
               {survey.currentStep > 0 ? "Continue Survey →" : "Begin Survey →"}
             </button>
           )}
-
-          {survey.completed && survey.topPriorities?.length > 0 && (
-            <div className="mt-4 pt-4 border-t border-gray-100">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
-                Your top priorities
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {survey.topPriorities.map((p) => (
-                  <span
-                    key={p}
-                    className="px-2.5 py-1 bg-navy/5 text-navy rounded-full text-xs font-medium"
-                  >
-                    {p}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
 
-        {/* Community Insights */}
-        <InsightsPanel />
+        {/* Survey preview — shown only before starting */}
+        {!survey.completed && survey.currentStep === 0 && <SurveyPreviewCard />}
+
+        {/* Community survey summary — shown at beginning AND end */}
+        <CommunitySurveyPanel />
+
+        {/* Personal responses — shown after completing */}
+        {survey.completed && <PersonalSummaryCard survey={survey} />}
 
         {/* Convention info */}
         <div className="bg-navy/5 rounded-2xl border border-navy/10 p-5">
@@ -293,7 +482,7 @@ export default function DelegateDashboard() {
             rel="noopener noreferrer"
             className="inline-block mt-3 text-sm text-coral font-semibold hover:underline"
           >
-            Learn more at wileyfor21.com →
+            Learn more at wileyfor21.com &rarr;
           </a>
         </div>
       </div>
