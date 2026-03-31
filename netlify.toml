@@ -66,3 +66,8 @@
   from = "/delegate/*"
   to = "/app.html"
   status = 200
+
+[[redirects]]
+  from = "/endorse"
+  to = "/app.html"
+  status = 200
