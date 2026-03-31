@@ -309,6 +309,78 @@ function SurveyPanel({ delegate, onSurveySent }) {
   );
 }
 
+// ── Calling All Delegates HTML template row ───────────────────────────────────
+
+const CAD_SUBJECT = "Aaron Wiley for HD 21 — Calling All Delegates";
+
+function CallAllDelegatesRow({ email, firstName, onLogged }) {
+  const [status, setStatus] = useState("idle"); // idle | copying | done | error
+
+  async function handleCopy() {
+    setStatus("copying");
+    try {
+      const res = await fetch("/emails/calling-all-delegates.html");
+      let html = await res.text();
+      if (firstName) html = html.replace(/\[First Name\]/g, firstName);
+
+      await navigator.clipboard.write([
+        new ClipboardItem({ "text/html": new Blob([html], { type: "text/html" }) }),
+      ]);
+
+      setStatus("done");
+      onLogged?.();
+
+      // Open Gmail compose addressed to this delegate
+      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent(CAD_SUBJECT)}`;
+      window.open(gmailUrl, "_blank", "noopener");
+
+      setTimeout(() => setStatus("idle"), 3000);
+    } catch {
+      setStatus("error");
+      setTimeout(() => setStatus("idle"), 3000);
+    }
+  }
+
+  return (
+    <div className="mb-3 bg-white border border-green-200 rounded-lg px-3 py-2">
+      <div className="flex items-center justify-between gap-2">
+        <div className="min-w-0">
+          <p className="text-xs font-bold text-navy truncate">Calling All Delegates</p>
+          <p className="text-xs text-gray-400 truncate">Subject: {CAD_SUBJECT}</p>
+        </div>
+        <div className="flex gap-2 shrink-0 items-center">
+          <a
+            href="/emails/calling-all-delegates.html"
+            target="_blank"
+            rel="noreferrer"
+            className="text-xs text-coral font-semibold hover:underline"
+          >
+            Preview ↗
+          </a>
+          {email && (
+            <button
+              onClick={handleCopy}
+              disabled={status === "copying"}
+              className="text-xs font-bold text-white px-3 py-1 rounded-lg transition-colors disabled:opacity-60"
+              style={{ backgroundColor: status === "done" ? "#034A76" : status === "error" ? "#e63946" : "#15803d" }}
+            >
+              {status === "copying" && "Copying…"}
+              {status === "done" && "Copied! ✓"}
+              {status === "error" && "Try again"}
+              {status === "idle" && "Copy & Open Gmail →"}
+            </button>
+          )}
+        </div>
+      </div>
+      {status === "done" && (
+        <p className="text-xs text-green-700 mt-1.5">
+          HTML copied — paste it into the Gmail compose window that just opened.
+        </p>
+      )}
+    </div>
+  );
+}
+
 // ── main component ────────────────────────────────────────────────────────────
 
 export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volunteerName, onSurveySent, onCallScriptSave }) {
@@ -902,33 +974,11 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
 
           {/* HTML Template: Calling All Delegates */}
           {expandedAction === "email" && (
-            <div className="mb-3 bg-white border border-green-200 rounded-lg px-3 py-2">
-              <div className="flex items-center justify-between gap-2">
-                <div className="min-w-0">
-                  <p className="text-xs font-bold text-navy truncate">Calling All Delegates</p>
-                  <p className="text-xs text-gray-400 truncate">Subject: Aaron Wiley for HD 21 — Calling All Delegates</p>
-                </div>
-                <div className="flex gap-2 shrink-0">
-                  <a
-                    href="/emails/calling-all-delegates.html"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-xs text-coral font-semibold hover:underline"
-                  >
-                    Preview ↗
-                  </a>
-                  {email && (
-                    <a
-                      href={`mailto:${email}?subject=${encodeURIComponent("Aaron Wiley for HD 21 — Calling All Delegates")}`}
-                      onClick={() => onOpenLog?.("email", delegate)}
-                      className="text-xs font-bold text-white bg-green-700 hover:bg-green-800 px-3 py-1 rounded-lg transition-colors"
-                    >
-                      Send →
-                    </a>
-                  )}
-                </div>
-              </div>
-            </div>
+            <CallAllDelegatesRow
+              email={email}
+              firstName={delegate.firstName || delegate.name?.split(" ")[0] || ""}
+              onLogged={() => onOpenLog?.("email", delegate)}
+            />
           )}
 
           {/* Story banner */}
