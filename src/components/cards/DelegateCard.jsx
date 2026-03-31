@@ -16,6 +16,17 @@ function getInitialTopicId(stage, wasOrdSupporter) {
   return null; // stage-based default message
 }
 
+function personalMessage(delegate, story, volunteerName) {
+  const name = delegate.firstName || delegate.name?.split(" ")[0] || delegate.name;
+  const vol = volunteerName || "your volunteer";
+  let msg = `Hi ${name}, this is ${vol} — a neighbor and volunteer for Aaron Wiley's campaign for House District 21.`;
+  if (story?.whySupporting) msg += ` I'm supporting Aaron because ${story.whySupporting}.`;
+  if (story?.issues) msg += ` The issues that matter most to me: ${story.issues}.`;
+  if (story?.aboutMe) msg += ` ${story.aboutMe}.`;
+  msg += `\n\nThe convention is April 11 and I'd love for you to support him. wileyfor21.com`;
+  return msg;
+}
+
 function stageBasedMessage(delegate, volunteerName) {
   const name = delegate.firstName || delegate.name?.split(" ")[0] || delegate.name;
   const vol = volunteerName || "your volunteer";
@@ -302,6 +313,16 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
   const [topicId, setTopicId] = useState(() => getInitialTopicId(delegate.stage, delegate.wasOrdSupporter));
   const textareaRef = useRef(null);
 
+  // ── Volunteer story (persisted to localStorage) ──
+  const STORY_KEY = "wileyfor21_volunteer_story";
+  const [showStoryForm, setShowStoryForm] = useState(false);
+  const [volunteerStory, setVolunteerStory] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(STORY_KEY)) || null; } catch { return null; }
+  });
+  const [storyDraft, setStoryDraft] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(STORY_KEY)) || { whySupporting: "", issues: "", aboutMe: "" }; } catch { return { whySupporting: "", issues: "", aboutMe: "" }; }
+  });
+
   // ── Inline call script wizard state ──
   const wizardSteps = callScripts.connect ?? [];
   const [wizardActive, setWizardActive] = useState(false);
@@ -460,7 +481,9 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
   const calendarUrl = buildCalendarUrl(delegate);
 
   const selectedTopic = MESSAGE_TOPICS.find((t) => t.id === topicId) || null;
-  const currentMessage = selectedTopic
+  const currentMessage = volunteerStory && !topicId
+    ? personalMessage(delegate, volunteerStory, volunteerName)
+    : selectedTopic
     ? topicMessage(selectedTopic, delegate, volunteerName)
     : stageBasedMessage(delegate, volunteerName);
 
@@ -471,8 +494,23 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
     setWizardReviewing(false);
     setWizardSaved(false);
   }
-  function handleText() { setExpandedAction(expandedAction === "text" ? null : "text"); }
-  function handleEmail() { setExpandedAction(expandedAction === "email" ? null : "email"); }
+  function handleText() {
+    if (expandedAction === "text") { setExpandedAction(null); setShowStoryForm(false); return; }
+    setExpandedAction("text");
+    setShowStoryForm(!volunteerStory);
+  }
+  function handleEmail() {
+    if (expandedAction === "email") { setExpandedAction(null); setShowStoryForm(false); return; }
+    setExpandedAction("email");
+    setShowStoryForm(!volunteerStory);
+  }
+  function saveStory() {
+    const story = { ...storyDraft };
+    localStorage.setItem(STORY_KEY, JSON.stringify(story));
+    setVolunteerStory(story);
+    setShowStoryForm(false);
+  }
+  function skipStory() { setShowStoryForm(false); }
 
   const emailSubject = `Aaron Wiley for HD 21 — following up, ${delegate.firstName || delegate.name?.split(" ")[0]}`;
   const emailBody = currentMessage +
@@ -738,8 +776,62 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
       })()}
 
       {/* ── Fix 5: Topic pills + message composer (text or email) ── */}
-      {(expandedAction === "text" || expandedAction === "email") && (
+      {(expandedAction === "text" || expandedAction === "email") && showStoryForm && (
         <div className={`rounded-lg p-3 mb-2 border ${expandedAction === "text" ? "bg-blue-50 border-blue-200" : "bg-green-50 border-green-200"}`}>
+          <p className="text-xs font-bold text-gray-700 uppercase tracking-wide mb-0.5">Share your story</p>
+          <p className="text-xs text-gray-500 mb-3">Your message will be personal — tell them why you care.</p>
+
+          <label className="text-xs font-semibold text-gray-700 block mb-1">Why are you supporting Aaron?</label>
+          <textarea
+            value={storyDraft.whySupporting}
+            onChange={(e) => setStoryDraft((s) => ({ ...s, whySupporting: e.target.value }))}
+            placeholder="e.g. He's fought for this neighborhood for 20 years and I trust him."
+            rows={2}
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs resize-none focus:outline-none focus:ring-1 focus:ring-navy/30 bg-white mb-3"
+          />
+
+          <label className="text-xs font-semibold text-gray-700 block mb-1">What issues matter most to you?</label>
+          <textarea
+            value={storyDraft.issues}
+            onChange={(e) => setStoryDraft((s) => ({ ...s, issues: e.target.value }))}
+            placeholder="e.g. housing affordability, healthcare, West Side investment"
+            rows={2}
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs resize-none focus:outline-none focus:ring-1 focus:ring-navy/30 bg-white mb-3"
+          />
+
+          <label className="text-xs font-semibold text-gray-700 block mb-1">Tell them a bit about yourself</label>
+          <textarea
+            value={storyDraft.aboutMe}
+            onChange={(e) => setStoryDraft((s) => ({ ...s, aboutMe: e.target.value }))}
+            placeholder="e.g. I'm a Rose Park resident and parent of two."
+            rows={2}
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs resize-none focus:outline-none focus:ring-1 focus:ring-navy/30 bg-white mb-3"
+          />
+
+          <div className="flex gap-2">
+            <button onClick={skipStory} className="flex-1 py-2 text-xs font-semibold border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50">
+              Skip
+            </button>
+            <button
+              onClick={saveStory}
+              disabled={!storyDraft.whySupporting.trim()}
+              className={`flex-1 py-2 text-xs font-bold rounded-lg text-white transition-colors disabled:opacity-40 ${expandedAction === "text" ? "bg-blue-600 hover:bg-blue-700" : "bg-green-700 hover:bg-green-800"}`}
+            >
+              Save & Continue →
+            </button>
+          </div>
+        </div>
+      )}
+
+      {(expandedAction === "text" || expandedAction === "email") && !showStoryForm && (
+        <div className={`rounded-lg p-3 mb-2 border ${expandedAction === "text" ? "bg-blue-50 border-blue-200" : "bg-green-50 border-green-200"}`}>
+          {/* Story banner */}
+          {volunteerStory && !topicId && (
+            <div className="flex items-center justify-between mb-2 bg-white/60 rounded-lg px-2.5 py-1.5 border border-gray-200">
+              <p className="text-xs text-gray-600">Sending your personal story</p>
+              <button onClick={() => setShowStoryForm(true)} className="text-xs text-navy underline font-medium">Edit</button>
+            </div>
+          )}
           {/* Topic pill selector */}
           <p className="text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">Choose a message topic</p>
           <div className="flex flex-wrap gap-1.5 mb-3">
