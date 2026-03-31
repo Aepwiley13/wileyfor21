@@ -18,6 +18,9 @@ function getInitialTopicId(stage, wasOrdSupporter) {
 
 function personalMessage(delegate, story, volunteerName) {
   const name = delegate.firstName || delegate.name?.split(" ")[0] || delegate.name;
+  if (story?.polishedMessage) {
+    return story.polishedMessage.replace(/\[DELEGATE_NAME\]/g, name);
+  }
   const vol = volunteerName || "your volunteer";
   let msg = `Hi ${name}, this is ${vol} — a neighbor and volunteer for Aaron Wiley's campaign for House District 21.`;
   if (story?.whySupporting) msg += ` I'm supporting Aaron because ${story.whySupporting}.`;
@@ -322,6 +325,13 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
   const [storyDraft, setStoryDraft] = useState(() => {
     try { return JSON.parse(localStorage.getItem(STORY_KEY)) || { whySupporting: "", issues: "", aboutMe: "" }; } catch { return { whySupporting: "", issues: "", aboutMe: "" }; }
   });
+  const [improving, setImproving] = useState(false);
+  const [polishedMessage, setPolishedMessage] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(STORY_KEY))?.polishedMessage || ""; } catch { return ""; }
+  });
+  const [showPolished, setShowPolished] = useState(() => {
+    try { return !!JSON.parse(localStorage.getItem(STORY_KEY))?.polishedMessage; } catch { return false; }
+  });
 
   // ── Inline call script wizard state ──
   const wizardSteps = callScripts.connect ?? [];
@@ -504,8 +514,32 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
     setExpandedAction("email");
     setShowStoryForm(!volunteerStory);
   }
+  async function improveMessage() {
+    setImproving(true);
+    try {
+      const res = await fetch("/.netlify/functions/improve-message", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          whySupporting: storyDraft.whySupporting,
+          issues: storyDraft.issues,
+          aboutMe: storyDraft.aboutMe,
+          volunteerName: volunteerName || "",
+        }),
+      });
+      const data = await res.json();
+      if (data.message) {
+        setPolishedMessage(data.message);
+        setShowPolished(true);
+      }
+    } catch (err) {
+      console.error("Failed to improve message:", err);
+    } finally {
+      setImproving(false);
+    }
+  }
   function saveStory() {
-    const story = { ...storyDraft };
+    const story = { ...storyDraft, polishedMessage: showPolished ? polishedMessage : null };
     localStorage.setItem(STORY_KEY, JSON.stringify(story));
     setVolunteerStory(story);
     setShowStoryForm(false);
@@ -779,47 +813,87 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
       {(expandedAction === "text" || expandedAction === "email") && showStoryForm && (
         <div className={`rounded-lg p-3 mb-2 border ${expandedAction === "text" ? "bg-blue-50 border-blue-200" : "bg-green-50 border-green-200"}`}>
           <p className="text-xs font-bold text-gray-700 uppercase tracking-wide mb-0.5">Share your story</p>
-          <p className="text-xs text-gray-500 mb-3">Your message will be personal — tell them why you care.</p>
+          <p className="text-xs text-gray-500 mb-3">Answer a few questions — then let AI shape it into a message you can send.</p>
 
-          <label className="text-xs font-semibold text-gray-700 block mb-1">Why are you supporting Aaron?</label>
-          <textarea
-            value={storyDraft.whySupporting}
-            onChange={(e) => setStoryDraft((s) => ({ ...s, whySupporting: e.target.value }))}
-            placeholder="e.g. He's fought for this neighborhood for 20 years and I trust him."
-            rows={2}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs resize-none focus:outline-none focus:ring-1 focus:ring-navy/30 bg-white mb-3"
-          />
+          {!showPolished ? (
+            <>
+              <label className="text-xs font-semibold text-gray-700 block mb-1">Why are you supporting Aaron?</label>
+              <textarea
+                value={storyDraft.whySupporting}
+                onChange={(e) => setStoryDraft((s) => ({ ...s, whySupporting: e.target.value }))}
+                placeholder="e.g. He's fought for this neighborhood for 20 years and I trust him."
+                rows={2}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs resize-none focus:outline-none focus:ring-1 focus:ring-navy/30 bg-white mb-3"
+              />
 
-          <label className="text-xs font-semibold text-gray-700 block mb-1">What issues matter most to you?</label>
-          <textarea
-            value={storyDraft.issues}
-            onChange={(e) => setStoryDraft((s) => ({ ...s, issues: e.target.value }))}
-            placeholder="e.g. housing affordability, healthcare, West Side investment"
-            rows={2}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs resize-none focus:outline-none focus:ring-1 focus:ring-navy/30 bg-white mb-3"
-          />
+              <label className="text-xs font-semibold text-gray-700 block mb-1">What issues matter most to you?</label>
+              <textarea
+                value={storyDraft.issues}
+                onChange={(e) => setStoryDraft((s) => ({ ...s, issues: e.target.value }))}
+                placeholder="e.g. housing affordability, healthcare, West Side investment"
+                rows={2}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs resize-none focus:outline-none focus:ring-1 focus:ring-navy/30 bg-white mb-3"
+              />
 
-          <label className="text-xs font-semibold text-gray-700 block mb-1">Tell them a bit about yourself</label>
-          <textarea
-            value={storyDraft.aboutMe}
-            onChange={(e) => setStoryDraft((s) => ({ ...s, aboutMe: e.target.value }))}
-            placeholder="e.g. I'm a Rose Park resident and parent of two."
-            rows={2}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs resize-none focus:outline-none focus:ring-1 focus:ring-navy/30 bg-white mb-3"
-          />
+              <label className="text-xs font-semibold text-gray-700 block mb-1">Tell them a bit about yourself</label>
+              <textarea
+                value={storyDraft.aboutMe}
+                onChange={(e) => setStoryDraft((s) => ({ ...s, aboutMe: e.target.value }))}
+                placeholder="e.g. I'm a Rose Park resident and parent of two."
+                rows={2}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs resize-none focus:outline-none focus:ring-1 focus:ring-navy/30 bg-white mb-3"
+              />
 
-          <div className="flex gap-2">
-            <button onClick={skipStory} className="flex-1 py-2 text-xs font-semibold border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50">
-              Skip
-            </button>
-            <button
-              onClick={saveStory}
-              disabled={!storyDraft.whySupporting.trim()}
-              className={`flex-1 py-2 text-xs font-bold rounded-lg text-white transition-colors disabled:opacity-40 ${expandedAction === "text" ? "bg-blue-600 hover:bg-blue-700" : "bg-green-700 hover:bg-green-800"}`}
-            >
-              Save & Continue →
-            </button>
-          </div>
+              <button
+                onClick={improveMessage}
+                disabled={!storyDraft.whySupporting.trim() || improving}
+                className={`w-full py-2 text-xs font-bold rounded-lg border transition-colors mb-2 disabled:opacity-40 ${
+                  expandedAction === "text"
+                    ? "bg-white text-blue-700 border-blue-300 hover:bg-blue-100"
+                    : "bg-white text-green-700 border-green-300 hover:bg-green-100"
+                }`}
+              >
+                {improving ? "Improving your message..." : "✨ Polish with AI"}
+              </button>
+
+              <div className="flex gap-2">
+                <button onClick={skipStory} className="flex-1 py-2 text-xs font-semibold border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50">
+                  Skip
+                </button>
+                <button
+                  onClick={saveStory}
+                  disabled={!storyDraft.whySupporting.trim()}
+                  className={`flex-1 py-2 text-xs font-bold rounded-lg text-white transition-colors disabled:opacity-40 ${expandedAction === "text" ? "bg-blue-600 hover:bg-blue-700" : "bg-green-700 hover:bg-green-800"}`}
+                >
+                  Use as-is →
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <p className="text-xs font-semibold text-gray-700 mb-1">Your message — edit anything you like:</p>
+              <textarea
+                value={polishedMessage}
+                onChange={(e) => setPolishedMessage(e.target.value)}
+                rows={6}
+                className={`w-full border rounded-lg px-3 py-2 text-xs resize-none focus:outline-none focus:ring-1 bg-white mb-2 ${
+                  expandedAction === "text" ? "border-blue-300 focus:ring-blue-400" : "border-green-300 focus:ring-green-400"
+                }`}
+              />
+              <button
+                onClick={() => setShowPolished(false)}
+                className="text-xs text-gray-500 underline mb-3 block"
+              >
+                ← Edit my answers
+              </button>
+              <button
+                onClick={saveStory}
+                className={`w-full py-2 text-xs font-bold rounded-lg text-white transition-colors ${expandedAction === "text" ? "bg-blue-600 hover:bg-blue-700" : "bg-green-700 hover:bg-green-800"}`}
+              >
+                Save & Continue →
+              </button>
+            </>
+          )}
         </div>
       )}
 
