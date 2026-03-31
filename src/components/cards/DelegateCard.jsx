@@ -311,7 +311,7 @@ function SurveyPanel({ delegate, onSurveySent }) {
 
 // ── Calling All Delegates HTML template row ───────────────────────────────────
 
-const CAD_SUBJECT = "Aaron Wiley for HD 21 — Calling All Delegates";
+const CAD_SUBJECT = "Yes, Another Campaign Email. Read This One.";
 
 function CallAllDelegatesRow({ email, firstName }) {
   const [status, setStatus] = useState("idle"); // idle | copying | done | error
