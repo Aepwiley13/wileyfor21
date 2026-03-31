@@ -16,13 +16,13 @@ function computeSummary(delegates) {
     not_winnable: 0,
   };
   for (const d of delegates) {
-    if (d.isDeferred) continue;
+    if (d.isDeferred || d.isVacant) continue;
     const s = d.stage || "unknown";
     if (s in stageCounts) stageCounts[s]++;
     else stageCounts.unknown++;
   }
   const committedTotal = stageCounts.locked + stageCounts.committed;
-  const total = delegates.filter((d) => !d.isDeferred).length;
+  const total = delegates.filter((d) => !d.isDeferred && !d.isVacant).length;
   return {
     stageCounts,
     total,
