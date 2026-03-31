@@ -107,9 +107,14 @@ export default function EndorsementsWallPage() {
                       {e.firstName?.[0]}{e.lastName?.[0]}
                     </div>
                   )}
-                  <p className="font-semibold text-gray-900 text-sm leading-tight">
-                    {e.firstName} {e.lastName}
-                  </p>
+                  <div>
+                    <p className="font-semibold text-gray-900 text-sm leading-tight">
+                      {e.firstName} {e.lastName}
+                    </p>
+                    {e.title && (
+                      <p className="text-xs text-coral font-medium mt-0.5">{e.title}</p>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}

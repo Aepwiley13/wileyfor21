@@ -7,7 +7,7 @@ import PublicNav from "@/components/layout/PublicNav";
 const mockEndorsements = [];
 
 export default function EndorsementPage() {
-  const [form, setForm] = useState({ firstName: "", lastName: "", email: "", why: "" });
+  const [form, setForm] = useState({ firstName: "", lastName: "", email: "", title: "", why: "" });
   const [photo, setPhoto] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
   const [endorsements, setEndorsements] = useState([]);
@@ -85,7 +85,7 @@ export default function EndorsementPage() {
       }
 
       setSubmitted(true);
-      setForm({ firstName: "", lastName: "", email: "", why: "" });
+      setForm({ firstName: "", lastName: "", email: "", title: "", why: "" });
       setPhoto(null);
       setPhotoPreview(null);
     } catch (err) {
@@ -169,6 +169,19 @@ export default function EndorsementPage() {
                 value={form.email}
                 onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
                 placeholder="you@example.com"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-navy/30"
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-gray-700 block mb-1">
+                Title / Role <span className="text-gray-400 font-normal">(optional)</span>
+              </label>
+              <input
+                type="text"
+                value={form.title}
+                onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
+                placeholder="e.g. Delegate, City Council Member, CEO"
                 className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-navy/30"
               />
             </div>
@@ -257,6 +270,9 @@ export default function EndorsementPage() {
                   <p className="font-medium text-gray-900 text-sm leading-tight">
                     {endorser.firstName} {endorser.lastName}
                   </p>
+                  {endorser.title && (
+                    <p className="text-xs text-coral font-medium">{endorser.title}</p>
+                  )}
                 </div>
               ))}
             </div>
