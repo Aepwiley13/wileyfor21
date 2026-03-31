@@ -11,6 +11,7 @@ import DelegateLoginPage from "@/pages/DelegateLoginPage";
 import DelegateSignupPage from "@/pages/DelegateSignupPage";
 import DelegateDashboard from "@/pages/DelegateDashboard";
 import DelegateSurveyDirectPage from "@/pages/DelegateSurveyDirectPage";
+import EndorsementPage from "@/pages/EndorsementPage";
 
 export default function App() {
   return (
@@ -48,6 +49,9 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+
+        {/* Public endorsement hub */}
+        <Route path="/endorse" element={<EndorsementPage />} />
 
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
