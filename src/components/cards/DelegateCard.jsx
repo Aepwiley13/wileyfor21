@@ -364,6 +364,22 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
     setSocialOpen(false);
   }
 
+  // ── Notes state ──
+  const [notes, setNotes] = useState(delegate.notes || "");
+  const [notesSaving, setNotesSaving] = useState(false);
+  const [notesSaved, setNotesSaved] = useState(false);
+
+  async function saveNotes(value) {
+    setNotesSaving(true);
+    if (!useMock && db) {
+      const { doc, updateDoc } = await import("firebase/firestore");
+      await updateDoc(doc(db, "delegates", delegate.id), { notes: value });
+    }
+    setNotesSaving(false);
+    setNotesSaved(true);
+    setTimeout(() => setNotesSaved(false), 2000);
+  }
+
   // ── Ranking state ──
   const [rankings, setRankings] = useState(delegate.candidateRankings || {});
   const [rankingOpen, setRankingOpen] = useState(false);
@@ -669,6 +685,23 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
             {rankingSaving && <p className="text-[10px] text-green-600 mt-1 text-right">Saving...</p>}
           </div>
         )}
+      </div>
+
+      {/* ── Notes ── */}
+      <div className="mb-2">
+        <div className="flex items-center justify-between mb-1">
+          <p className="text-xs font-semibold text-gray-700">&#128221; Notes</p>
+          {notesSaving && <span className="text-[10px] text-gray-400">Saving...</span>}
+          {notesSaved && <span className="text-[10px] text-green-600">Saved</span>}
+        </div>
+        <textarea
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          onBlur={(e) => saveNotes(e.target.value)}
+          placeholder="Add notes about this delegate..."
+          rows={3}
+          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-xs resize-none focus:outline-none focus:ring-2 focus:ring-navy/30 bg-gray-50"
+        />
       </div>
 
       {/* ── Primary action buttons ── */}
