@@ -147,6 +147,14 @@ export default function VolunteerDashboard() {
           >
             Delegate Hub
           </Link>
+          {user?.role === "admin" && (
+            <Link
+              to="/admin"
+              className="text-xs font-bold px-3 py-1 rounded-lg bg-coral text-white hover:bg-coral/90 transition-colors hidden sm:inline-block"
+            >
+              Admin Dashboard
+            </Link>
+          )}
           <span className="text-white/70 text-sm hidden sm:inline">{user?.name || user?.displayName}</span>
           <button
             onClick={signOut}
