@@ -1,10 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { db, useMock } from "@/lib/firebase";
+import { mockEndorsements } from "@/lib/mockStore";
 import PublicNav from "@/components/layout/PublicNav";
-
-// In-memory store for mock/dev mode
-const mockEndorsements = [];
 
 export default function EndorsementPage() {
   const [form, setForm] = useState({ firstName: "", lastName: "", email: "", title: "", why: "" });
@@ -99,14 +97,15 @@ export default function EndorsementPage() {
           photoURL = await getDownloadURL(storageRef);
         }
 
-        if (db) {
-          const { collection, addDoc, serverTimestamp } = await import("firebase/firestore");
-          await addDoc(collection(db, "endorsements"), {
-            ...form,
-            photoURL,
-            createdAt: serverTimestamp(),
-          });
+        if (!db) {
+          throw new Error("Database connection unavailable. Please contact the campaign.");
         }
+        const { collection, addDoc, serverTimestamp } = await import("firebase/firestore");
+        await addDoc(collection(db, "endorsements"), {
+          ...form,
+          photoURL,
+          createdAt: serverTimestamp(),
+        });
       }
 
       setSubmitted(true);
