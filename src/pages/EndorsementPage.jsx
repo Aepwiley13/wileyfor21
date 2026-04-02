@@ -86,15 +86,20 @@ export default function EndorsementPage() {
         mockEndorsements.unshift(newEndorsement);
         setEndorsements([...mockEndorsements]);
       } else {
-        // Compress then upload photo to Firebase Storage
+        // Compress then upload photo — if it fails, continue without the photo
         if (photo) {
-          const compressed = await compressImage(photo);
-          const { getStorage, ref, uploadBytes, getDownloadURL } = await import("firebase/storage");
-          const { getApp } = await import("firebase/app");
-          const storage = getStorage(getApp());
-          const storageRef = ref(storage, `endorsements/${Date.now()}.jpg`);
-          await uploadBytes(storageRef, compressed, { contentType: "image/jpeg" });
-          photoURL = await getDownloadURL(storageRef);
+          try {
+            const compressed = await compressImage(photo);
+            const { getStorage, ref, uploadBytes, getDownloadURL } = await import("firebase/storage");
+            const { getApp } = await import("firebase/app");
+            const storage = getStorage(getApp());
+            const storageRef = ref(storage, `endorsements/${Date.now()}.jpg`);
+            await uploadBytes(storageRef, compressed, { contentType: "image/jpeg" });
+            photoURL = await getDownloadURL(storageRef);
+          } catch (uploadErr) {
+            console.error("Photo upload failed, submitting without photo:", uploadErr);
+            // Non-fatal — endorsement still saves, photo is just omitted
+          }
         }
 
         if (!db) {
@@ -114,14 +119,7 @@ export default function EndorsementPage() {
       setPhotoPreview(null);
     } catch (err) {
       console.error(err);
-      const msg = err?.message || "";
-      if (msg.includes("storage") || msg.includes("upload") || msg.includes("compress") || msg.includes("image")) {
-        setError("Photo upload failed. Try a different image or skip the photo and submit without one.");
-      } else if (msg.includes("network") || msg.includes("fetch")) {
-        setError("Network error — check your connection and try again.");
-      } else {
-        setError("Something went wrong. Please try again.");
-      }
+      setError("Something went wrong saving your endorsement. Please try again.");
     } finally {
       setSubmitting(false);
     }

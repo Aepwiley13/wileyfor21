@@ -1,0 +1,8 @@
+[
+  {
+    "origin": ["https://wileyfor21.com", "https://www.wileyfor21.com"],
+    "method": ["GET", "POST", "PUT", "DELETE", "HEAD"],
+    "responseHeader": ["Content-Type", "Authorization", "x-goog-*"],
+    "maxAgeSeconds": 3600
+  }
+]
