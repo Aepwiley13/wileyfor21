@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { db, useMock } from "@/lib/firebase";
+import { mockEndorsements } from "@/lib/mockStore";
 import PublicNav from "@/components/layout/PublicNav";
-
-// Shared mock store with EndorsementPage
-const mockEndorsements = [];
 
 export default function EndorsementsWallPage() {
   const [endorsements, setEndorsements] = useState([]);
