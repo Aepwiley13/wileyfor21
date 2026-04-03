@@ -79,6 +79,138 @@ function mapRow(row) {
   return { name, precinct, role, phone, email, address };
 }
 
+function AddDelegateModal({ onClose, onAdded }) {
+  const [form, setForm] = useState({ name: "", precinct: "", role: "", phone: "", email: "", address: "" });
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(null);
+
+  function set(field, value) {
+    setForm((f) => ({ ...f, [field]: value }));
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    if (!form.name.trim()) { setError("Name is required."); return; }
+    setSaving(true);
+    setError(null);
+    try {
+      const { collection, addDoc } = await import("firebase/firestore");
+      const isPLEO = form.role.toUpperCase().includes("PLEO");
+      const isLock = form.name.trim() === "Jeneanne Lock";
+      await addDoc(collection(db, "delegates"), {
+        name: form.name.trim(),
+        precinct: form.precinct.trim(),
+        role: form.role.trim(),
+        phone: form.phone.trim(),
+        email: form.email.trim(),
+        address: form.address.trim(),
+        district: "HD21",
+        stage: "unknown",
+        stageHistory: [],
+        currentLeaning: "undecided",
+        leaningHistory: [],
+        assignedTo: null,
+        lastContactedAt: null,
+        totalContacts: 0,
+        conflictOfInterest: isLock,
+        isOpposingCandidate: isLock,
+        isPLEO,
+        isVacant: false,
+      });
+      onAdded?.();
+      onClose();
+    } catch (err) {
+      console.error(err);
+      setError("Failed to save delegate. Check console.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-lg font-bold text-navy">Add Delegate</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none">&times;</button>
+        </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-xs font-semibold text-gray-600 mb-1">Full Name <span className="text-red-500">*</span></label>
+            <input
+              value={form.name}
+              onChange={(e) => set("name", e.target.value)}
+              placeholder="e.g. Jane Smith"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-navy"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1">Precinct</label>
+              <input
+                value={form.precinct}
+                onChange={(e) => set("precinct", e.target.value)}
+                placeholder="e.g. SLC030"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-navy"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1">Role</label>
+              <input
+                value={form.role}
+                onChange={(e) => set("role", e.target.value)}
+                placeholder="e.g. P Chair"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-navy"
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1">Phone</label>
+              <input
+                value={form.phone}
+                onChange={(e) => set("phone", e.target.value)}
+                placeholder="801-555-1234"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-navy"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1">Email</label>
+              <input
+                value={form.email}
+                onChange={(e) => set("email", e.target.value)}
+                placeholder="jane@example.com"
+                type="email"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-navy"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-600 mb-1">Address</label>
+            <input
+              value={form.address}
+              onChange={(e) => set("address", e.target.value)}
+              placeholder="123 Main St, Salt Lake City, UT 84101"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-navy"
+            />
+          </div>
+          {error && <p className="text-red-500 text-xs">{error}</p>}
+          <div className="flex justify-end gap-3 pt-1">
+            <button type="button" onClick={onClose}
+              className="px-4 py-2 text-sm font-semibold rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors">
+              Cancel
+            </button>
+            <button type="submit" disabled={saving}
+              className="px-4 py-2 text-sm font-semibold rounded-lg bg-navy text-white hover:bg-navy/90 disabled:opacity-50 transition-colors">
+              {saving ? "Saving…" : "Add Delegate"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 function CsvImporter({ onImported }) {
   const fileRef = useRef();
   const [status, setStatus] = useState(null);
@@ -289,6 +421,7 @@ export default function AdminDashboard() {
   const [selected, setSelected] = useState(new Set());
   const [bulkVolunteer, setBulkVolunteer] = useState("");
   const [bulkSaving, setBulkSaving] = useState(false);
+  const [showAddDelegate, setShowAddDelegate] = useState(false);
 
   useEffect(() => {
     let unsub;
@@ -390,6 +523,12 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {showAddDelegate && (
+        <AddDelegateModal
+          onClose={() => setShowAddDelegate(false)}
+          onAdded={() => {}}
+        />
+      )}
       <header className="bg-navy text-white px-6 py-4 flex items-center justify-between">
         <div>
           <span className="text-xs font-bold tracking-widest opacity-60 uppercase">Wiley for HD21</span>
@@ -444,6 +583,11 @@ export default function AdminDashboard() {
           <div className="flex flex-wrap items-center gap-3 mb-4">
             <h2 className="font-bold text-navy text-lg">Delegates</h2>
             <CsvImporter onImported={() => {}} />
+            <button
+              onClick={() => setShowAddDelegate(true)}
+              className="px-4 py-2 text-sm font-semibold rounded-lg bg-navy text-white hover:bg-navy/90 transition-colors">
+              + Add Delegate
+            </button>
             <button onClick={deferAllPVice}
               className="px-3 py-1.5 text-xs font-semibold rounded-lg border border-yellow-400 text-yellow-700 hover:bg-yellow-50 transition-colors">
               Defer all P Vice
