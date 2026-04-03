@@ -506,6 +506,14 @@ export default function AdminDashboard() {
   const progressPct = Math.min(100, Math.round((committed / target) * 100));
   const days = daysUntil(CONVENTION_DATE);
 
+  const activeTotal = delegates.filter((d) => !d.isVacant && !d.isOpposingCandidate && !d.isDeferred).length;
+  const voteTarget56 = Math.ceil(target * 0.56);
+  const neededFor56 = Math.max(0, voteTarget56 - committed);
+  const vote56Pct = Math.min(100, Math.round((committed / voteTarget56) * 100));
+  const stageCounts = Object.fromEntries(
+    STAGES.map((s) => [s, delegates.filter((d) => d.stage === s && !d.isDeferred && !d.isVacant && !d.isOpposingCandidate).length])
+  );
+
   const precincts = [...new Set(delegates.map((d) => d.precinct).filter(Boolean))].sort();
 
   const filteredDelegates = delegates.filter((d) => {
@@ -584,7 +592,7 @@ export default function AdminDashboard() {
               <div className="text-sm text-gray-500">Days until April 11</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-navy">{delegates.filter((d) => !d.isVacant && !d.isOpposingCandidate && !d.isDeferred).length}</div>
+              <div className="text-3xl font-bold text-navy">{activeTotal}</div>
               <div className="text-sm text-gray-500">Active delegates</div>
             </div>
             <div>
@@ -602,6 +610,53 @@ export default function AdminDashboard() {
               <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
                 <div className="h-full rounded-full transition-all"
                   style={{ width: `${progressPct}%`, backgroundColor: progressPct >= 100 ? "#22c55e" : "#034A76" }} />
+              </div>
+            </div>
+          </div>
+
+          {/* 56% Vote Threshold */}
+          <div className="mt-5 pt-5 border-t border-gray-100">
+            <div className="flex flex-wrap items-center gap-8 mb-5">
+              <div>
+                <div className="text-2xl font-bold text-navy">
+                  {committed}<span className="text-gray-400 text-lg font-normal"> / {voteTarget56}</span>
+                </div>
+                <div className="text-sm text-gray-500">56% Vote Threshold</div>
+              </div>
+              <div>
+                <div className={`text-2xl font-bold ${neededFor56 === 0 ? "text-green-600" : "text-coral"}`}>{neededFor56}</div>
+                <div className="text-sm text-gray-500">Still needed for 56%</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-navy">{vote56Pct}%</div>
+                <div className="text-sm text-gray-500">Current vote share</div>
+              </div>
+              <div className="flex-1 min-w-[200px]">
+                <div className="flex justify-between text-xs text-gray-500 mb-1">
+                  <span>Progress to 56% ({voteTarget56} delegates needed)</span><span>{vote56Pct}%</span>
+                </div>
+                <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+                  <div className="h-full rounded-full transition-all"
+                    style={{ width: `${vote56Pct}%`, backgroundColor: vote56Pct >= 100 ? "#22c55e" : "#f59e0b" }} />
+                </div>
+              </div>
+            </div>
+
+            {/* Stage breakdown */}
+            <div>
+              <div className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Stage breakdown — {activeTotal} active delegates</div>
+              <div className="flex flex-wrap gap-2">
+                {STAGES.map((s) => {
+                  const count = stageCounts[s] || 0;
+                  const pct = activeTotal > 0 ? Math.round((count / activeTotal) * 100) : 0;
+                  return (
+                    <div key={s} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold ${STAGE_COLORS[s]}`}>
+                      <span className="capitalize">{s === "not_winnable" ? "not winnable" : s}</span>
+                      <span className="font-bold">{count}</span>
+                      <span className="opacity-60">({pct}%)</span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
