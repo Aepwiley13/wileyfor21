@@ -1,38 +1,78 @@
 import { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { useParams, useSearchParams, Link } from "react-router-dom";
 import { db, useMock } from "@/lib/firebase";
 import { mockEndorsements } from "@/lib/mockStore";
 import PublicNav from "@/components/layout/PublicNav";
 
-export default function EndorsementPage() {
+export default function EndorsementEditPage() {
+  const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token");
+
   const [form, setForm] = useState({ firstName: "", lastName: "", email: "", title: "", why: "" });
   const [photo, setPhoto] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
-  const [endorsements, setEndorsements] = useState([]);
+  const [existingPhotoURL, setExistingPhotoURL] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [authError, setAuthError] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [editLink, setEditLink] = useState(null);
-  const [copied, setCopied] = useState(false);
+  const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
   const fileInputRef = useRef();
 
-  // Load endorsements (real-time in Firebase, static in mock)
+  // Load the endorsement and validate the token
   useEffect(() => {
-    if (useMock) {
-      setEndorsements([...mockEndorsements]);
+    if (!id || !token) {
+      setAuthError(true);
+      setLoading(false);
       return;
     }
-    if (!db) return;
-    let unsubscribe;
+
+    if (useMock) {
+      const found = mockEndorsements.find((e) => e.id === id);
+      if (!found || found.editToken !== token) {
+        setAuthError(true);
+      } else {
+        setForm({
+          firstName: found.firstName || "",
+          lastName: found.lastName || "",
+          email: found.email || "",
+          title: found.title || "",
+          why: found.why || "",
+        });
+        setExistingPhotoURL(found.photoURL || null);
+        setPhotoPreview(found.photoURL || null);
+      }
+      setLoading(false);
+      return;
+    }
+
     (async () => {
-      const { collection, query, orderBy, onSnapshot } = await import("firebase/firestore");
-      const q = query(collection(db, "endorsements"), orderBy("createdAt", "desc"));
-      unsubscribe = onSnapshot(q, (snap) => {
-        setEndorsements(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
-      });
+      try {
+        const { doc, getDoc } = await import("firebase/firestore");
+        const snap = await getDoc(doc(db, "endorsements", id));
+        if (!snap.exists() || snap.data().editToken !== token) {
+          setAuthError(true);
+        } else {
+          const data = snap.data();
+          setForm({
+            firstName: data.firstName || "",
+            lastName: data.lastName || "",
+            email: data.email || "",
+            title: data.title || "",
+            why: data.why || "",
+          });
+          setExistingPhotoURL(data.photoURL || null);
+          setPhotoPreview(data.photoURL || null);
+        }
+      } catch (err) {
+        console.error(err);
+        setAuthError(true);
+      } finally {
+        setLoading(false);
+      }
     })();
-    return () => unsubscribe?.();
-  }, []);
+  }, [id, token]);
 
   function handlePhotoChange(e) {
     const file = e.target.files[0];
@@ -41,7 +81,6 @@ export default function EndorsementPage() {
     setPhotoPreview(URL.createObjectURL(file));
   }
 
-  // Compress image to max 900px on longest side, JPEG 80% quality
   function compressImage(file) {
     return new Promise((resolve, reject) => {
       const img = new Image();
@@ -75,24 +114,15 @@ export default function EndorsementPage() {
     setSubmitting(true);
 
     try {
-      let photoURL = null;
-      const editToken = crypto.randomUUID();
+      let photoURL = existingPhotoURL;
 
       if (useMock) {
-        photoURL = photoPreview;
-        const newId = Date.now().toString();
-        const newEndorsement = {
-          id: newId,
-          ...form,
-          photoURL,
-          editToken,
-          createdAt: new Date().toISOString(),
-        };
-        mockEndorsements.unshift(newEndorsement);
-        setEndorsements([...mockEndorsements]);
-        setEditLink(`${window.location.origin}/endorse/edit/${newId}?token=${editToken}`);
+        if (photo) photoURL = photoPreview;
+        const idx = mockEndorsements.findIndex((e) => e.id === id);
+        if (idx !== -1) {
+          mockEndorsements[idx] = { ...mockEndorsements[idx], ...form, photoURL };
+        }
       } else {
-        // Compress then upload photo — if it fails, continue without the photo
         if (photo) {
           try {
             const compressed = await compressImage(photo);
@@ -103,31 +133,24 @@ export default function EndorsementPage() {
             await uploadBytes(storageRef, compressed, { contentType: "image/jpeg" });
             photoURL = await getDownloadURL(storageRef);
           } catch (uploadErr) {
-            console.error("Photo upload failed, submitting without photo:", uploadErr);
-            // Non-fatal — endorsement still saves, photo is just omitted
+            console.error("Photo upload failed, saving without new photo:", uploadErr);
           }
         }
 
-        if (!db) {
-          throw new Error("Database connection unavailable. Please contact the campaign.");
-        }
-        const { collection, addDoc, serverTimestamp } = await import("firebase/firestore");
-        const docRef = await addDoc(collection(db, "endorsements"), {
+        const { doc, updateDoc } = await import("firebase/firestore");
+        await updateDoc(doc(db, "endorsements", id), {
           ...form,
           photoURL,
-          editToken,
-          createdAt: serverTimestamp(),
         });
-        setEditLink(`${window.location.origin}/endorse/edit/${docRef.id}?token=${editToken}`);
       }
 
-      setSubmitted(true);
-      setForm({ firstName: "", lastName: "", email: "", title: "", why: "" });
+      setExistingPhotoURL(photoURL);
       setPhoto(null);
-      setPhotoPreview(null);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 4000);
     } catch (err) {
       console.error(err);
-      setError("Something went wrong saving your endorsement. Please try again.");
+      setError("Something went wrong saving your changes. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -137,67 +160,27 @@ export default function EndorsementPage() {
     <div className="min-h-screen bg-cream">
       <PublicNav />
       <header className="bg-navy text-white py-8 px-4 text-center">
-        <h2 className="font-condensed font-black text-3xl tracking-wide">Endorse Aaron Wiley</h2>
+        <h2 className="font-condensed font-black text-3xl tracking-wide">Update Your Endorsement</h2>
         <p className="text-white/60 text-sm mt-1">Utah House District 21 · April 11, 2026</p>
       </header>
 
-      <main className="max-w-2xl mx-auto px-4 py-10 space-y-10">
-        {/* Intro */}
-        <div className="text-center">
-          <p className="text-gray-600 text-sm max-w-md mx-auto">
-            Add your name to the growing list of neighbors who support Aaron's vision for a stronger District 21.
-          </p>
-          <Link to="/endorsements" className="inline-block mt-3 text-coral text-sm font-semibold hover:underline">
-            See all endorsements →
-          </Link>
-        </div>
-
-        {/* Form / Success */}
-        {submitted ? (
+      <main className="max-w-2xl mx-auto px-4 py-10">
+        {loading ? (
+          <div className="text-center text-gray-400 py-20 text-sm">Loading…</div>
+        ) : authError ? (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-center">
-            <div className="w-14 h-14 rounded-full bg-navy flex items-center justify-center mx-auto mb-3">
-              <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            <div className="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-3">
+              <svg className="w-7 h-7 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
               </svg>
             </div>
-            <h3 className="font-condensed font-bold text-xl text-navy mb-1">Thank you for your endorsement!</h3>
-            <p className="text-gray-500 text-sm mb-5">Your name has been added to the list below.</p>
-
-            {editLink && (
-              <div className="mb-5 text-left bg-gray-50 border border-gray-200 rounded-xl p-4">
-                <p className="text-xs font-semibold text-gray-600 mb-2">
-                  Want to update your endorsement later? Save this private link:
-                </p>
-                <div className="flex items-center gap-2">
-                  <input
-                    readOnly
-                    value={editLink}
-                    className="flex-1 text-xs bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-700 focus:outline-none"
-                    onFocus={(e) => e.target.select()}
-                  />
-                  <button
-                    onClick={() => {
-                      navigator.clipboard.writeText(editLink);
-                      setCopied(true);
-                      setTimeout(() => setCopied(false), 2000);
-                    }}
-                    className="shrink-0 px-3 py-2 rounded-lg text-xs font-semibold bg-navy text-white hover:bg-navy/90 transition-colors"
-                  >
-                    {copied ? "Copied!" : "Copy"}
-                  </button>
-                </div>
-                <p className="text-xs text-gray-400 mt-2">
-                  This link is private — only someone with it can edit your endorsement.
-                </p>
-              </div>
-            )}
-
-            <button
-              onClick={() => { setSubmitted(false); setEditLink(null); }}
-              className="text-coral underline text-sm hover:text-coral/80"
-            >
-              Add another endorsement
-            </button>
+            <h3 className="font-condensed font-bold text-xl text-navy mb-2">Link not valid</h3>
+            <p className="text-gray-500 text-sm mb-5">
+              This edit link is invalid or has expired. Please use the exact link from your submission confirmation.
+            </p>
+            <Link to="/endorse" className="text-coral underline text-sm hover:text-coral/80">
+              Submit a new endorsement →
+            </Link>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 space-y-4">
@@ -253,7 +236,6 @@ export default function EndorsementPage() {
               />
             </div>
 
-            {/* Why endorsing */}
             <div>
               <label className="text-sm font-medium text-gray-700 block mb-1">
                 Why are you endorsing Aaron? <span className="text-gray-400 font-normal">(optional)</span>
@@ -285,10 +267,10 @@ export default function EndorsementPage() {
                     </svg>
                   </div>
                 )}
-                <span className="text-xs text-gray-500">{photo ? photo.name : "Click to upload a photo"}</span>
-                {photo && (
-                  <span className="text-xs text-gray-400">Image will be automatically resized</span>
-                )}
+                <span className="text-xs text-gray-500">
+                  {photo ? photo.name : existingPhotoURL ? "Click to replace photo" : "Click to upload a photo"}
+                </span>
+                {photo && <span className="text-xs text-gray-400">Image will be automatically resized</span>}
               </div>
               <input
                 ref={fileInputRef}
@@ -301,53 +283,23 @@ export default function EndorsementPage() {
 
             {error && <p className="text-red-600 text-sm">{error}</p>}
 
+            {saved && (
+              <p className="text-green-600 text-sm font-medium">Changes saved successfully.</p>
+            )}
+
             <button
               type="submit"
               disabled={submitting}
               className="w-full py-3 rounded-xl font-condensed font-bold text-white bg-coral hover:bg-coral/90 disabled:opacity-50 transition-colors text-lg"
             >
-              {submitting ? "Submitting..." : "Add My Endorsement"}
+              {submitting ? "Saving…" : "Save Changes"}
             </button>
+
+            <p className="text-center text-xs text-gray-400">
+              <Link to="/endorsements" className="hover:underline">View all endorsements →</Link>
+            </p>
           </form>
         )}
-
-        {/* Endorser List */}
-        <div>
-          <h3 className="font-condensed font-bold text-2xl text-navy mb-4">
-            {endorsements.length > 0
-              ? `${endorsements.length} Endorser${endorsements.length !== 1 ? "s" : ""}`
-              : "Be the first to endorse!"}
-          </h3>
-
-          {endorsements.length > 0 && (
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {endorsements.map((endorser) => (
-                <div
-                  key={endorser.id}
-                  className="bg-white rounded-xl border border-gray-200 p-4 flex flex-col items-center text-center gap-2"
-                >
-                  {endorser.photoURL ? (
-                    <img
-                      src={endorser.photoURL}
-                      alt={`${endorser.firstName} ${endorser.lastName}`}
-                      className="w-16 h-16 rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-16 h-16 rounded-full bg-navy flex items-center justify-center text-white font-condensed font-bold text-xl">
-                      {endorser.firstName?.[0]}{endorser.lastName?.[0]}
-                    </div>
-                  )}
-                  <p className="font-medium text-gray-900 text-sm leading-tight">
-                    {endorser.firstName} {endorser.lastName}
-                  </p>
-                  {endorser.title && (
-                    <p className="text-xs text-coral font-medium">{endorser.title}</p>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
       </main>
 
       <footer className="text-center text-xs text-gray-400 py-6 border-t border-gray-200 mt-10">

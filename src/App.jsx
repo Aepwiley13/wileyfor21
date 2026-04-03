@@ -12,6 +12,7 @@ import DelegateSignupPage from "@/pages/DelegateSignupPage";
 import DelegateDashboard from "@/pages/DelegateDashboard";
 import DelegateSurveyDirectPage from "@/pages/DelegateSurveyDirectPage";
 import EndorsementPage from "@/pages/EndorsementPage";
+import EndorsementEditPage from "@/pages/EndorsementEditPage";
 import EndorsementsWallPage from "@/pages/EndorsementsWallPage";
 
 export default function App() {
@@ -53,6 +54,7 @@ export default function App() {
 
         {/* Public endorsement hub */}
         <Route path="/endorse" element={<EndorsementPage />} />
+        <Route path="/endorse/edit/:id" element={<EndorsementEditPage />} />
         <Route path="/endorsements" element={<EndorsementsWallPage />} />
 
         <Route path="*" element={<Navigate to="/login" replace />} />
