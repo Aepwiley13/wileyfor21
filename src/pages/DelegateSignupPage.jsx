@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { doc, setDoc, updateDoc, collection, query, where, getDocs, limit, serverTimestamp } from "firebase/firestore";
 import { auth, db, useMock } from "@/lib/firebase";
+import { useAuth } from "@/hooks/useAuth";
 
 /**
  * Looks up an existing volunteer-managed delegate doc by email or phone.
@@ -48,6 +49,13 @@ async function findExistingDelegate(email, phone) {
 
 export default function DelegateSignupPage() {
   const navigate = useNavigate();
+  const { user, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading && user) {
+      navigate("/delegate/dashboard", { replace: true });
+    }
+  }, [user, loading, navigate]);
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
