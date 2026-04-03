@@ -79,8 +79,16 @@ function mapRow(row) {
   return { name, precinct, role, phone, email, address };
 }
 
-function AddDelegateModal({ onClose, onAdded }) {
-  const [form, setForm] = useState({ name: "", precinct: "", role: "", phone: "", email: "", address: "" });
+function AddDelegateModal({ onClose, onAdded, delegate }) {
+  const isEdit = Boolean(delegate);
+  const [form, setForm] = useState({
+    name: delegate?.name || "",
+    precinct: delegate?.precinct || "",
+    role: delegate?.role || "",
+    phone: delegate?.phone || "",
+    email: delegate?.email || "",
+    address: delegate?.address || "",
+  });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
 
@@ -94,29 +102,44 @@ function AddDelegateModal({ onClose, onAdded }) {
     setSaving(true);
     setError(null);
     try {
-      const { collection, addDoc } = await import("firebase/firestore");
       const isPLEO = form.role.toUpperCase().includes("PLEO");
       const isLock = form.name.trim() === "Jeneanne Lock";
-      await addDoc(collection(db, "delegates"), {
-        name: form.name.trim(),
-        precinct: form.precinct.trim(),
-        role: form.role.trim(),
-        phone: form.phone.trim(),
-        email: form.email.trim(),
-        address: form.address.trim(),
-        district: "HD21",
-        stage: "unknown",
-        stageHistory: [],
-        currentLeaning: "undecided",
-        leaningHistory: [],
-        assignedTo: null,
-        lastContactedAt: null,
-        totalContacts: 0,
-        conflictOfInterest: isLock,
-        isOpposingCandidate: isLock,
-        isPLEO,
-        isVacant: false,
-      });
+      if (isEdit) {
+        const { doc, updateDoc } = await import("firebase/firestore");
+        await updateDoc(doc(db, "delegates", delegate.id), {
+          name: form.name.trim(),
+          precinct: form.precinct.trim(),
+          role: form.role.trim(),
+          phone: form.phone.trim(),
+          email: form.email.trim(),
+          address: form.address.trim(),
+          isPLEO,
+          conflictOfInterest: isLock,
+          isOpposingCandidate: isLock,
+        });
+      } else {
+        const { collection, addDoc } = await import("firebase/firestore");
+        await addDoc(collection(db, "delegates"), {
+          name: form.name.trim(),
+          precinct: form.precinct.trim(),
+          role: form.role.trim(),
+          phone: form.phone.trim(),
+          email: form.email.trim(),
+          address: form.address.trim(),
+          district: "HD21",
+          stage: "unknown",
+          stageHistory: [],
+          currentLeaning: "undecided",
+          leaningHistory: [],
+          assignedTo: null,
+          lastContactedAt: null,
+          totalContacts: 0,
+          conflictOfInterest: isLock,
+          isOpposingCandidate: isLock,
+          isPLEO,
+          isVacant: false,
+        });
+      }
       onAdded?.();
       onClose();
     } catch (err) {
@@ -131,7 +154,7 @@ function AddDelegateModal({ onClose, onAdded }) {
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-lg font-bold text-navy">Add Delegate</h2>
+          <h2 className="text-lg font-bold text-navy">{isEdit ? "Edit Delegate" : "Add Delegate"}</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none">&times;</button>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -202,7 +225,7 @@ function AddDelegateModal({ onClose, onAdded }) {
             </button>
             <button type="submit" disabled={saving}
               className="px-4 py-2 text-sm font-semibold rounded-lg bg-navy text-white hover:bg-navy/90 disabled:opacity-50 transition-colors">
-              {saving ? "Saving…" : "Add Delegate"}
+              {saving ? "Saving…" : isEdit ? "Save Changes" : "Add Delegate"}
             </button>
           </div>
         </form>
@@ -422,6 +445,7 @@ export default function AdminDashboard() {
   const [bulkVolunteer, setBulkVolunteer] = useState("");
   const [bulkSaving, setBulkSaving] = useState(false);
   const [showAddDelegate, setShowAddDelegate] = useState(false);
+  const [editingDelegate, setEditingDelegate] = useState(null);
 
   useEffect(() => {
     let unsub;
@@ -460,6 +484,12 @@ export default function AdminDashboard() {
     if (!window.confirm("Defer all P Vice delegates? They'll be hidden from the active list.")) return;
     const pvice = delegates.filter((d) => !d.isVacant && d.role?.includes("P Vice"));
     await setDeferred(pvice.map((d) => d.id), true);
+  }
+
+  async function deleteDelegate(id, name) {
+    if (!window.confirm(`Delete "${name || "this delegate"}" permanently? This cannot be undone.`)) return;
+    const { doc, deleteDoc } = await import("firebase/firestore");
+    await deleteDoc(doc(db, "delegates", id));
   }
 
   // Bulk assign selected delegates to a volunteer (adds, doesn't replace)
@@ -526,6 +556,13 @@ export default function AdminDashboard() {
       {showAddDelegate && (
         <AddDelegateModal
           onClose={() => setShowAddDelegate(false)}
+          onAdded={() => {}}
+        />
+      )}
+      {editingDelegate && (
+        <AddDelegateModal
+          delegate={editingDelegate}
+          onClose={() => setEditingDelegate(null)}
           onAdded={() => {}}
         />
       )}
@@ -666,7 +703,8 @@ export default function AdminDashboard() {
                   <th className="text-left pb-3 pr-4">Role</th>
                   <th className="text-left pb-3 pr-4">Stage</th>
                   <th className="text-left pb-3 pr-4">Phone</th>
-                  <th className="text-left pb-3">Assigned To</th>
+                  <th className="text-left pb-3 pr-4">Assigned To</th>
+                  <th className="pb-3 w-16"></th>
                 </tr>
               </thead>
               <tbody>
@@ -699,9 +737,27 @@ export default function AdminDashboard() {
                           : <StageBadge delegateId={d.id} currentStage={d.stage} />}
                       </td>
                       <td className="py-2 pr-4 text-gray-500 text-xs">{d.phone || "—"}</td>
-                      <td className="py-2">
+                      <td className="py-2 pr-4">
                         {d.isVacant || d.isOpposingCandidate ? <span className="text-gray-300 text-xs">—</span>
                           : <AssignmentCell delegate={d} volunteers={volunteers} />}
+                      </td>
+                      <td className="py-2">
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => setEditingDelegate(d)}
+                            title="Edit"
+                            className="text-gray-400 hover:text-navy transition-colors p-1 rounded"
+                          >
+                            ✏️
+                          </button>
+                          <button
+                            onClick={() => deleteDelegate(d.id, d.name)}
+                            title="Delete"
+                            className="text-gray-400 hover:text-red-500 transition-colors p-1 rounded"
+                          >
+                            🗑️
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
