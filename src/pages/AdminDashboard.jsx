@@ -499,9 +499,9 @@ export default function AdminDashboard() {
     } finally { setBulkSaving(false); }
   }
 
-  const committed = stats
-    ? (stats.totalByStage?.committed || 0) + (stats.totalByStage?.locked || 0)
-    : delegates.filter((d) => ["committed", "locked"].includes(d.stage) && !d.isDeferred && !d.isVacant && !d.isOpposingCandidate).length;
+  const committed = delegates.filter(
+    (d) => ["committed", "locked"].includes(d.stage) && !d.isDeferred && !d.isVacant && !d.isOpposingCandidate
+  ).length;
   const target = stats?.target || 53;
   const progressPct = Math.min(100, Math.round((committed / target) * 100));
   const days = daysUntil(CONVENTION_DATE);
