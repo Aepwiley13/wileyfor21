@@ -14,6 +14,7 @@ import DelegateSurveyDirectPage from "@/pages/DelegateSurveyDirectPage";
 import EndorsementPage from "@/pages/EndorsementPage";
 import EndorsementEditPage from "@/pages/EndorsementEditPage";
 import EndorsementsWallPage from "@/pages/EndorsementsWallPage";
+import AdminBootstrapPage from "@/pages/AdminBootstrapPage";
 
 export default function App() {
   return (
@@ -51,6 +52,9 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+
+        {/* One-time admin bootstrap — protected by setup code */}
+        <Route path="/admin-setup" element={<AdminBootstrapPage />} />
 
         {/* Public endorsement hub */}
         <Route path="/endorse" element={<EndorsementPage />} />
