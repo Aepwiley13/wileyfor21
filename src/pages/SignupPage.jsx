@@ -9,13 +9,13 @@ const UTAH_HOUSE_DISTRICTS = Array.from({ length: 75 }, (_, i) => i + 1);
 
 export default function SignupPage() {
   const navigate = useNavigate();
-  const { user, loading, signIn } = useAuth();
+  const { user, loading: authLoading, signIn } = useAuth();
 
   useEffect(() => {
-    if (!loading && user) {
+    if (!authLoading && user) {
       navigate("/volunteer", { replace: true });
     }
-  }, [user, loading, navigate]);
+  }, [user, authLoading, navigate]);
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
