@@ -10,6 +10,8 @@ import {
   onSnapshot,
   Timestamp,
   getDocs,
+  deleteDoc,
+  doc,
 } from "firebase/firestore";
 import { auth, db } from "../lib/firebase";
 import { useCampaignStats } from "../hooks/useCampaignStats";
@@ -42,6 +44,8 @@ export default function AdminDashboard() {
   const [atRisk, setAtRisk] = useState([]);
   const [filter, setFilter] = useState("all");
   const [precinctFilter, setPrecinctFilter] = useState("all");
+  const [endorsements, setEndorsements] = useState([]);
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
   // Load all delegates in real-time
   useEffect(() => {
@@ -91,6 +95,20 @@ export default function AdminDashboard() {
         console.warn("At-risk query needs a composite index:", err.message);
       });
   }, []);
+
+  // Load endorsements in real-time
+  useEffect(() => {
+    const q = query(collection(db, "endorsements"), orderBy("createdAt", "desc"));
+    const unsub = onSnapshot(q, (snap) => {
+      setEndorsements(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+    });
+    return unsub;
+  }, []);
+
+  async function handleDeleteEndorsement(id) {
+    await deleteDoc(doc(db, "endorsements", id));
+    setConfirmDeleteId(null);
+  }
 
   async function handleLogout() {
     await signOut(auth);
@@ -396,6 +414,86 @@ export default function AdminDashboard() {
               </p>
             )}
           </div>
+        </section>
+        {/* ── ENDORSEMENTS ───────────────────────────────────────── */}
+        <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-bold text-navy text-lg">
+              Endorsements
+              <span className="ml-2 text-sm font-normal text-gray-400">
+                ({endorsements.length})
+              </span>
+            </h2>
+          </div>
+
+          {endorsements.length === 0 ? (
+            <p className="text-gray-400 text-sm">No endorsements yet.</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-gray-400 text-xs uppercase border-b">
+                    <th className="text-left pb-3 pr-4">Name</th>
+                    <th className="text-left pb-3 pr-4">Title / Org</th>
+                    <th className="text-left pb-3 pr-4">Date</th>
+                    <th className="text-left pb-3">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {endorsements.map((e) => (
+                    <tr key={e.id} className="border-b last:border-0">
+                      <td className="py-2 pr-4 font-medium flex items-center gap-2">
+                        {e.photoURL ? (
+                          <img
+                            src={e.photoURL}
+                            alt=""
+                            className="w-7 h-7 rounded-full object-cover shrink-0"
+                          />
+                        ) : (
+                          <div className="w-7 h-7 rounded-full bg-navy text-white flex items-center justify-center text-xs font-bold shrink-0">
+                            {e.firstName?.[0]}{e.lastName?.[0]}
+                          </div>
+                        )}
+                        {e.firstName} {e.lastName}
+                      </td>
+                      <td className="py-2 pr-4 text-gray-500">{e.title || "—"}</td>
+                      <td className="py-2 pr-4 text-gray-400 text-xs">
+                        {e.createdAt?.toDate
+                          ? e.createdAt.toDate().toLocaleDateString()
+                          : "—"}
+                      </td>
+                      <td className="py-2">
+                        {confirmDeleteId === e.id ? (
+                          <span className="flex items-center gap-2">
+                            <span className="text-xs text-gray-500">Remove?</span>
+                            <button
+                              onClick={() => handleDeleteEndorsement(e.id)}
+                              className="px-2 py-0.5 rounded text-xs font-semibold bg-red-600 text-white hover:bg-red-700"
+                            >
+                              Yes, remove
+                            </button>
+                            <button
+                              onClick={() => setConfirmDeleteId(null)}
+                              className="px-2 py-0.5 rounded text-xs font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200"
+                            >
+                              Cancel
+                            </button>
+                          </span>
+                        ) : (
+                          <button
+                            onClick={() => setConfirmDeleteId(e.id)}
+                            className="px-2 py-0.5 rounded text-xs font-semibold text-red-500 border border-red-200 hover:bg-red-50"
+                          >
+                            Remove
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </section>
       </main>
     </div>
