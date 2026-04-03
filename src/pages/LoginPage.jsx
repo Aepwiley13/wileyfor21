@@ -14,19 +14,19 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
-    setLoading(true);
+    setSubmitting(true);
     try {
       await signIn(email, password);
       navigate("/volunteer", { replace: true });
     } catch (err) {
       setError(err.message || "Sign in failed");
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   }
 
@@ -62,10 +62,10 @@ export default function LoginPage() {
           {error && <p className="text-red-600 text-sm">{error}</p>}
           <button
             type="submit"
-            disabled={loading}
+            disabled={submitting}
             className="w-full py-3 rounded-xl font-condensed font-bold text-white bg-coral hover:bg-coral/90 disabled:opacity-50 transition-colors text-lg"
           >
-            {loading ? "Signing in..." : "Sign In"}
+            {submitting ? "Signing in..." : "Sign In"}
           </button>
         </form>
 

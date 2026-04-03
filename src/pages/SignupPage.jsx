@@ -28,7 +28,7 @@ export default function SignupPage() {
     whyVolunteering: "",
   });
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   function handleChange(e) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -55,7 +55,7 @@ export default function SignupPage() {
       return;
     }
 
-    setLoading(true);
+    setSubmitting(true);
     try {
       if (useMock) {
         // Mock mode: skip Firebase, go straight to dashboard
@@ -90,7 +90,7 @@ export default function SignupPage() {
         setError(err.message || "Failed to create account.");
       }
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   }
 
@@ -273,10 +273,10 @@ export default function SignupPage() {
           {/* Submit */}
           <button
             type="submit"
-            disabled={loading}
+            disabled={submitting}
             className="w-full py-3 rounded-xl font-condensed font-bold text-white bg-coral hover:bg-coral/90 disabled:opacity-50 transition-colors text-lg"
           >
-            {loading ? "Creating account…" : "Create My Account"}
+            {submitting ? "Creating account…" : "Create My Account"}
           </button>
 
           <p className="text-center text-sm text-gray-500">

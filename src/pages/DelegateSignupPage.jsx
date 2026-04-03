@@ -68,7 +68,7 @@ export default function DelegateSignupPage() {
     preferredMethod: "text",
   });
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   function handleChange(e) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -91,7 +91,7 @@ export default function DelegateSignupPage() {
       return;
     }
 
-    setLoading(true);
+    setSubmitting(true);
     try {
       if (useMock) {
         navigate("/delegate/dashboard");
@@ -151,7 +151,7 @@ export default function DelegateSignupPage() {
         setError(err.message || "Failed to create account.");
       }
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   }
 
@@ -329,10 +329,10 @@ export default function DelegateSignupPage() {
           {/* Submit */}
           <button
             type="submit"
-            disabled={loading}
+            disabled={submitting}
             className="w-full py-3 rounded-xl font-condensed font-bold text-white bg-coral hover:bg-coral/90 disabled:opacity-50 transition-colors text-lg"
           >
-            {loading ? "Creating account…" : "Create My Delegate Account"}
+            {submitting ? "Creating account…" : "Create My Delegate Account"}
           </button>
 
           <p className="text-center text-sm text-gray-500">

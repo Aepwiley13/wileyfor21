@@ -14,19 +14,19 @@ export default function DelegateLoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
-    setLoading(true);
+    setSubmitting(true);
     try {
       await signIn(email, password);
       navigate("/delegate/dashboard", { replace: true });
     } catch (err) {
       setError(err.message || "Sign in failed. Check your email and password.");
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   }
 
@@ -34,7 +34,7 @@ export default function DelegateLoginPage() {
     <div className="min-h-screen bg-cream flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <h1 className="font-condensed font-black text-navy text-4xl">WILEY FOR 21</h1>
+          <img src="/logo.png" alt="Aaron Wiley District 21" className="h-16 mx-auto mb-2" />
           <p className="text-gray-500 text-sm mt-1">Delegate Hub</p>
         </div>
 
@@ -67,10 +67,10 @@ export default function DelegateLoginPage() {
           {error && <p className="text-red-600 text-sm">{error}</p>}
           <button
             type="submit"
-            disabled={loading}
+            disabled={submitting}
             className="w-full py-3 rounded-xl font-condensed font-bold text-white bg-coral hover:bg-coral/90 disabled:opacity-50 transition-colors text-lg"
           >
-            {loading ? "Signing in…" : "Sign In"}
+            {submitting ? "Signing in…" : "Sign In"}
           </button>
         </form>
 
