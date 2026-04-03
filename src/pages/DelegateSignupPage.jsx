@@ -160,7 +160,7 @@ export default function DelegateSignupPage() {
       <div className="w-full max-w-lg">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="font-condensed font-black text-navy text-4xl">WILEY FOR 21</h1>
+          <img src="/logo.png" alt="Aaron Wiley District 21" className="h-16 mx-auto mb-2" />
           <p className="text-gray-500 text-sm mt-1">Delegate Hub — Create Your Account</p>
         </div>
 
