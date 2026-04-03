@@ -49,13 +49,13 @@ async function findExistingDelegate(email, phone) {
 
 export default function DelegateSignupPage() {
   const navigate = useNavigate();
-  const { user, loading } = useAuth();
+  const { user, loading: authLoading } = useAuth();
 
   useEffect(() => {
-    if (!loading && user) {
+    if (!authLoading && user) {
       navigate("/delegate/dashboard", { replace: true });
     }
-  }, [user, loading, navigate]);
+  }, [user, authLoading, navigate]);
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",

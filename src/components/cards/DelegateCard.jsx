@@ -461,7 +461,15 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
     setRankingSaving(true);
     if (!useMock && db) {
       const { doc, updateDoc } = await import("firebase/firestore");
-      await updateDoc(doc(db, "delegates", delegate.id), { candidateRankings: next });
+      const updates = { candidateRankings: next };
+      const aaronRank = next["Aaron Wiley"];
+      if (aaronRank === 1 || aaronRank === 2) {
+        const targetStage = aaronRank === 1 ? "committed" : "leaning";
+        const currentIdx = STAGES.indexOf(delegate.stage);
+        const targetIdx = STAGES.indexOf(targetStage);
+        if (targetIdx > currentIdx) updates.stage = targetStage;
+      }
+      await updateDoc(doc(db, "delegates", delegate.id), updates);
     }
     setRankingSaving(false);
   }
@@ -496,6 +504,15 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
     let stageAfter = delegate.stage;
     if (logForm.outcome === "hostile") stageAfter = "not_winnable";
     else if (stageAfter === "unknown" && logForm.outcome !== "no_answer") stageAfter = "identified";
+
+    // Advance stage based on Aaron's candidate ranking (only if not already higher)
+    const aaronRank = logForm.candidateRankings?.["Aaron Wiley"];
+    if (aaronRank === 1 || aaronRank === 2) {
+      const targetStage = aaronRank === 1 ? "committed" : "leaning";
+      const currentStageIdx = STAGES.indexOf(stageAfter);
+      const targetStageIdx = STAGES.indexOf(targetStage);
+      if (targetStageIdx > currentStageIdx) stageAfter = targetStage;
+    }
 
     const logEntry = {
       delegateId: delegate.id,
