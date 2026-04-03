@@ -114,6 +114,8 @@ async function recalculateCampaignStats(db) {
 
   snap.forEach((docSnap) => {
     const d = docSnap.data();
+    // Exclude deferred, vacant, and opposing candidates from stage rollup
+    if (d.isDeferred || d.isVacant || d.isOpposingCandidate) return;
     if (d.stage) {
       stageCounts[d.stage] = (stageCounts[d.stage] || 0) + 1;
     }

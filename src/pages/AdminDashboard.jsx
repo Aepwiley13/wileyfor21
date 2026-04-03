@@ -343,11 +343,10 @@ function getAssigned(d) {
 }
 
 function StageBadge({ delegateId, currentStage }) {
-  const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
 
   async function changeStage(newStage) {
-    if (newStage === currentStage) { setOpen(false); return; }
+    if (newStage === currentStage) return;
     setSaving(true);
     try {
       const { doc, updateDoc, arrayUnion } = await import("firebase/firestore");
@@ -355,26 +354,20 @@ function StageBadge({ delegateId, currentStage }) {
         stage: newStage,
         stageHistory: arrayUnion({ stage: newStage, changedAt: new Date().toISOString(), changedBy: "admin" }),
       });
-    } finally { setSaving(false); setOpen(false); }
+    } finally { setSaving(false); }
   }
 
   return (
-    <div className="relative inline-block">
-      <button onClick={() => setOpen((v) => !v)} disabled={saving}
-        className={`px-2 py-0.5 rounded-full text-xs font-semibold cursor-pointer ${STAGE_COLORS[currentStage] || STAGE_COLORS.unknown}`}>
-        {saving ? "…" : currentStage || "unknown"}
-      </button>
-      {open && (
-        <div className="absolute z-10 top-7 left-0 bg-white border border-gray-200 rounded-lg shadow-lg min-w-[160px]">
-          {STAGES.map((s) => (
-            <button key={s} onClick={() => changeStage(s)}
-              className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-50 ${s === currentStage ? "font-bold" : ""}`}>
-              {s}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
+    <select
+      value={currentStage || "unknown"}
+      onChange={(e) => changeStage(e.target.value)}
+      disabled={saving}
+      className={`px-2 py-0.5 rounded-full text-xs font-semibold cursor-pointer border-0 outline-none appearance-none ${STAGE_COLORS[currentStage] || STAGE_COLORS.unknown}`}
+    >
+      {STAGES.map((s) => (
+        <option key={s} value={s}>{s}</option>
+      ))}
+    </select>
   );
 }
 
@@ -508,7 +501,7 @@ export default function AdminDashboard() {
 
   const committed = stats
     ? (stats.totalByStage?.committed || 0) + (stats.totalByStage?.locked || 0)
-    : delegates.filter((d) => ["committed", "locked"].includes(d.stage)).length;
+    : delegates.filter((d) => ["committed", "locked"].includes(d.stage) && !d.isDeferred && !d.isVacant && !d.isOpposingCandidate).length;
   const target = stats?.target || 53;
   const progressPct = Math.min(100, Math.round((committed / target) * 100));
   const days = daysUntil(CONVENTION_DATE);
