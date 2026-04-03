@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
@@ -9,7 +9,13 @@ const UTAH_HOUSE_DISTRICTS = Array.from({ length: 75 }, (_, i) => i + 1);
 
 export default function SignupPage() {
   const navigate = useNavigate();
-  const { signIn } = useAuth();
+  const { user, loading, signIn } = useAuth();
+
+  useEffect(() => {
+    if (!loading && user) {
+      navigate("/volunteer", { replace: true });
+    }
+  }, [user, loading, navigate]);
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
