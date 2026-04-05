@@ -17,6 +17,7 @@ import { auth, db } from "../lib/firebase";
 import { useCampaignStats } from "../hooks/useCampaignStats";
 import { useAuth } from "../hooks/useAuth";
 import InlineStageEditor from "../components/InlineStageEditor";
+import SurveyDetailModal from "../components/SurveyDetailModal";
 
 const CONVENTION_DATE = new Date("2026-04-11T09:00:00");
 const STAGES = ["locked", "committed", "leaning", "engaged", "identified", "unknown", "not_winnable"];
@@ -46,6 +47,8 @@ export default function AdminDashboard() {
   const [precinctFilter, setPrecinctFilter] = useState("all");
   const [endorsements, setEndorsements] = useState([]);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  const [selectedSurveyDelegate, setSelectedSurveyDelegate] = useState(null);
+  const [surveyFilter, setSurveyFilter] = useState("all"); // "all" | "completed" | "in_progress"
 
   // Load all delegates in real-time
   useEffect(() => {
@@ -415,6 +418,136 @@ export default function AdminDashboard() {
             )}
           </div>
         </section>
+        {/* ── SURVEY RESPONSES ───────────────────────────────────── */}
+        {(() => {
+          const withSurvey = delegates.filter((d) => d.survey && (d.survey.currentStep > 0 || d.survey.completed));
+          const completed = withSurvey.filter((d) => d.survey.completed);
+          const inProgress = withSurvey.filter((d) => !d.survey.completed);
+
+          const visibleDelegates =
+            surveyFilter === "completed" ? completed
+            : surveyFilter === "in_progress" ? inProgress
+            : withSurvey;
+
+          return (
+            <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+              <div className="flex flex-wrap items-center gap-4 mb-5">
+                <div>
+                  <h2 className="font-bold text-navy text-lg">
+                    Survey Responses
+                  </h2>
+                  <p className="text-xs text-gray-400 mt-0.5">
+                    {completed.length} completed · {inProgress.length} in progress · {delegates.length - withSurvey.length} not started
+                  </p>
+                </div>
+                <div className="flex gap-2 ml-auto">
+                  {[
+                    { key: "all",         label: `All (${withSurvey.length})` },
+                    { key: "completed",   label: `Completed (${completed.length})` },
+                    { key: "in_progress", label: `In Progress (${inProgress.length})` },
+                  ].map(({ key, label }) => (
+                    <button
+                      key={key}
+                      onClick={() => setSurveyFilter(key)}
+                      className={`px-3 py-1 rounded-full text-xs font-semibold border transition-colors ${
+                        surveyFilter === key
+                          ? "bg-navy text-white border-navy"
+                          : "bg-white text-gray-600 border-gray-300 hover:border-navy"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {visibleDelegates.length === 0 ? (
+                <p className="text-gray-400 text-sm py-4">
+                  {withSurvey.length === 0
+                    ? "No delegates have started the survey yet."
+                    : "No responses match this filter."}
+                </p>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="text-gray-400 text-xs uppercase border-b">
+                        <th className="text-left pb-3 pr-4">Name</th>
+                        <th className="text-left pb-3 pr-4">Precinct</th>
+                        <th className="text-left pb-3 pr-4">Status</th>
+                        <th className="text-left pb-3 pr-4">Top Priorities</th>
+                        <th className="text-left pb-3 pr-4">Engagement</th>
+                        <th className="text-left pb-3">Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {visibleDelegates.map((d) => {
+                        const s = d.survey;
+                        const date = s.completed
+                          ? s.completedAt?.toDate?.()
+                          : s.lastUpdated?.toDate?.();
+                        return (
+                          <tr
+                            key={d.id}
+                            onClick={() => setSelectedSurveyDelegate(d)}
+                            className="border-b last:border-0 hover:bg-navy/5 cursor-pointer transition-colors"
+                          >
+                            <td className="py-2.5 pr-4 font-medium">{d.name}</td>
+                            <td className="py-2.5 pr-4 text-gray-500">{d.precinct}</td>
+                            <td className="py-2.5 pr-4">
+                              {s.completed ? (
+                                <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700">
+                                  Completed
+                                </span>
+                              ) : (
+                                <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-700">
+                                  Step {s.currentStep ?? 0}/10
+                                </span>
+                              )}
+                            </td>
+                            <td className="py-2.5 pr-4">
+                              <div className="flex flex-wrap gap-1">
+                                {s.topPriorities?.slice(0, 2).map((p) => (
+                                  <span key={p} className="px-1.5 py-0.5 rounded-full text-xs bg-navy/10 text-navy">
+                                    {p.length > 24 ? p.slice(0, 24) + "…" : p}
+                                  </span>
+                                ))}
+                                {(s.topPriorities?.length ?? 0) > 2 && (
+                                  <span className="text-xs text-gray-400">
+                                    +{s.topPriorities.length - 2} more
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+                            <td className="py-2.5 pr-4">
+                              {d.engagementTier ? (
+                                <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
+                                  d.engagementTier === "volunteer"
+                                    ? "bg-coral/10 text-coral"
+                                    : d.engagementTier === "active"
+                                    ? "bg-blue-100 text-blue-700"
+                                    : "bg-gray-100 text-gray-600"
+                                }`}>
+                                  {d.engagementTier}
+                                </span>
+                              ) : (
+                                <span className="text-gray-300 text-xs">—</span>
+                              )}
+                            </td>
+                            <td className="py-2.5 text-gray-400 text-xs">
+                              {date ? date.toLocaleDateString() : "—"}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </section>
+          );
+        })()}
+
         {/* ── ENDORSEMENTS ───────────────────────────────────────── */}
         <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
           <div className="flex items-center justify-between mb-4">
@@ -496,6 +629,13 @@ export default function AdminDashboard() {
           )}
         </section>
       </main>
+
+      {selectedSurveyDelegate && (
+        <SurveyDetailModal
+          delegate={selectedSurveyDelegate}
+          onClose={() => setSelectedSurveyDelegate(null)}
+        />
+      )}
     </div>
   );
 }
