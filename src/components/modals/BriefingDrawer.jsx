@@ -21,6 +21,113 @@ function CopyButton({ text }) {
   );
 }
 
+function SurveyInsights({ survey }) {
+  if (!survey || (!survey.completed && !survey.currentStep)) return null;
+
+  const hasPriorities = survey.topPriorities?.length > 0;
+  const hasChallenges = survey.westsideChallenges?.length > 0;
+  const hasEngagement = survey.engagementInterest?.length > 0;
+  const hasOpenText = survey.overlookedIssue || survey.legislativeFocus || survey.closingThoughts;
+  const isVolunteer = survey.engagementInterest?.includes("Volunteer on the campaign");
+
+  return (
+    <section className="bg-navy/5 border border-navy/10 rounded-xl p-4 space-y-3">
+      <div className="flex items-center justify-between">
+        <h3 className="font-condensed font-bold text-navy text-base">Survey Answers</h3>
+        {survey.completed ? (
+          <span className="text-xs font-semibold text-green-700 bg-green-100 px-2 py-0.5 rounded-full">Completed</span>
+        ) : (
+          <span className="text-xs font-semibold text-yellow-700 bg-yellow-100 px-2 py-0.5 rounded-full">
+            In progress — step {survey.currentStep}/10
+          </span>
+        )}
+      </div>
+
+      {isVolunteer && (
+        <div className="bg-coral/10 border border-coral/20 rounded-lg px-3 py-2">
+          <p className="text-xs font-bold text-coral">&#9733; Wants to volunteer on the campaign — ask them!</p>
+        </div>
+      )}
+
+      {hasPriorities && (
+        <div>
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Top Priorities</p>
+          <div className="flex flex-wrap gap-1.5">
+            {survey.topPriorities.map((p) => (
+              <span key={p} className="text-xs bg-navy/10 text-navy px-2 py-0.5 rounded-full">{p}</span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {hasChallenges && (
+        <div>
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Biggest Westside Challenges</p>
+          <div className="flex flex-wrap gap-1.5">
+            {survey.westsideChallenges.map((c) => (
+              <span key={c} className="text-xs bg-coral/10 text-coral px-2 py-0.5 rounded-full">{c}</span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {survey.crimeApproach && (
+        <div>
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">On Crime</p>
+          <p className="text-sm text-gray-700">{survey.crimeApproach}</p>
+        </div>
+      )}
+
+      {survey.budgetTradeoff && (
+        <div>
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Budget Priority</p>
+          <p className="text-sm text-gray-700">{survey.budgetTradeoff}</p>
+        </div>
+      )}
+
+      {hasOpenText && (
+        <div className="space-y-2">
+          {survey.overlookedIssue && (
+            <div>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-0.5">Overlooked Issue</p>
+              <p className="text-sm text-gray-700 italic">&ldquo;{survey.overlookedIssue}&rdquo;</p>
+            </div>
+          )}
+          {survey.legislativeFocus && (
+            <div>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-0.5">Legislative Focus</p>
+              <p className="text-sm text-gray-700 italic">&ldquo;{survey.legislativeFocus}&rdquo;</p>
+            </div>
+          )}
+          {survey.closingThoughts && (
+            <div>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-0.5">In Their Own Words</p>
+              <p className="text-sm text-gray-700 italic">&ldquo;{survey.closingThoughts}&rdquo;</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {hasEngagement && (
+        <div>
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Wants to Stay Involved</p>
+          <div className="flex flex-wrap gap-1.5">
+            {survey.engagementInterest.map((e) => (
+              <span key={e} className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">{e}</span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {survey.contactPreference && (
+        <p className="text-xs text-gray-500">
+          Preferred contact: <span className="font-semibold text-gray-700">{survey.contactPreference}</span>
+        </p>
+      )}
+    </section>
+  );
+}
+
 export default function BriefingDrawer({ delegate, onClose }) {
   const script = getRecommendedScript(delegate.stage, delegate.wasOrdSupporter);
   const days = delegate.lastContactedAt ? daysSince(delegate.lastContactedAt) : null;
@@ -52,6 +159,9 @@ export default function BriefingDrawer({ delegate, onClose }) {
               <span className="bg-amber-100 text-amber-800 text-xs font-semibold px-2 py-0.5 rounded-full">&#9733; PLEO</span>
             )}
           </div>
+
+          {/* Survey insights — shown before scripts so volunteers are prepared */}
+          <SurveyInsights survey={delegate.survey} />
 
           {/* Ord supporter warning */}
           {delegate.wasOrdSupporter && (
