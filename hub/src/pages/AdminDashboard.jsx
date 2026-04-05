@@ -360,11 +360,15 @@ export default function AdminDashboard() {
                   <th className="text-left pb-3 pr-4">Role</th>
                   <th className="text-left pb-3 pr-4">Stage</th>
                   <th className="text-left pb-3 pr-4">Leaning</th>
-                  <th className="text-left pb-3">Contacts</th>
+                  <th className="text-left pb-3 pr-4">Contacts</th>
+                  <th className="text-left pb-3">Survey</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredDelegates.map((d) => (
+                {filteredDelegates.map((d) => {
+                  const sv = d.survey;
+                  const hasSurvey = sv && (sv.completed || sv.currentStep > 0 || sv.name);
+                  return (
                   <tr
                     key={d.id}
                     className={`border-b last:border-0 ${
@@ -405,9 +409,26 @@ export default function AdminDashboard() {
                     <td className="py-2 pr-4 text-gray-500 text-xs">
                       {d.currentLeaning || "—"}
                     </td>
-                    <td className="py-2 text-gray-500">{d.totalContacts || 0}</td>
+                    <td className="py-2 pr-4 text-gray-500">{d.totalContacts || 0}</td>
+                    <td className="py-2">
+                      {hasSurvey ? (
+                        <button
+                          onClick={() => setSelectedSurveyDelegate(d)}
+                          className={`px-2 py-0.5 rounded-full text-xs font-semibold transition-colors hover:opacity-80 ${
+                            sv.completed
+                              ? "bg-green-100 text-green-700"
+                              : "bg-yellow-100 text-yellow-700"
+                          }`}
+                        >
+                          {sv.completed ? "Done" : `Step ${sv.currentStep ?? 0}/10`}
+                        </button>
+                      ) : (
+                        <span className="text-gray-300 text-xs">—</span>
+                      )}
+                    </td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
 
@@ -420,7 +441,7 @@ export default function AdminDashboard() {
         </section>
         {/* ── SURVEY RESPONSES ───────────────────────────────────── */}
         {(() => {
-          const withSurvey = delegates.filter((d) => d.survey && (d.survey.currentStep > 0 || d.survey.completed));
+          const withSurvey = delegates.filter((d) => d.survey && (d.survey.completed || d.survey.currentStep > 0 || d.survey.name));
           const completed = withSurvey.filter((d) => d.survey.completed);
           const inProgress = withSurvey.filter((d) => !d.survey.completed);
 
