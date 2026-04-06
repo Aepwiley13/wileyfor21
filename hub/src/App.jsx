@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
+import ForgotPassword from "./pages/ForgotPassword";
 import AdminDashboard from "./pages/AdminDashboard";
 import VolunteerHome from "./pages/VolunteerHome";
 import { AdminOnly } from "./components/ProtectedRoute";
@@ -13,6 +14,7 @@ export default function App() {
         {/* Public routes */}
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
         {/* Volunteer dashboard — any authenticated user */}
         <Route

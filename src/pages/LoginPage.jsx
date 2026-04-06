@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function LoginPage() {
@@ -60,6 +60,11 @@ export default function LoginPage() {
             />
           </div>
           {error && <p className="text-red-600 text-sm">{error}</p>}
+          <div className="text-right">
+            <Link to="/forgot-password" className="text-xs text-navy underline">
+              Forgot password?
+            </Link>
+          </div>
           <button
             type="submit"
             disabled={submitting}

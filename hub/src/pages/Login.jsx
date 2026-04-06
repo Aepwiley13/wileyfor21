@@ -93,6 +93,12 @@ export default function Login() {
             {loading ? "Signing in…" : "Sign In"}
           </button>
 
+          <p className="text-center text-sm">
+            <Link to="/forgot-password" className="text-navy underline">
+              Forgot password?
+            </Link>
+          </p>
+
           <p className="text-center text-sm text-gray-500">
             New volunteer?{" "}
             <Link to="/signup" className="text-navy underline">
