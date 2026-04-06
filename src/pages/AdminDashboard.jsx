@@ -426,6 +426,106 @@ function AssignmentCell({ delegate, volunteers }) {
   );
 }
 
+function buildContactListText(volunteer, delegates, volNameFn) {
+  const name = volNameFn(volunteer);
+  const lines = [
+    `Hi ${volunteer.firstName || name},`,
+    ``,
+    `Here is your contact list for the Wiley for HD21 campaign. Please reach out to each person below before the April 11 caucus.`,
+    ``,
+    `YOUR DELEGATES (${delegates.length}):`,
+    ``,
+  ];
+  delegates.forEach((d, i) => {
+    lines.push(`${i + 1}. ${d.name}`);
+    if (d.precinct) lines.push(`   Precinct: ${d.precinct}${d.role ? ` — ${d.role}` : ""}`);
+    if (d.phone)    lines.push(`   Phone: ${d.phone}`);
+    if (d.email)    lines.push(`   Email: ${d.email}`);
+    if (d.address)  lines.push(`   Address: ${d.address}`);
+    lines.push(``);
+  });
+  lines.push(`Questions? Reply to this email or reach out to the campaign.`);
+  lines.push(`Thank you for your help!`);
+  return lines.join("\n");
+}
+
+function VolunteerContactRow({ volunteer, assignedDelegates, volName }) {
+  const [open, setOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const name = volName(volunteer);
+
+  function handleCopy() {
+    const text = buildContactListText(volunteer, assignedDelegates, volName);
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
+
+  function handleEmail() {
+    const subject = encodeURIComponent("Your Delegate Contact List — Wiley for HD21");
+    const body = encodeURIComponent(buildContactListText(volunteer, assignedDelegates, volName));
+    const to = encodeURIComponent(volunteer.email || "");
+    window.open(`mailto:${to}?subject=${subject}&body=${body}`, "_self");
+  }
+
+  return (
+    <div className="border border-gray-100 rounded-xl overflow-hidden">
+      {/* Header row */}
+      <div
+        className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors"
+        onClick={() => setOpen((o) => !o)}
+      >
+        <span className="text-gray-400 text-xs select-none">{open ? "▼" : "▶"}</span>
+        <span className="font-semibold text-navy text-sm flex-1">
+          {name}
+          {volunteer.role === "admin" && <span className="ml-2 text-xs bg-navy text-white px-1.5 py-0.5 rounded-full">Admin</span>}
+        </span>
+        <span className="text-xs text-gray-400">{volunteer.email}</span>
+        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${assignedDelegates.length > 0 ? "bg-blue-50 text-blue-700" : "bg-gray-100 text-gray-400"}`}>
+          {assignedDelegates.length} delegate{assignedDelegates.length !== 1 ? "s" : ""}
+        </span>
+        {assignedDelegates.length > 0 && (
+          <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+            <button
+              onClick={handleCopy}
+              className="text-xs font-semibold px-3 py-1 rounded-lg border border-gray-200 hover:border-navy text-gray-600 hover:text-navy transition-colors"
+            >
+              {copied ? "Copied!" : "Copy List"}
+            </button>
+            <button
+              onClick={handleEmail}
+              className="text-xs font-semibold px-3 py-1 rounded-lg bg-coral text-white hover:bg-coral/90 transition-colors"
+            >
+              Email List
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Expanded delegate list */}
+      {open && (
+        <div className="border-t border-gray-100 px-4 py-3 bg-gray-50">
+          {assignedDelegates.length === 0 ? (
+            <p className="text-xs text-gray-400">No delegates assigned yet.</p>
+          ) : (
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {assignedDelegates.map((d) => (
+                <div key={d.id} className="bg-white border border-gray-100 rounded-lg px-3 py-2 text-xs">
+                  <div className="font-semibold text-navy leading-snug">{d.name}</div>
+                  {d.precinct && <div className="text-gray-400">{d.precinct}{d.role ? ` — ${d.role}` : ""}</div>}
+                  {d.phone && <div className="text-gray-600 mt-0.5">{d.phone}</div>}
+                  {d.email && <div className="text-gray-500 truncate">{d.email}</div>}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function AdminDashboard() {
   const { user, signOut } = useAuth();
   const stats = useCampaignStats();
@@ -763,38 +863,22 @@ export default function AdminDashboard() {
           </div>
         </section>
 
-        {/* Volunteers */}
+        {/* Volunteers + Contact List Sender */}
         <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-          <h2 className="font-bold text-navy text-lg mb-4">Volunteers ({volunteers.length})</h2>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-gray-400 text-xs uppercase border-b">
-                  <th className="text-left pb-3 pr-4">Name</th>
-                  <th className="text-left pb-3 pr-4">Email</th>
-                  <th className="text-left pb-3 pr-4">District</th>
-                  <th className="text-left pb-3 pr-4">Phone</th>
-                  <th className="text-left pb-3">Delegates Assigned</th>
-                </tr>
-              </thead>
-              <tbody>
-                {volunteers.map((v) => {
-                  const count = delegates.filter((d) => getAssigned(d).includes(v.id)).length;
-                  return (
-                    <tr key={v.id} className="border-b last:border-0">
-                      <td className="py-2 pr-4 font-medium">
-                        {volName(v)}
-                        {v.role === "admin" && <span className="ml-2 text-xs bg-navy text-white px-1.5 py-0.5 rounded-full">Admin</span>}
-                      </td>
-                      <td className="py-2 pr-4 text-gray-500">{v.email}</td>
-                      <td className="py-2 pr-4 text-gray-500">{v.houseDistrict ? `HD ${v.houseDistrict}` : "—"}</td>
-                      <td className="py-2 pr-4 text-gray-500">{v.phone || "—"}</td>
-                      <td className="py-2 font-semibold text-navy">{count}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+          <h2 className="font-bold text-navy text-lg mb-1">Volunteers ({volunteers.length})</h2>
+          <p className="text-xs text-gray-400 mb-4">Expand any volunteer to see their contact list, then copy or email it to them.</p>
+          <div className="space-y-2">
+            {volunteers.map((v) => {
+              const assigned = delegates.filter(
+                (d) => getAssigned(d).includes(v.id) && !d.isVacant && !d.isOpposingCandidate
+              );
+              return (
+                <VolunteerContactRow key={v.id} volunteer={v} assignedDelegates={assigned} volName={volName} />
+              );
+            })}
+            {volunteers.length === 0 && (
+              <p className="text-sm text-gray-400">No volunteers yet.</p>
+            )}
           </div>
         </section>
       </main>
