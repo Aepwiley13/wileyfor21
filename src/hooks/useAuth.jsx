@@ -48,6 +48,12 @@ export function AuthProvider({ children }) {
     setUser({ uid: cred.user.uid, displayName: cred.user.displayName, email: cred.user.email, name: cred.user.displayName });
   };
 
+  const sendPasswordReset = async (email) => {
+    if (useMock) return;
+    const { sendPasswordResetEmail } = await import("firebase/auth");
+    await sendPasswordResetEmail(auth, email);
+  };
+
   const signOut = async () => {
     if (useMock) {
       setUser(null);
@@ -59,7 +65,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, loading, signIn, signOut, sendPasswordReset }}>
       {children}
     </AuthContext.Provider>
   );

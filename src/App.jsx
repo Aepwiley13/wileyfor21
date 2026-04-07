@@ -14,6 +14,7 @@ import DelegateSurveyDirectPage from "@/pages/DelegateSurveyDirectPage";
 import EndorsementPage from "@/pages/EndorsementPage";
 import EndorsementEditPage from "@/pages/EndorsementEditPage";
 import EndorsementsWallPage from "@/pages/EndorsementsWallPage";
+import ForgotPasswordPage from "@/pages/ForgotPasswordPage";
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
       <Routes>
         {/* Volunteer routes */}
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route
           path="/volunteer"
