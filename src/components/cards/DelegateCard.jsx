@@ -667,9 +667,14 @@ export default function DelegateCard({ delegate, onOpenLog, onOpenBriefing, volu
             {delegate.precinct} &middot; {delegate.role}
           </p>
           {(delegate.address || delegate.city) && (
-            <p className="text-xs text-gray-400 mt-0.5">
+            <a
+              href={buildMapsUrl(delegate)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-gray-400 mt-0.5 hover:text-navy hover:underline"
+            >
               {[delegate.address, delegate.city, delegate.state].filter(Boolean).join(", ")}
-            </p>
+            </a>
           )}
           {/* Contact links */}
           <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1">
