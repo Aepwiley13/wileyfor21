@@ -449,9 +449,25 @@ function buildContactListText(volunteer, delegates, volNameFn) {
   return lines.join("\n");
 }
 
+function buildSmsText(volunteer, delegates, volNameFn) {
+  const firstName = volunteer.firstName || volNameFn(volunteer).split(" ")[0];
+  const lines = [
+    `Hi ${firstName}! Your Wiley HD21 call list (${delegates.length} delegate${delegates.length !== 1 ? "s" : ""}):`,
+    ``,
+  ];
+  delegates.forEach((d, i) => {
+    const phone = d.phone ? ` – ${d.phone}` : "";
+    lines.push(`${i + 1}. ${d.name}${phone}`);
+  });
+  lines.push(``, `Questions? Text or call Aaron's campaign. Thanks!`);
+  return lines.join("\n");
+}
+
 function VolunteerContactRow({ volunteer, assignedDelegates, volName }) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [smsCopied, setSmsCopied] = useState(false);
+  const [emailCopied, setEmailCopied] = useState(false);
   const name = volName(volunteer);
 
   function handleCopy() {
@@ -463,10 +479,23 @@ function VolunteerContactRow({ volunteer, assignedDelegates, volName }) {
   }
 
   function handleEmail() {
+    const body = buildContactListText(volunteer, assignedDelegates, volName);
     const subject = encodeURIComponent("Your Delegate Contact List — Wiley for HD21");
-    const body = encodeURIComponent(buildContactListText(volunteer, assignedDelegates, volName));
     const to = encodeURIComponent(volunteer.email || "");
-    window.open(`mailto:${to}?subject=${subject}&body=${body}`, "_self");
+    // Copy body to clipboard first so it's available if mailto truncates it
+    navigator.clipboard.writeText(body).then(() => {
+      setEmailCopied(true);
+      setTimeout(() => setEmailCopied(false), 3000);
+    });
+    window.open(`mailto:${to}?subject=${subject}&body=${encodeURIComponent(body)}`, "_self");
+  }
+
+  function handleSmsCopy() {
+    const text = buildSmsText(volunteer, assignedDelegates, volName);
+    navigator.clipboard.writeText(text).then(() => {
+      setSmsCopied(true);
+      setTimeout(() => setSmsCopied(false), 2000);
+    });
   }
 
   return (
@@ -494,10 +523,16 @@ function VolunteerContactRow({ volunteer, assignedDelegates, volName }) {
               {copied ? "Copied!" : "Copy List"}
             </button>
             <button
+              onClick={handleSmsCopy}
+              className="text-xs font-semibold px-3 py-1 rounded-lg border border-green-200 hover:border-green-500 text-green-700 hover:text-green-800 transition-colors"
+            >
+              {smsCopied ? "Copied!" : "Copy SMS"}
+            </button>
+            <button
               onClick={handleEmail}
               className="text-xs font-semibold px-3 py-1 rounded-lg bg-coral text-white hover:bg-coral/90 transition-colors"
             >
-              Email List
+              {emailCopied ? "Body Copied!" : "Email List"}
             </button>
           </div>
         )}
