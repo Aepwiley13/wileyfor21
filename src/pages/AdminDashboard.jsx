@@ -699,9 +699,13 @@ function DelegateEventInviteSection({ delegates }) {
   const [selected, setSelected] = useState(null);
   const [search, setSearch] = useState("");
   const [copyState, setCopyState] = useState("idle"); // idle | copied | error
+  const [showDeferred, setShowDeferred] = useState(false);
+
+  const deferredCount = delegates.filter((d) => d.email && d.isDeferred && !d.isVacant && !d.isOpposingCandidate).length;
 
   const inviteable = delegates
     .filter((d) => d.email && !d.isVacant && !d.isOpposingCandidate)
+    .filter((d) => showDeferred ? d.isDeferred : !d.isDeferred)
     .filter((d) => {
       if (!search) return true;
       const q = search.toLowerCase();
@@ -745,9 +749,21 @@ function DelegateEventInviteSection({ delegates }) {
           <h2 className="font-bold text-navy text-lg mb-0.5">Event Invite — Jordan River &amp; Great Salt Lake</h2>
           <p className="text-xs text-gray-400">Click a delegate to preview their personalized email, then copy or open in Gmail.</p>
         </div>
-        <span className="text-xs bg-blue-50 text-blue-600 font-semibold px-3 py-1.5 rounded-full border border-blue-100">
-          {inviteable.length} delegates with email
-        </span>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => { setShowDeferred((v) => !v); setSelected(null); setSearch(""); }}
+            className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-all ${
+              showDeferred
+                ? "bg-yellow-100 text-yellow-700 border-yellow-300"
+                : "bg-gray-100 text-gray-500 border-gray-200 hover:bg-yellow-50 hover:text-yellow-700 hover:border-yellow-200"
+            }`}
+          >
+            {showDeferred ? "⬅ Back to Active" : `Deferred (${deferredCount})`}
+          </button>
+          <span className="text-xs bg-blue-50 text-blue-600 font-semibold px-3 py-1.5 rounded-full border border-blue-100">
+            {inviteable.length} {showDeferred ? "deferred" : "active"} with email
+          </span>
+        </div>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
@@ -755,7 +771,7 @@ function DelegateEventInviteSection({ delegates }) {
         <div className="lg:w-72 flex-shrink-0">
           <input
             type="text"
-            placeholder="Search delegates…"
+            placeholder={`Search ${showDeferred ? "deferred" : "active"} delegates…`}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-navy/20"
@@ -774,7 +790,10 @@ function DelegateEventInviteSection({ delegates }) {
                     : "bg-white hover:bg-gray-50 border-gray-100"
                 }`}
               >
-                <div className="font-semibold leading-snug">{d.name}</div>
+                <div className="font-semibold leading-snug flex items-center gap-2">
+                  {d.name}
+                  {d.isDeferred && <span className={`text-xs font-semibold px-1.5 py-0.5 rounded ${selected?.id === d.id ? "bg-yellow-300 text-yellow-900" : "bg-yellow-100 text-yellow-700"}`}>Deferred</span>}
+                </div>
                 <div className={`text-xs mt-0.5 truncate ${selected?.id === d.id ? "text-blue-200" : "text-gray-400"}`}>
                   {d.email}
                 </div>
