@@ -644,8 +644,8 @@ function generateEventEmailHTML(firstName) {
     <!-- Event details -->
     <div class="event-card">
       <p class="event-card-title">Event Details</p>
-      <div class="event-detail"><span class="event-icon">📅</span><span>Date &amp; time to be announced — check your RSVP confirmation</span></div>
-      <div class="event-detail"><span class="event-icon">📍</span><span><strong>Culture Coffee</strong> · Salt Lake City, UT</span></div>
+      <div class="event-detail"><span class="event-icon">📅</span><span><strong>Thursday, April 9th · 5:00 – 6:30 PM</strong></span></div>
+      <div class="event-detail"><span class="event-icon">📍</span><span><strong>Culture Coffee</strong> · 285 N 900 W, Salt Lake City, UT 84116</span></div>
       <div class="event-detail"><span class="event-icon">💬</span><span>Live Q&amp;A — bring your questions</span></div>
     </div>
 
