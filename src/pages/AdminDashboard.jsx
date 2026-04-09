@@ -695,37 +695,50 @@ function generateEventEmailHTML(firstName) {
 </html>`;
 }
 
+function generateTextMessage(firstName) {
+  return `Hey ${firstName}! If you're free and want to join the conversation, come join us at Culture Coffee! We'll be gathering around 5 and should be kicking off around 5:30–6:30 at the latest. 📍 285 N 900 W, Salt Lake City`;
+}
+
 function DelegateEventInviteSection({ delegates }) {
   const [selected, setSelected] = useState(null);
   const [search, setSearch] = useState("");
   const [copyState, setCopyState] = useState("idle"); // idle | copied | error
   const [showDeferred, setShowDeferred] = useState(false);
+  const [mode, setMode] = useState("email"); // "email" | "text"
 
-  const deferredCount = delegates.filter((d) => d.email && d.isDeferred && !d.isVacant && !d.isOpposingCandidate).length;
+  const deferredCount = delegates.filter((d) => (d.email || d.phone) && d.isDeferred && !d.isVacant && !d.isOpposingCandidate).length;
 
   const inviteable = delegates
-    .filter((d) => d.email && !d.isVacant && !d.isOpposingCandidate)
+    .filter((d) => (mode === "email" ? d.email : d.phone) && !d.isVacant && !d.isOpposingCandidate)
     .filter((d) => showDeferred ? d.isDeferred : !d.isDeferred)
     .filter((d) => {
       if (!search) return true;
       const q = search.toLowerCase();
-      return (d.name || "").toLowerCase().includes(q) || (d.email || "").toLowerCase().includes(q) || (d.precinct || "").toLowerCase().includes(q);
+      return (d.name || "").toLowerCase().includes(q) ||
+        (d.email || "").toLowerCase().includes(q) ||
+        (d.phone || "").includes(q) ||
+        (d.precinct || "").toLowerCase().includes(q);
     })
     .sort((a, b) => (a.name || "").localeCompare(b.name || ""));
 
   const firstName = selected ? (selected.name || "").split(" ")[0] || "there" : "there";
   const emailHTML = selected ? generateEventEmailHTML(firstName) : null;
+  const textMsg = selected ? generateTextMessage(firstName) : "";
 
   const SUBJECT = "You're Invited: Jordan River & Great Salt Lake Community Dialogue";
 
   async function handleCopy() {
-    if (!emailHTML) return;
     try {
-      if (window.ClipboardItem) {
-        const blob = new Blob([emailHTML], { type: "text/html" });
-        await navigator.clipboard.write([new ClipboardItem({ "text/html": blob })]);
+      if (mode === "email") {
+        if (!emailHTML) return;
+        if (window.ClipboardItem) {
+          const blob = new Blob([emailHTML], { type: "text/html" });
+          await navigator.clipboard.write([new ClipboardItem({ "text/html": blob })]);
+        } else {
+          await navigator.clipboard.writeText(emailHTML);
+        }
       } else {
-        await navigator.clipboard.writeText(emailHTML);
+        await navigator.clipboard.writeText(textMsg);
       }
       setCopyState("copied");
       setTimeout(() => setCopyState("idle"), 2500);
@@ -736,10 +749,16 @@ function DelegateEventInviteSection({ delegates }) {
   }
 
   function handleGmail() {
-    if (!selected) return;
+    if (!selected?.email) return;
     const to = encodeURIComponent(selected.email);
     const su = encodeURIComponent(SUBJECT);
     window.open(`https://mail.google.com/mail/?view=cm&to=${to}&su=${su}`, "_blank");
+  }
+
+  function handleSMS() {
+    if (!selected?.phone) return;
+    const phone = selected.phone.replace(/\D/g, "");
+    window.open(`sms:+1${phone}?body=${encodeURIComponent(textMsg)}`, "_self");
   }
 
   return (
@@ -747,9 +766,24 @@ function DelegateEventInviteSection({ delegates }) {
       <div className="flex flex-wrap items-start justify-between gap-4 mb-5">
         <div>
           <h2 className="font-bold text-navy text-lg mb-0.5">Event Invite — Jordan River &amp; Great Salt Lake</h2>
-          <p className="text-xs text-gray-400">Click a delegate to preview their personalized email, then copy or open in Gmail.</p>
+          <p className="text-xs text-gray-400">Click a delegate to preview their personalized message, then copy or send.</p>
         </div>
         <div className="flex items-center gap-2">
+          {/* Mode toggle */}
+          <div className="flex rounded-lg border border-gray-200 overflow-hidden text-xs font-semibold">
+            <button
+              onClick={() => { setMode("email"); setSelected(null); setCopyState("idle"); }}
+              className={`px-3 py-1.5 transition-all ${mode === "email" ? "bg-navy text-white" : "bg-white text-gray-500 hover:bg-gray-50"}`}
+            >
+              📧 Email
+            </button>
+            <button
+              onClick={() => { setMode("text"); setSelected(null); setCopyState("idle"); }}
+              className={`px-3 py-1.5 transition-all border-l border-gray-200 ${mode === "text" ? "bg-navy text-white" : "bg-white text-gray-500 hover:bg-gray-50"}`}
+            >
+              💬 Text
+            </button>
+          </div>
           <button
             onClick={() => { setShowDeferred((v) => !v); setSelected(null); setSearch(""); }}
             className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-all ${
@@ -761,7 +795,7 @@ function DelegateEventInviteSection({ delegates }) {
             {showDeferred ? "⬅ Back to Active" : `Deferred (${deferredCount})`}
           </button>
           <span className="text-xs bg-blue-50 text-blue-600 font-semibold px-3 py-1.5 rounded-full border border-blue-100">
-            {inviteable.length} {showDeferred ? "deferred" : "active"} with email
+            {inviteable.length} {showDeferred ? "deferred" : "active"} with {mode === "email" ? "email" : "phone"}
           </span>
         </div>
       </div>
@@ -795,7 +829,7 @@ function DelegateEventInviteSection({ delegates }) {
                   {d.isDeferred && <span className={`text-xs font-semibold px-1.5 py-0.5 rounded ${selected?.id === d.id ? "bg-yellow-300 text-yellow-900" : "bg-yellow-100 text-yellow-700"}`}>Deferred</span>}
                 </div>
                 <div className={`text-xs mt-0.5 truncate ${selected?.id === d.id ? "text-blue-200" : "text-gray-400"}`}>
-                  {d.email}
+                  {mode === "email" ? d.email : d.phone}
                 </div>
                 {d.precinct && (
                   <div className={`text-xs ${selected?.id === d.id ? "text-blue-300" : "text-gray-300"}`}>
@@ -812,13 +846,13 @@ function DelegateEventInviteSection({ delegates }) {
           {!selected ? (
             <div className="h-full min-h-[280px] flex items-center justify-center rounded-xl border-2 border-dashed border-gray-200">
               <div className="text-center">
-                <div className="text-3xl mb-3">📧</div>
-                <p className="text-sm text-gray-400 font-medium">Select a delegate to preview their invite</p>
+                <div className="text-3xl mb-3">{mode === "email" ? "📧" : "💬"}</div>
+                <p className="text-sm text-gray-400 font-medium">Select a delegate to preview their {mode === "email" ? "email invite" : "text message"}</p>
               </div>
             </div>
-          ) : (
+          ) : mode === "email" ? (
             <div>
-              {/* Action bar */}
+              {/* Email action bar */}
               <div className="flex flex-wrap items-center gap-3 mb-4">
                 <div className="flex-1 min-w-0">
                   <div className="text-xs text-gray-400 mb-0.5">To</div>
@@ -827,11 +861,9 @@ function DelegateEventInviteSection({ delegates }) {
                 <button
                   onClick={handleCopy}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
-                    copyState === "copied"
-                      ? "bg-green-500 text-white"
-                      : copyState === "error"
-                      ? "bg-red-500 text-white"
-                      : "bg-navy text-white hover:bg-navy/90"
+                    copyState === "copied" ? "bg-green-500 text-white"
+                    : copyState === "error" ? "bg-red-500 text-white"
+                    : "bg-navy text-white hover:bg-navy/90"
                   }`}
                 >
                   {copyState === "copied" ? "✓ Copied!" : copyState === "error" ? "Copy failed" : "Copy Rich Email"}
@@ -846,7 +878,6 @@ function DelegateEventInviteSection({ delegates }) {
               <div className="text-xs text-gray-400 mb-3">
                 <strong className="text-gray-500">Subject:</strong> {SUBJECT}
               </div>
-              {/* Email preview */}
               <div className="border border-gray-200 rounded-xl overflow-hidden shadow-sm">
                 <iframe
                   srcDoc={emailHTML}
@@ -858,6 +889,44 @@ function DelegateEventInviteSection({ delegates }) {
               </div>
               <p className="text-xs text-gray-400 mt-2 text-center">
                 "Copy Rich Email" → paste into Gmail compose to send with full formatting
+              </p>
+            </div>
+          ) : (
+            <div>
+              {/* Text action bar */}
+              <div className="flex flex-wrap items-center gap-3 mb-4">
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs text-gray-400 mb-0.5">To</div>
+                  <div className="text-sm font-medium text-navy">{selected.phone}</div>
+                </div>
+                <button
+                  onClick={handleCopy}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                    copyState === "copied" ? "bg-green-500 text-white"
+                    : copyState === "error" ? "bg-red-500 text-white"
+                    : "bg-navy text-white hover:bg-navy/90"
+                  }`}
+                >
+                  {copyState === "copied" ? "✓ Copied!" : copyState === "error" ? "Copy failed" : "Copy Text"}
+                </button>
+                <button
+                  onClick={handleSMS}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-green-600 text-white hover:bg-green-700 transition-all"
+                >
+                  Open in SMS ↗
+                </button>
+              </div>
+              {/* iMessage-style preview */}
+              <div className="bg-gray-100 rounded-2xl p-6 min-h-[200px]">
+                <div className="flex justify-end">
+                  <div className="max-w-[80%] bg-blue-500 text-white text-sm rounded-2xl rounded-tr-sm px-4 py-3 leading-relaxed shadow-sm">
+                    {textMsg}
+                  </div>
+                </div>
+                <p className="text-xs text-gray-400 text-center mt-4">Preview — message is personalized with delegate's first name</p>
+              </div>
+              <p className="text-xs text-gray-400 mt-3 text-center">
+                "Copy Text" → paste into any SMS app &nbsp;·&nbsp; "Open in SMS" → opens your phone's messages app
               </p>
             </div>
           )}
