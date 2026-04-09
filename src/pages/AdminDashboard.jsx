@@ -581,6 +581,9 @@ function generateEventEmailHTML(firstName) {
     .header-sub{font-family:'Barlow',Arial,sans-serif;font-size:14px;color:#a8cfe0;margin:8px 0 0;font-style:italic;}
     .hero-band{background:#034A76;padding:14px 40px;text-align:center;border-bottom:1px solid #0a5c8a;}
     .hero-band p{margin:0;font-family:'Barlow Condensed',Arial,sans-serif;font-size:17px;font-weight:700;color:#67d8ef;letter-spacing:1px;text-transform:uppercase;}
+    .coffee-band{background:linear-gradient(135deg,#F36F6B,#e05a56);padding:18px 40px;text-align:center;}
+    .coffee-band p{margin:0;font-family:'Barlow Condensed',Arial,sans-serif;font-size:22px;font-weight:800;color:#ffffff;letter-spacing:2px;text-transform:uppercase;line-height:1.2;}
+    .coffee-band span{display:block;font-size:14px;font-weight:600;letter-spacing:3px;color:rgba(255,255,255,0.8);margin-top:4px;}
     .body-pad{padding:32px 40px;}
     .greeting{font-size:22px;font-weight:700;color:#002A52;margin:0 0 16px;}
     .body-copy{font-size:15px;line-height:1.7;color:#374151;margin:0 0 20px;}
@@ -619,6 +622,11 @@ function generateEventEmailHTML(firstName) {
     <p>Connecting Our River to the Future of the Great Salt Lake</p>
   </div>
 
+  <!-- Culture Coffee callout -->
+  <div class="coffee-band">
+    <p>Join Today at Culture Coffee<span>☕ Come as you are · Bring a friend</span></p>
+  </div>
+
   <!-- Body -->
   <div class="body-pad">
     <p class="greeting">Hi ${firstName},</p>
@@ -637,7 +645,7 @@ function generateEventEmailHTML(firstName) {
     <div class="event-card">
       <p class="event-card-title">Event Details</p>
       <div class="event-detail"><span class="event-icon">📅</span><span>Date &amp; time to be announced — check your RSVP confirmation</span></div>
-      <div class="event-detail"><span class="event-icon">📍</span><span>Location details provided after RSVP</span></div>
+      <div class="event-detail"><span class="event-icon">📍</span><span><strong>Culture Coffee</strong> · Salt Lake City, UT</span></div>
       <div class="event-detail"><span class="event-icon">💬</span><span>Live Q&amp;A — bring your questions</span></div>
     </div>
 
