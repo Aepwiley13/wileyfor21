@@ -561,6 +561,285 @@ function VolunteerContactRow({ volunteer, assignedDelegates, volName }) {
   );
 }
 
+// ─── Event Invite ────────────────────────────────────────────────────────────
+
+function generateEventEmailHTML(firstName) {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>You're Invited: Jordan River & Great Salt Lake Community Dialogue</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+    body{margin:0;padding:0;background:#f0f4f8;font-family:'Barlow',Arial,sans-serif;color:#1a1a1a;}
+    .wrapper{max-width:620px;margin:0 auto;background:#ffffff;}
+    .header{background:linear-gradient(160deg,#001f3f 0%,#002A52 55%,#034A76 100%);padding:36px 40px 28px;text-align:center;border-bottom:5px solid #F36F6B;}
+    .eyebrow{font-family:'Barlow Condensed',Arial,sans-serif;font-size:12px;letter-spacing:4px;color:#F36F6B;margin:0 0 10px;text-transform:uppercase;}
+    .header-title{font-family:'Barlow Condensed',Arial,sans-serif;font-weight:800;font-size:30px;letter-spacing:1px;color:#ffffff;margin:0 0 4px;line-height:1.15;text-transform:uppercase;}
+    .header-title span{color:#67d8ef;}
+    .header-sub{font-family:'Barlow',Arial,sans-serif;font-size:14px;color:#a8cfe0;margin:8px 0 0;font-style:italic;}
+    .hero-band{background:#034A76;padding:14px 40px;text-align:center;border-bottom:1px solid #0a5c8a;}
+    .hero-band p{margin:0;font-family:'Barlow Condensed',Arial,sans-serif;font-size:17px;font-weight:700;color:#67d8ef;letter-spacing:1px;text-transform:uppercase;}
+    .body-pad{padding:32px 40px;}
+    .greeting{font-size:22px;font-weight:700;color:#002A52;margin:0 0 16px;}
+    .body-copy{font-size:15px;line-height:1.7;color:#374151;margin:0 0 20px;}
+    .event-card{background:#f8f9fb;border:1px solid #e2e8f0;border-radius:12px;padding:20px 24px;margin:24px 0;}
+    .event-card-title{font-family:'Barlow Condensed',Arial,sans-serif;font-size:13px;letter-spacing:3px;text-transform:uppercase;color:#F36F6B;margin:0 0 12px;font-weight:700;}
+    .event-detail{display:flex;align-items:center;gap:10px;font-size:14px;color:#374151;margin-bottom:8px;}
+    .event-icon{font-size:18px;width:24px;text-align:center;}
+    .speaker-card{display:flex;align-items:center;gap:16px;background:linear-gradient(135deg,#001f3f,#034A76);border-radius:12px;padding:20px 24px;margin:24px 0;}
+    .speaker-avatar{width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#67d8ef,#0ea5e9);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',Arial,sans-serif;font-size:20px;font-weight:800;color:#001f3f;flex-shrink:0;}
+    .speaker-name{font-family:'Barlow Condensed',Arial,sans-serif;font-size:20px;font-weight:800;color:#ffffff;margin:0;letter-spacing:0.5px;}
+    .speaker-title{font-size:13px;color:#a8cfe0;margin:2px 0 0;}
+    .agenda-title{font-family:'Barlow Condensed',Arial,sans-serif;font-size:13px;letter-spacing:3px;text-transform:uppercase;color:#034A76;margin:0 0 12px;font-weight:700;}
+    .agenda-item{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
+    .agenda-icon{font-size:20px;line-height:1;margin-top:1px;}
+    .agenda-text strong{font-size:14px;font-weight:700;color:#002A52;display:block;}
+    .agenda-text span{font-size:13px;color:#6b7280;}
+    .cta-wrap{text-align:center;padding:28px 40px;}
+    .cta-btn{display:inline-block;background:linear-gradient(135deg,#0891b2,#0ea5e9);color:#ffffff;font-family:'Barlow Condensed',Arial,sans-serif;font-size:18px;font-weight:800;letter-spacing:2px;text-transform:uppercase;text-decoration:none;padding:16px 44px;border-radius:50px;box-shadow:0 4px 18px rgba(8,145,178,0.4);}
+    .divider{height:1px;background:#e5e7eb;margin:0 40px;}
+    .footer{padding:24px 40px;text-align:center;}
+    .footer p{font-size:12px;color:#9ca3af;margin:4px 0;line-height:1.6;}
+    .footer a{color:#9ca3af;}
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <!-- Header -->
+  <div class="header">
+    <p class="eyebrow">Wiley for HD21 · Community Dialogue</p>
+    <h1 class="header-title">The Jordan River &amp;<br/><span>Great Salt Lake</span></h1>
+    <p class="header-sub">A Community Dialogue — You're Invited</p>
+  </div>
+
+  <!-- Hero band -->
+  <div class="hero-band">
+    <p>Connecting Our River to the Future of the Great Salt Lake</p>
+  </div>
+
+  <!-- Body -->
+  <div class="body-pad">
+    <p class="greeting">Hi ${firstName},</p>
+    <p class="body-copy">
+      In our recent delegate survey, clean air &amp; the Great Salt Lake rose to the top as our community's
+      most urgent concern — and I heard you. That's why I'm hosting a special community dialogue to dig
+      into what's happening with our water systems and what we can do together to protect them.
+    </p>
+    <p class="body-copy">
+      I'd love for you to join us for an honest, in-depth conversation with <strong>Sören Simonsen</strong>
+      of the Jordan River Commission — one of Utah's foremost experts on the river and lake system that
+      shapes life on the Westside every single day.
+    </p>
+
+    <!-- Event details -->
+    <div class="event-card">
+      <p class="event-card-title">Event Details</p>
+      <div class="event-detail"><span class="event-icon">📅</span><span>Date &amp; time to be announced — check your RSVP confirmation</span></div>
+      <div class="event-detail"><span class="event-icon">📍</span><span>Location details provided after RSVP</span></div>
+      <div class="event-detail"><span class="event-icon">💬</span><span>Live Q&amp;A — bring your questions</span></div>
+    </div>
+
+    <!-- Speaker -->
+    <div class="speaker-card">
+      <div class="speaker-avatar">SS</div>
+      <div>
+        <p class="speaker-name">Sören Simonsen</p>
+        <p class="speaker-title">Executive Director · Jordan River Commission</p>
+      </div>
+    </div>
+
+    <!-- Agenda -->
+    <p class="agenda-title">What We'll Cover</p>
+    <div class="agenda-item">
+      <span class="agenda-icon">💧</span>
+      <div class="agenda-text"><strong>Impacts on Our Water Systems</strong><span>How the Jordan River connects to the future of the Great Salt Lake</span></div>
+    </div>
+    <div class="agenda-item">
+      <span class="agenda-icon">⚠️</span>
+      <div class="agenda-text"><strong>Challenges &amp; Solutions</strong><span>Real threats, real fixes — what policy can actually do</span></div>
+    </div>
+    <div class="agenda-item">
+      <span class="agenda-icon">👥</span>
+      <div class="agenda-text"><strong>Community Actions</strong><span>How delegates like you can drive change from the convention floor</span></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- CTA -->
+  <div class="cta-wrap">
+    <p style="font-size:15px;color:#374151;margin:0 0 20px;">Spots are limited — please RSVP so we can plan accordingly.</p>
+    <a class="cta-btn" href="https://luma.com/bhh7ss55">RSVP Now &rarr;</a>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>Paid for by Wiley for HD21 · Salt Lake City, Utah</p>
+    <p>You're receiving this because you're a delegate in House District 21.</p>
+    <p><a href="#">Unsubscribe</a></p>
+  </div>
+</div>
+</body>
+</html>`;
+}
+
+function DelegateEventInviteSection({ delegates }) {
+  const [selected, setSelected] = useState(null);
+  const [search, setSearch] = useState("");
+  const [copyState, setCopyState] = useState("idle"); // idle | copied | error
+
+  const inviteable = delegates
+    .filter((d) => d.email && !d.isVacant && !d.isOpposingCandidate)
+    .filter((d) => {
+      if (!search) return true;
+      const q = search.toLowerCase();
+      return (d.name || "").toLowerCase().includes(q) || (d.email || "").toLowerCase().includes(q) || (d.precinct || "").toLowerCase().includes(q);
+    })
+    .sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+
+  const firstName = selected ? (selected.name || "").split(" ")[0] || "there" : "there";
+  const emailHTML = selected ? generateEventEmailHTML(firstName) : null;
+
+  const SUBJECT = "You're Invited: Jordan River & Great Salt Lake Community Dialogue";
+
+  async function handleCopy() {
+    if (!emailHTML) return;
+    try {
+      if (window.ClipboardItem) {
+        const blob = new Blob([emailHTML], { type: "text/html" });
+        await navigator.clipboard.write([new ClipboardItem({ "text/html": blob })]);
+      } else {
+        await navigator.clipboard.writeText(emailHTML);
+      }
+      setCopyState("copied");
+      setTimeout(() => setCopyState("idle"), 2500);
+    } catch {
+      setCopyState("error");
+      setTimeout(() => setCopyState("idle"), 2500);
+    }
+  }
+
+  function handleGmail() {
+    if (!selected) return;
+    const to = encodeURIComponent(selected.email);
+    const su = encodeURIComponent(SUBJECT);
+    window.open(`https://mail.google.com/mail/?view=cm&to=${to}&su=${su}`, "_blank");
+  }
+
+  return (
+    <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+      <div className="flex flex-wrap items-start justify-between gap-4 mb-5">
+        <div>
+          <h2 className="font-bold text-navy text-lg mb-0.5">Event Invite — Jordan River &amp; Great Salt Lake</h2>
+          <p className="text-xs text-gray-400">Click a delegate to preview their personalized email, then copy or open in Gmail.</p>
+        </div>
+        <span className="text-xs bg-blue-50 text-blue-600 font-semibold px-3 py-1.5 rounded-full border border-blue-100">
+          {inviteable.length} delegates with email
+        </span>
+      </div>
+
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Left: delegate list */}
+        <div className="lg:w-72 flex-shrink-0">
+          <input
+            type="text"
+            placeholder="Search delegates…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-navy/20"
+          />
+          <div className="space-y-1 max-h-[420px] overflow-y-auto pr-1">
+            {inviteable.length === 0 && (
+              <p className="text-xs text-gray-400 text-center py-6">No delegates match.</p>
+            )}
+            {inviteable.map((d) => (
+              <button
+                key={d.id}
+                onClick={() => setSelected(d)}
+                className={`w-full text-left px-3 py-2.5 rounded-lg border transition-all text-sm ${
+                  selected?.id === d.id
+                    ? "bg-navy text-white border-navy"
+                    : "bg-white hover:bg-gray-50 border-gray-100"
+                }`}
+              >
+                <div className="font-semibold leading-snug">{d.name}</div>
+                <div className={`text-xs mt-0.5 truncate ${selected?.id === d.id ? "text-blue-200" : "text-gray-400"}`}>
+                  {d.email}
+                </div>
+                {d.precinct && (
+                  <div className={`text-xs ${selected?.id === d.id ? "text-blue-300" : "text-gray-300"}`}>
+                    {d.precinct}{d.role ? ` · ${d.role}` : ""}
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Right: preview + actions */}
+        <div className="flex-1 min-w-0">
+          {!selected ? (
+            <div className="h-full min-h-[280px] flex items-center justify-center rounded-xl border-2 border-dashed border-gray-200">
+              <div className="text-center">
+                <div className="text-3xl mb-3">📧</div>
+                <p className="text-sm text-gray-400 font-medium">Select a delegate to preview their invite</p>
+              </div>
+            </div>
+          ) : (
+            <div>
+              {/* Action bar */}
+              <div className="flex flex-wrap items-center gap-3 mb-4">
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs text-gray-400 mb-0.5">To</div>
+                  <div className="text-sm font-medium text-navy truncate">{selected.email}</div>
+                </div>
+                <button
+                  onClick={handleCopy}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                    copyState === "copied"
+                      ? "bg-green-500 text-white"
+                      : copyState === "error"
+                      ? "bg-red-500 text-white"
+                      : "bg-navy text-white hover:bg-navy/90"
+                  }`}
+                >
+                  {copyState === "copied" ? "✓ Copied!" : copyState === "error" ? "Copy failed" : "Copy Rich Email"}
+                </button>
+                <button
+                  onClick={handleGmail}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-coral text-white hover:bg-coral/90 transition-all"
+                >
+                  Open in Gmail ↗
+                </button>
+              </div>
+              <div className="text-xs text-gray-400 mb-3">
+                <strong className="text-gray-500">Subject:</strong> {SUBJECT}
+              </div>
+              {/* Email preview */}
+              <div className="border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+                <iframe
+                  srcDoc={emailHTML}
+                  title="Email preview"
+                  className="w-full"
+                  style={{ height: 560, border: "none" }}
+                  sandbox="allow-same-origin"
+                />
+              </div>
+              <p className="text-xs text-gray-400 mt-2 text-center">
+                "Copy Rich Email" → paste into Gmail compose to send with full formatting
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function AdminDashboard() {
   const { user, signOut } = useAuth();
   const stats = useCampaignStats();
@@ -971,6 +1250,9 @@ export default function AdminDashboard() {
             )}
           </div>
         </section>
+
+        {/* Event Invite Tool */}
+        <DelegateEventInviteSection delegates={delegates} />
       </main>
     </div>
   );
