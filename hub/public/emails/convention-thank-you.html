@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Today Is The Day. Thank You for Standing With Me.</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:ital,wght@0,400;0,600;1,400&display=swap');
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f8f6f2;
+      font-family: 'Barlow', Arial, sans-serif;
+      color: #1a1a1a;
+    }
+
+    .wrapper {
+      max-width: 620px;
+      margin: 0 auto;
+      background-color: #ffffff;
+    }
+
+    /* HEADER */
+    .header {
+      background-color: #002A52;
+      padding: 28px 40px 20px;
+      text-align: center;
+      border-bottom: 5px solid #F36F6B;
+    }
+
+    .header-eyebrow {
+      font-family: 'Barlow Condensed', Arial Narrow, sans-serif;
+      font-size: 13px;
+      letter-spacing: 4px;
+      color: #F36F6B;
+      margin: 0 0 8px;
+      text-transform: uppercase;
+    }
+
+    .header-logo {
+      font-family: 'Barlow Condensed', Arial Narrow, sans-serif;
+      font-weight: 700;
+      font-size: 34px;
+      letter-spacing: 3px;
+      color: #ffffff;
+      margin: 0;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .header-sub {
+      font-family: 'Barlow', Arial, sans-serif;
+      font-size: 13px;
+      color: #99bbcc;
+      margin: 6px 0 0;
+      font-style: italic;
+    }
+
+    /* HERO BAND */
+    .hero-band {
+      background-color: #F36F6B;
+      padding: 22px 40px;
+      text-align: center;
+    }
+
+    .hero-band p {
+      font-family: 'Barlow Condensed', Arial Narrow, sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      letter-spacing: 3px;
+      color: #ffffff;
+      margin: 0;
+      text-transform: uppercase;
+      line-height: 1.3;
+    }
+
+    /* BODY */
+    .body-content {
+      padding: 40px 44px;
+    }
+
+    .greeting {
+      font-size: 22px;
+      font-weight: 600;
+      color: #034A76;
+      margin: 0 0 24px;
+    }
+
+    .body-content p {
+      font-size: 16px;
+      line-height: 1.8;
+      color: #2d2d2d;
+      margin: 0 0 18px;
+    }
+
+    .body-content p.punch {
+      font-size: 18px;
+      font-weight: 600;
+      color: #034A76;
+      border-left: 4px solid #F36F6B;
+      padding-left: 16px;
+      margin: 28px 0;
+    }
+
+    /* ENDORSEMENT CARD */
+    .endorsement-card {
+      background-color: #002A52;
+      border-radius: 6px;
+      padding: 28px 32px;
+      margin: 28px 0;
+    }
+
+    .endorsement-card-title {
+      font-family: 'Barlow Condensed', Arial Narrow, sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 3px;
+      color: #F36F6B;
+      margin: 0 0 18px;
+      text-transform: uppercase;
+    }
+
+    .endorsement-name {
+      font-family: 'Barlow Condensed', Arial Narrow, sans-serif;
+      font-weight: 700;
+      font-size: 17px;
+      letter-spacing: 1px;
+      color: #ffffff;
+      margin: 0 0 2px;
+      text-transform: uppercase;
+    }
+
+    .endorsement-title {
+      font-size: 13px;
+      color: #99bbcc;
+      margin: 0 0 14px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #1a4a6a;
+      font-style: italic;
+    }
+
+    .endorsement-title:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    /* SNACK BAND */
+    .snack-band {
+      background-color: #f8f6f2;
+      border-radius: 6px;
+      border-left: 5px solid #F36F6B;
+      padding: 20px 24px;
+      margin: 24px 0;
+    }
+
+    .snack-band p {
+      font-size: 16px;
+      color: #2d2d2d;
+      margin: 0;
+      line-height: 1.7;
+    }
+
+    .snack-band strong {
+      font-family: 'Barlow Condensed', Arial Narrow, sans-serif;
+      font-size: 14px;
+      letter-spacing: 2px;
+      color: #034A76;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    /* FACT CARD */
+    .fact-card {
+      background-color: #034A76;
+      border-radius: 6px;
+      padding: 24px 28px;
+      margin: 28px 0;
+    }
+
+    .fact-card-title {
+      font-family: 'Barlow Condensed', Arial Narrow, sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 3px;
+      color: #F36F6B;
+      margin: 0 0 14px;
+      text-transform: uppercase;
+    }
+
+    .fact-card p {
+      color: #e8eef4 !important;
+      font-size: 15px !important;
+      line-height: 1.7 !important;
+      margin: 0 0 10px !important;
+    }
+
+    .fact-card p:last-child {
+      margin: 0 !important;
+    }
+
+    /* DIVIDER */
+    .divider {
+      border: none;
+      border-top: 2px solid #eeecea;
+      margin: 32px 0;
+    }
+
+    /* SIGN OFF */
+    .signoff {
+      padding: 0 44px 36px;
+    }
+
+    .signoff p {
+      font-size: 16px;
+      line-height: 1.8;
+      color: #2d2d2d;
+      margin: 0 0 14px;
+    }
+
+    .signoff .name {
+      font-family: 'Barlow Condensed', Arial Narrow, sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      letter-spacing: 2px;
+      color: #034A76;
+      margin: 20px 0 2px;
+      text-transform: uppercase;
+    }
+
+    .signoff .title {
+      font-size: 13px;
+      color: #888;
+      font-style: italic;
+      margin: 0;
+    }
+
+    .ps {
+      background-color: #fdf4f4;
+      border-left: 3px solid #F36F6B;
+      padding: 14px 18px;
+      margin-top: 24px;
+      font-size: 14px;
+      color: #444;
+      line-height: 1.7;
+    }
+
+    /* FOOTER */
+    .footer {
+      background-color: #002A52;
+      padding: 24px 40px;
+      text-align: center;
+    }
+
+    .footer p {
+      font-size: 12px;
+      color: #7799aa;
+      margin: 0 0 6px;
+      line-height: 1.6;
+    }
+
+    .footer a {
+      color: #F36F6B;
+      text-decoration: none;
+    }
+
+    .footer .tagline {
+      font-family: 'Barlow Condensed', Arial Narrow, sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 3px;
+      color: #ffffff;
+      margin: 14px 0 0;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+
+    <!-- HEADER -->
+    <div class="header">
+      <p class="header-eyebrow">Utah House District 21 &middot; Convention Day</p>
+      <p class="header-logo">Aaron Wiley</p>
+      <p class="header-sub">West Side Salt Lake City &middot; April 11, 2026</p>
+    </div>
+
+    <!-- HERO BAND -->
+    <div class="hero-band">
+      <p>&#x2B50; &nbsp; Today Is The Day. Thank You for Standing With Me.</p>
+    </div>
+
+    <!-- BODY -->
+    <div class="body-content">
+
+      <p class="greeting">Dear [First Name],</p>
+
+      <p>Today we show up. And I could not be more grateful.</p>
+
+      <p>When you chose to rank me <strong>#1</strong>, you didn't just make a political decision &mdash; you made a statement about what you believe West Side Salt Lake City deserves. You put your credibility behind this campaign, and I do not take that lightly. Not for a single second.</p>
+
+      <p class="punch">"This is what a movement looks like &mdash; leaders and neighbors standing together, choosing community over politics. That's why we're going to win today."</p>
+
+      <p>Because of you and so many others who believed from the very beginning, we have built something real. Something rooted. Something the West Side can be proud of.</p>
+
+    </div>
+
+    <!-- ENDORSEMENT CARD -->
+    <div style="padding: 0 44px;">
+      <div class="endorsement-card">
+        <p class="endorsement-card-title">&#x2705; &nbsp; Those Who Stood With Us</p>
+
+        <p class="endorsement-name">Representative Sandra Hollins</p>
+        <p class="endorsement-title">Current Utah House District 21 Representative &mdash; Our Own Rep</p>
+
+        <p class="endorsement-name">Representative Ashlee Matthews</p>
+        <p class="endorsement-title">Utah House of Representatives</p>
+
+        <p class="endorsement-name">Representative Rosalba Dominguez</p>
+        <p class="endorsement-title">Utah House of Representatives</p>
+
+        <p class="endorsement-name">County Councilwoman Natalie Pinkney</p>
+        <p class="endorsement-title">Salt Lake County Council</p>
+
+        <p class="endorsement-name">Liban Mohamed</p>
+        <p class="endorsement-title">1st Congressional District Candidate</p>
+
+        <p class="endorsement-name">David Hollins</p>
+        <p class="endorsement-title" style="border-bottom:none; margin-bottom:0; padding-bottom:0;">Community Leader &amp; Supporter</p>
+      </div>
+    </div>
+
+    <div class="body-content" style="padding-top: 28px;">
+
+      <p>When Representative Sandra Hollins &mdash; the woman who has carried this district with distinction &mdash; chooses to pass the torch to me, I feel the full weight of that trust. I will honor it every single day I serve. And when leaders like Rep. Ashlee Matthews, Rep. Rosalba Dominguez, Councilwoman Natalie Pinkney, Liban Mohamed, and David Hollins add their voices to this campaign, it says something powerful: <strong>this community is ready for what comes next.</strong></p>
+
+      <p>I have overwhelming support heading into today &mdash; but I never forget that every single endorsement is a promise I owe this community. I will fight for you. I will show up for you. I will make District 21 proud.</p>
+
+    </div>
+
+    <!-- SNACK BAND -->
+    <div style="padding: 0 44px;">
+      <div class="snack-band">
+        <p>
+          <strong>&#x1F37F; We've Got You Covered at Convention</strong>
+          Come find us at the Aaron Wiley table &mdash; we'll have <strong>snacks and water</strong> waiting for you. You're giving your Saturday for this community. The least we can do is make sure you're fueled up and ready to vote. Come say hello, grab a bite, and let's celebrate what we built together.
+        </p>
+      </div>
+    </div>
+
+    <!-- FACT CARD -->
+    <div style="padding: 0 44px; margin-top: 8px;">
+      <div class="fact-card">
+        <p class="fact-card-title">&#x1F4CB; &nbsp; Convention Reminder</p>
+        <p><strong style="color:#F36F6B;">&#x1F4CD; Where:</strong> Highland High School &mdash; 2166 S 1700 E, SLC</p>
+        <p><strong style="color:#F36F6B;">&#x1F4C5; Today:</strong> Saturday, April 11, 2026 &middot; Check-in opens 8:00 AM</p>
+        <p><strong style="color:#F36F6B;">&#x1F5F3;&#xFE0F; District 21 Breakout:</strong> 1:40 PM &middot; Voting begins 2:00 PM</p>
+        <p><strong style="color:#F36F6B;">&#x2B50; Your vote:</strong> Rank Aaron Wiley <strong>#1</strong>. Let's make it official.</p>
+      </div>
+    </div>
+
+    <div class="body-content" style="padding-top: 28px;">
+      <p>You chose to be part of this from the beginning. Today, we finish what we started &mdash; together.</p>
+      <hr class="divider" />
+    </div>
+
+    <!-- SIGN OFF -->
+    <div class="signoff">
+      <p>From the bottom of my heart &mdash; thank you. For your time, your trust, and your belief that the West Side deserves a strong, fearless voice in the Utah House.</p>
+      <p>I will not let you down. Today, I fight for every family in District 21. Let's go win this.</p>
+      <p>With deep gratitude and West Side pride,</p>
+      <p class="name">Aaron Wiley</p>
+      <p class="title">Candidate &middot; Utah House District 21 &middot; <a href="https://wileyfor21.com" style="color:#034A76;">wileyfor21.com</a></p>
+
+      <div class="ps">
+        <strong>P.S.</strong> &mdash; If you see me at Highland High School today, come say hi. I genuinely want to meet you face to face and thank you personally. That's not a talking point &mdash; it's just who I am.
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <p class="tagline">WE ARE 21. WE ARE HERE.</p>
+      <p style="margin-top:12px;">Paid for by Utah for Wiley &middot; Aaron Wiley for Utah House District 21</p>
+      <p><a href="mailto:utahforwiley@gmail.com">utahforwiley@gmail.com</a> &middot; <a href="https://wileyfor21.com">wileyfor21.com</a></p>
+      <p style="margin-top:10px; font-size:11px; color:#557788;">You are receiving this because you are a credentialed delegate for District 21.<br/>To unsubscribe, reply with "unsubscribe" and we'll remove you immediately.</p>
+    </div>
+
+  </div>
+</body>
+</html>
