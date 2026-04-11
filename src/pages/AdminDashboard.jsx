@@ -622,7 +622,7 @@ function generateConventionEmailHTML(firstName) {
   <div class="body-pad">
     <p class="greeting">Dear ${firstName},</p>
     <p class="body-copy">Today we show up. And I could not be more grateful.</p>
-    <p class="body-copy">When you chose to rank me <strong>#1</strong>, you don't just make a political decision &mdash; you making a statement about what you believe West Side of Salt Lake City deserves. You put your credibility behind this campaign, and I do not take that lightly. Not for a single second.</p>
+    <p class="body-copy">When you chose to rank me <strong>#1</strong>, you don't just make a political decision &mdash; you make a statement about what you believe the West Side of Salt Lake City deserves. You put your credibility behind this campaign, and I do not take that lightly. Not for a single second.</p>
     <p class="punch">&ldquo;This is what a movement looks like &mdash; leaders and neighbors standing together, choosing community over politics. That&rsquo;s why we&rsquo;re going to win today.&rdquo;</p>
     <p class="body-copy">Because of you and so many others who believed from the very beginning, we have built something real. Something rooted. Something the West Side can be proud of.</p>
     <div class="endorsement-card">
