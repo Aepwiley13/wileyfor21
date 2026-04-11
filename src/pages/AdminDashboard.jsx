@@ -561,6 +561,357 @@ function VolunteerContactRow({ volunteer, assignedDelegates, volName }) {
   );
 }
 
+// ─── Convention Thank-You Email ───────────────────────────────────────────────
+
+function generateConventionEmailHTML(firstName) {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Today Is The Day. Thank You for Standing With Me.</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:ital,wght@0,400;0,600;1,400&display=swap');
+    body{margin:0;padding:0;background-color:#f8f6f2;font-family:'Barlow',Arial,sans-serif;color:#1a1a1a;}
+    .wrapper{max-width:620px;margin:0 auto;background-color:#ffffff;}
+    .header{background-color:#002A52;padding:28px 40px 20px;text-align:center;border-bottom:5px solid #F36F6B;}
+    .header-eyebrow{font-family:'Barlow Condensed',Arial Narrow,sans-serif;font-size:13px;letter-spacing:4px;color:#F36F6B;margin:0 0 8px;text-transform:uppercase;}
+    .header-logo{font-family:'Barlow Condensed',Arial Narrow,sans-serif;font-weight:700;font-size:34px;letter-spacing:3px;color:#ffffff;margin:0;line-height:1;text-transform:uppercase;}
+    .header-sub{font-family:'Barlow',Arial,sans-serif;font-size:13px;color:#99bbcc;margin:6px 0 0;font-style:italic;}
+    .hero-band{background-color:#F36F6B;padding:22px 40px;text-align:center;}
+    .hero-band p{font-family:'Barlow Condensed',Arial Narrow,sans-serif;font-weight:700;font-size:22px;letter-spacing:3px;color:#ffffff;margin:0;text-transform:uppercase;line-height:1.3;}
+    .body-pad{padding:40px 44px;}
+    .greeting{font-size:22px;font-weight:600;color:#034A76;margin:0 0 24px;}
+    .body-copy{font-size:16px;line-height:1.8;color:#2d2d2d;margin:0 0 18px;}
+    .punch{font-size:18px;font-weight:600;color:#034A76;border-left:4px solid #F36F6B;padding-left:16px;margin:28px 0;}
+    .endorsement-card{background-color:#002A52;border-radius:6px;padding:28px 32px;margin:28px 0;}
+    .endorsement-card-title{font-family:'Barlow Condensed',Arial Narrow,sans-serif;font-weight:700;font-size:13px;letter-spacing:3px;color:#F36F6B;margin:0 0 18px;text-transform:uppercase;}
+    .endorsement-name{font-family:'Barlow Condensed',Arial Narrow,sans-serif;font-weight:700;font-size:17px;letter-spacing:1px;color:#ffffff;margin:0 0 2px;text-transform:uppercase;}
+    .endorsement-role{font-size:13px;color:#99bbcc;margin:0 0 14px;padding-bottom:14px;border-bottom:1px solid #1a4a6a;font-style:italic;}
+    .endorsement-role-last{font-size:13px;color:#99bbcc;margin:0;font-style:italic;}
+    .snack-band{background-color:#f8f6f2;border-radius:6px;border-left:5px solid #F36F6B;padding:20px 24px;margin:24px 0;}
+    .snack-label{font-family:'Barlow Condensed',Arial Narrow,sans-serif;font-size:14px;letter-spacing:2px;color:#034A76;text-transform:uppercase;display:block;margin-bottom:6px;font-weight:700;}
+    .snack-copy{font-size:16px;color:#2d2d2d;margin:0;line-height:1.7;}
+    .fact-card{background-color:#034A76;border-radius:6px;padding:24px 28px;margin:28px 0;}
+    .fact-card-title{font-family:'Barlow Condensed',Arial Narrow,sans-serif;font-weight:700;font-size:13px;letter-spacing:3px;color:#F36F6B;margin:0 0 14px;text-transform:uppercase;}
+    .fact-row{color:#e8eef4;font-size:15px;line-height:1.7;margin:0 0 10px;}
+    .fact-row:last-child{margin:0;}
+    .fact-label{color:#F36F6B;font-weight:700;}
+    .divider{border:none;border-top:2px solid #eeecea;margin:32px 0;}
+    .signoff-pad{padding:0 44px 36px;}
+    .signoff-copy{font-size:16px;line-height:1.8;color:#2d2d2d;margin:0 0 14px;}
+    .name{font-family:'Barlow Condensed',Arial Narrow,sans-serif;font-weight:700;font-size:22px;letter-spacing:2px;color:#034A76;margin:20px 0 2px;text-transform:uppercase;}
+    .title-line{font-size:13px;color:#888;font-style:italic;margin:0;}
+    .ps{background-color:#fdf4f4;border-left:3px solid #F36F6B;padding:14px 18px;margin-top:24px;font-size:14px;color:#444;line-height:1.7;}
+    .footer{background-color:#002A52;padding:24px 40px;text-align:center;}
+    .footer p{font-size:12px;color:#7799aa;margin:0 0 6px;line-height:1.6;}
+    .footer a{color:#F36F6B;text-decoration:none;}
+    .tagline{font-family:'Barlow Condensed',Arial Narrow,sans-serif;font-weight:700;font-size:16px;letter-spacing:3px;color:#ffffff;margin:14px 0 0;text-transform:uppercase;}
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <p class="header-eyebrow">Utah House District 21 &middot; Convention Day</p>
+    <p class="header-logo">Aaron Wiley</p>
+    <p class="header-sub">West Side Salt Lake City &middot; April 11, 2026</p>
+  </div>
+  <div class="hero-band">
+    <p>&#x2B50; Today Is The Day. Thank You for Standing With Me.</p>
+  </div>
+  <div class="body-pad">
+    <p class="greeting">Dear ${firstName},</p>
+    <p class="body-copy">Today we show up. And I could not be more grateful.</p>
+    <p class="body-copy">When you chose to rank me <strong>#1</strong>, you didn't just make a political decision &mdash; you made a statement about what you believe West Side Salt Lake City deserves. You put your credibility behind this campaign, and I do not take that lightly. Not for a single second.</p>
+    <p class="punch">&ldquo;This is what a movement looks like &mdash; leaders and neighbors standing together, choosing community over politics. That&rsquo;s why we&rsquo;re going to win today.&rdquo;</p>
+    <p class="body-copy">Because of you and so many others who believed from the very beginning, we have built something real. Something rooted. Something the West Side can be proud of.</p>
+    <div class="endorsement-card">
+      <p class="endorsement-card-title">&#x2705; Those Who Stood With Us</p>
+      <p class="endorsement-name">Representative Sandra Hollins</p>
+      <p class="endorsement-role">Current Utah House District 21 Representative &mdash; Our Own Rep</p>
+      <p class="endorsement-name">Representative Ashlee Matthews</p>
+      <p class="endorsement-role">Utah House of Representatives</p>
+      <p class="endorsement-name">Representative Rosalba Dominguez</p>
+      <p class="endorsement-role">Utah House of Representatives</p>
+      <p class="endorsement-name">County Councilwoman Natalie Pinkney</p>
+      <p class="endorsement-role">Salt Lake County Council</p>
+      <p class="endorsement-name">Liban Mohamed</p>
+      <p class="endorsement-role">1st Congressional District Candidate</p>
+      <p class="endorsement-name">David Hollins</p>
+      <p class="endorsement-role-last">Community Leader &amp; Supporter</p>
+    </div>
+    <p class="body-copy">When Representative Sandra Hollins &mdash; the woman who has carried this district with distinction &mdash; chooses to pass the torch to me, I feel the full weight of that trust. I will honor it every single day I serve. And when leaders like Rep. Ashlee Matthews, Rep. Rosalba Dominguez, Councilwoman Natalie Pinkney, Liban Mohamed, and David Hollins add their voices to this campaign, it says something powerful: <strong>this community is ready for what comes next.</strong></p>
+    <p class="body-copy">I have overwhelming support heading into today &mdash; but I never forget that every single endorsement is a promise I owe this community. I will fight for you. I will show up for you. I will make District 21 proud.</p>
+    <div class="snack-band">
+      <span class="snack-label">&#x1F37F; We&rsquo;ve Got You Covered at Convention</span>
+      <p class="snack-copy">Come find us at the Aaron Wiley table &mdash; we&rsquo;ll have <strong>snacks and water</strong> waiting for you. You&rsquo;re giving your Saturday for this community. The least we can do is make sure you&rsquo;re fueled up. Come say hello and let&rsquo;s celebrate what we built together.</p>
+    </div>
+    <div class="fact-card">
+      <p class="fact-card-title">&#x1F4CB; Convention Reminder</p>
+      <p class="fact-row"><span class="fact-label">&#x1F4CD; Where:</span> Highland High School &mdash; 2166 S 1700 E, SLC</p>
+      <p class="fact-row"><span class="fact-label">&#x1F4C5; Today:</span> Saturday, April 11, 2026 &middot; Check-in opens 8:00 AM</p>
+      <p class="fact-row"><span class="fact-label">&#x1F5F3; District 21 Breakout:</span> 1:40 PM &middot; Voting begins 2:00 PM</p>
+      <p class="fact-row"><span class="fact-label">&#x2B50; Your vote:</span> Rank Aaron Wiley <strong>#1</strong>. Let&rsquo;s make it official.</p>
+    </div>
+    <p class="body-copy">You chose to be part of this from the beginning. Today, we finish what we started &mdash; together.</p>
+    <hr class="divider"/>
+  </div>
+  <div class="signoff-pad">
+    <p class="signoff-copy">From the bottom of my heart &mdash; thank you. For your time, your trust, and your belief that the West Side deserves a strong, fearless voice in the Utah House.</p>
+    <p class="signoff-copy">I will not let you down. Today, I fight for every family in District 21. Let&rsquo;s go win this.</p>
+    <p class="signoff-copy">With deep gratitude and West Side pride,</p>
+    <p class="name">Aaron Wiley</p>
+    <p class="title-line">Candidate &middot; Utah House District 21 &middot; wileyfor21.com</p>
+    <div class="ps"><strong>P.S.</strong> &mdash; If you see me at Highland High School today, come say hi. I genuinely want to meet you face to face and thank you personally. That&rsquo;s not a talking point &mdash; it&rsquo;s just who I am.</div>
+  </div>
+  <div class="footer">
+    <p class="tagline">WE ARE 21. WE ARE HERE.</p>
+    <p style="margin-top:12px;">Paid for by Utah for Wiley &middot; Aaron Wiley for Utah House District 21</p>
+    <p><a href="mailto:utahforwiley@gmail.com">utahforwiley@gmail.com</a> &middot; <a href="https://wileyfor21.com">wileyfor21.com</a></p>
+    <p style="margin-top:10px;font-size:11px;color:#557788;">You are receiving this because you are a credentialed delegate for District 21.<br/>To unsubscribe, reply with &ldquo;unsubscribe&rdquo; and we&rsquo;ll remove you immediately.</p>
+  </div>
+</div>
+</body>
+</html>`;
+}
+
+function generateConventionTextMessage(firstName) {
+  return `${firstName} — Today's the day and I am grateful beyond words.\n\nYou chose to rank me #1, and I don't take that lightly. Because of delegates like you, we head into this convention with the support of Rep. Sandra Hollins, Rep. Ashlee Matthews, Rep. Rosalba Dominguez, Councilwoman Natalie Pinkney, Liban Mohamed, and David Hollins behind this campaign.\n\nThat's not politics. That's a movement.\n\nCome find us at the Aaron Wiley table — we have SNACKS & WATER waiting for you.\n\n📍 Highland High School — 2166 S 1700 E, SLC\n🗓️ District 21 breakout: 1:40 PM | Voting: 2:00 PM\n⭐ Rank Aaron Wiley #1 — let's make it official.\n\nThank you for the opportunity to fight for our community. See you today.\n\n— Aaron Wiley | wileyfor21.com`;
+}
+
+function DelegateConventionThankYouSection({ delegates }) {
+  const [selected, setSelected] = useState(null);
+  const [search, setSearch] = useState("");
+  const [copyState, setCopyState] = useState("idle");
+  const [showDeferred, setShowDeferred] = useState(false);
+  const [mode, setMode] = useState("email");
+
+  const deferredCount = delegates.filter((d) => (d.email || d.phone) && d.isDeferred && !d.isVacant && !d.isOpposingCandidate).length;
+
+  const inviteable = delegates
+    .filter((d) => (mode === "email" ? d.email : d.phone) && !d.isVacant && !d.isOpposingCandidate)
+    .filter((d) => showDeferred ? d.isDeferred : !d.isDeferred)
+    .filter((d) => {
+      if (!search) return true;
+      const q = search.toLowerCase();
+      return (d.name || "").toLowerCase().includes(q) ||
+        (d.email || "").toLowerCase().includes(q) ||
+        (d.phone || "").includes(q) ||
+        (d.precinct || "").toLowerCase().includes(q);
+    })
+    .sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+
+  const firstName = selected ? (selected.name || "").split(" ")[0] || "there" : "there";
+  const emailHTML = selected ? generateConventionEmailHTML(firstName) : null;
+  const textMsg = selected ? generateConventionTextMessage(firstName) : "";
+
+  const SUBJECT = "Today Is The Day. Thank You for Standing With Me. ⭐";
+
+  async function handleCopy() {
+    try {
+      if (mode === "email") {
+        if (!emailHTML) return;
+        if (window.ClipboardItem) {
+          const blob = new Blob([emailHTML], { type: "text/html" });
+          await navigator.clipboard.write([new ClipboardItem({ "text/html": blob })]);
+        } else {
+          await navigator.clipboard.writeText(emailHTML);
+        }
+      } else {
+        await navigator.clipboard.writeText(textMsg);
+      }
+      setCopyState("copied");
+      setTimeout(() => setCopyState("idle"), 2500);
+    } catch {
+      setCopyState("error");
+      setTimeout(() => setCopyState("idle"), 2500);
+    }
+  }
+
+  function handleGmail() {
+    if (!selected?.email) return;
+    const to = encodeURIComponent(selected.email);
+    const su = encodeURIComponent(SUBJECT);
+    window.open(`https://mail.google.com/mail/?view=cm&to=${to}&su=${su}`, "_blank");
+  }
+
+  function handleSMS() {
+    if (!selected?.phone) return;
+    const phone = selected.phone.replace(/\D/g, "");
+    window.open(`sms:+1${phone}?body=${encodeURIComponent(textMsg)}`, "_self");
+  }
+
+  return (
+    <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+      <div className="flex flex-wrap items-start justify-between gap-4 mb-5">
+        <div>
+          <h2 className="font-bold text-navy text-lg mb-0.5">Convention Thank-You — April 11, 2026</h2>
+          <p className="text-xs text-gray-400">Personalized convention day thank-you with endorsements, snack notice &amp; voting reminder.</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="flex rounded-lg border border-gray-200 overflow-hidden text-xs font-semibold">
+            <button
+              onClick={() => { setMode("email"); setSelected(null); setCopyState("idle"); }}
+              className={`px-3 py-1.5 transition-all ${mode === "email" ? "bg-navy text-white" : "bg-white text-gray-500 hover:bg-gray-50"}`}
+            >
+              📧 Email
+            </button>
+            <button
+              onClick={() => { setMode("text"); setSelected(null); setCopyState("idle"); }}
+              className={`px-3 py-1.5 transition-all border-l border-gray-200 ${mode === "text" ? "bg-navy text-white" : "bg-white text-gray-500 hover:bg-gray-50"}`}
+            >
+              💬 Text
+            </button>
+          </div>
+          <button
+            onClick={() => { setShowDeferred((v) => !v); setSelected(null); setSearch(""); }}
+            className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-all ${
+              showDeferred
+                ? "bg-yellow-100 text-yellow-700 border-yellow-300"
+                : "bg-gray-100 text-gray-500 border-gray-200 hover:bg-yellow-50 hover:text-yellow-700 hover:border-yellow-200"
+            }`}
+          >
+            {showDeferred ? "⬅ Back to Active" : `Deferred (${deferredCount})`}
+          </button>
+          <span className="text-xs bg-blue-50 text-blue-600 font-semibold px-3 py-1.5 rounded-full border border-blue-100">
+            {inviteable.length} {showDeferred ? "deferred" : "active"} with {mode === "email" ? "email" : "phone"}
+          </span>
+        </div>
+      </div>
+
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Left: delegate list */}
+        <div className="lg:w-72 flex-shrink-0">
+          <input
+            type="text"
+            placeholder={`Search ${showDeferred ? "deferred" : "active"} delegates…`}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-navy/20"
+          />
+          <div className="space-y-1 max-h-[420px] overflow-y-auto pr-1">
+            {inviteable.length === 0 && (
+              <p className="text-xs text-gray-400 text-center py-6">No delegates match.</p>
+            )}
+            {inviteable.map((d) => (
+              <button
+                key={d.id}
+                onClick={() => setSelected(d)}
+                className={`w-full text-left px-3 py-2.5 rounded-lg border transition-all text-sm ${
+                  selected?.id === d.id
+                    ? "bg-navy text-white border-navy"
+                    : "bg-white hover:bg-gray-50 border-gray-100"
+                }`}
+              >
+                <div className="font-semibold leading-snug flex items-center gap-2">
+                  {d.name}
+                  {d.isDeferred && <span className={`text-xs font-semibold px-1.5 py-0.5 rounded ${selected?.id === d.id ? "bg-yellow-300 text-yellow-900" : "bg-yellow-100 text-yellow-700"}`}>Deferred</span>}
+                </div>
+                <div className={`text-xs mt-0.5 truncate ${selected?.id === d.id ? "text-blue-200" : "text-gray-400"}`}>
+                  {mode === "email" ? d.email : d.phone}
+                </div>
+                {d.precinct && (
+                  <div className={`text-xs ${selected?.id === d.id ? "text-blue-300" : "text-gray-300"}`}>
+                    {d.precinct}{d.role ? ` · ${d.role}` : ""}
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Right: preview + actions */}
+        <div className="flex-1 min-w-0">
+          {!selected ? (
+            <div className="h-full min-h-[280px] flex items-center justify-center rounded-xl border-2 border-dashed border-gray-200">
+              <div className="text-center">
+                <div className="text-3xl mb-3">{mode === "email" ? "⭐" : "💬"}</div>
+                <p className="text-sm text-gray-400 font-medium">Select a delegate to preview their {mode === "email" ? "convention thank-you email" : "text message"}</p>
+              </div>
+            </div>
+          ) : mode === "email" ? (
+            <div>
+              <div className="flex flex-wrap items-center gap-3 mb-4">
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs text-gray-400 mb-0.5">To</div>
+                  <div className="text-sm font-medium text-navy truncate">{selected.email}</div>
+                </div>
+                <button
+                  onClick={handleCopy}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                    copyState === "copied" ? "bg-green-500 text-white"
+                    : copyState === "error" ? "bg-red-500 text-white"
+                    : "bg-navy text-white hover:bg-navy/90"
+                  }`}
+                >
+                  {copyState === "copied" ? "✓ Copied!" : copyState === "error" ? "Copy failed" : "Copy Rich Email"}
+                </button>
+                <button
+                  onClick={handleGmail}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-coral text-white hover:bg-coral/90 transition-all"
+                >
+                  Open in Gmail ↗
+                </button>
+              </div>
+              <div className="text-xs text-gray-400 mb-3">
+                <strong className="text-gray-500">Subject:</strong> {SUBJECT}
+              </div>
+              <div className="border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+                <iframe
+                  srcDoc={emailHTML}
+                  title="Convention thank-you email preview"
+                  className="w-full"
+                  style={{ height: 560, border: "none" }}
+                  sandbox="allow-same-origin"
+                />
+              </div>
+              <p className="text-xs text-gray-400 mt-2 text-center">
+                "Copy Rich Email" → paste into Gmail compose to send with full formatting
+              </p>
+            </div>
+          ) : (
+            <div>
+              <div className="flex flex-wrap items-center gap-3 mb-4">
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs text-gray-400 mb-0.5">To</div>
+                  <div className="text-sm font-medium text-navy">{selected.phone}</div>
+                </div>
+                <button
+                  onClick={handleCopy}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                    copyState === "copied" ? "bg-green-500 text-white"
+                    : copyState === "error" ? "bg-red-500 text-white"
+                    : "bg-navy text-white hover:bg-navy/90"
+                  }`}
+                >
+                  {copyState === "copied" ? "✓ Copied!" : copyState === "error" ? "Copy failed" : "Copy Text"}
+                </button>
+                <button
+                  onClick={handleSMS}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-green-600 text-white hover:bg-green-700 transition-all"
+                >
+                  Open in SMS ↗
+                </button>
+              </div>
+              <div className="bg-gray-100 rounded-2xl p-6 min-h-[200px]">
+                <div className="flex justify-end">
+                  <div className="max-w-[80%] bg-blue-500 text-white text-sm rounded-2xl rounded-tr-sm px-4 py-3 leading-relaxed shadow-sm whitespace-pre-line">
+                    {textMsg}
+                  </div>
+                </div>
+                <p className="text-xs text-gray-400 text-center mt-4">Preview — message is personalized with delegate's first name</p>
+              </div>
+              <p className="text-xs text-gray-400 mt-3 text-center">
+                "Copy Text" → paste into any SMS app &nbsp;·&nbsp; "Open in SMS" → opens your phone's messages app
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ─── Event Invite ────────────────────────────────────────────────────────────
 
 function generateEventEmailHTML(firstName) {
@@ -1349,6 +1700,9 @@ export default function AdminDashboard() {
 
         {/* Event Invite Tool */}
         <DelegateEventInviteSection delegates={delegates} />
+
+        {/* Convention Thank-You Email Tool */}
+        <DelegateConventionThankYouSection delegates={delegates} />
       </main>
     </div>
   );
