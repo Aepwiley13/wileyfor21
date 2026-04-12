@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>We Made It. Now Let's Go Win the Primary.</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:ital,wght@0,400;0,600;1,400&display=swap');
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f8f6f2;
+      font-family: 'Barlow', Arial, sans-serif;
+      color: #1a1a1a;
+    }
+
+    .wrapper {
+      max-width: 620px;
+      margin: 0 auto;
+      background-color: #ffffff;
+    }
+
+    /* HEADER */
+    .header {
+      background-color: #002A52;
+      padding: 28px 40px 20px;
+      text-align: center;
+      border-bottom: 5px solid #F36F6B;
+    }
+
+    .header-eyebrow {
+      font-family: 'Barlow Condensed', Arial Narrow, sans-serif;
+      font-size: 13px;
+      letter-spacing: 4px;
+      color: #F36F6B;
+      margin: 0 0 8px;
+      text-transform: uppercase;
+    }
+
+    .header-logo {
+      font-family: 'Barlow Condensed', Arial Narrow, sans-serif;
+      font-weight: 700;
+      font-size: 34px;
+      letter-spacing: 3px;
+      color: #ffffff;
+      margin: 0;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .header-sub {
+      font-family: 'Barlow', Arial, sans-serif;
+      font-size: 13px;
+      color: #99bbcc;
+      margin: 6px 0 0;
+      font-style: italic;
+    }
+
+    /* HERO BAND */
+    .hero-band {
+      background-color: #F36F6B;
+      padding: 22px 40px;
+      text-align: center;
+    }
+
+    .hero-band p {
+      font-family: 'Barlow Condensed', Arial Narrow, sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      letter-spacing: 3px;
+      color: #ffffff;
+      margin: 0;
+      text-transform: uppercase;
+      line-height: 1.3;
+    }
+
+    /* BODY */
+    .body-content {
+      padding: 40px 44px;
+    }
+
+    .greeting {
+      font-size: 22px;
+      font-weight: 600;
+      color: #034A76;
+      margin: 0 0 24px;
+    }
+
+    .body-content p {
+      font-size: 16px;
+      line-height: 1.8;
+      color: #2d2d2d;
+      margin: 0 0 18px;
+    }
+
+    .body-content p.punch {
+      font-size: 18px;
+      font-weight: 600;
+      color: #034A76;
+      border-left: 4px solid #F36F6B;
+      padding-left: 16px;
+      margin: 28px 0;
+    }
+
+    /* ACTION CARD */
+    .action-card {
+      background-color: #f8f6f2;
+      border-radius: 6px;
+      border-left: 5px solid #F36F6B;
+      padding: 24px 28px;
+      margin: 28px 0;
+    }
+
+    .action-card-title {
+      font-family: 'Barlow Condensed', Arial Narrow, sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 3px;
+      color: #034A76;
+      text-transform: uppercase;
+      margin: 0 0 16px;
+      display: block;
+    }
+
+    .action-card p {
+      font-size: 15px;
+      color: #2d2d2d;
+      line-height: 1.7;
+      margin: 0 0 10px;
+    }
+
+    .action-card p:last-child {
+      margin: 0;
+    }
+
+    /* CTA BLOCK */
+    .cta-block {
+      background-color: #002A52;
+      border-radius: 6px;
+      padding: 28px 32px;
+      margin: 28px 0;
+      text-align: center;
+    }
+
+    .cta-block-label {
+      font-family: 'Barlow Condensed', Arial Narrow, sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 3px;
+      color: #99bbcc;
+      margin: 0 0 10px;
+      text-transform: uppercase;
+    }
+
+    .cta-block h3 {
+      font-family: 'Barlow Condensed', Arial Narrow, sans-serif;
+      font-weight: 700;
+      font-size: 26px;
+      letter-spacing: 2px;
+      color: #ffffff;
+      margin: 0 0 12px;
+      text-transform: uppercase;
+    }
+
+    .cta-block p {
+      font-size: 15px;
+      color: #c8d8e8;
+      line-height: 1.7;
+      margin: 0 0 20px;
+    }
+
+    .cta-button {
+      display: inline-block;
+      background-color: #F36F6B;
+      color: #ffffff;
+      font-family: 'Barlow Condensed', Arial Narrow, sans-serif;
+      font-weight: 700;
+      font-size: 17px;
+      letter-spacing: 3px;
+      text-decoration: none;
+      padding: 14px 32px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    /* DIVIDER */
+    .divider {
+      border: none;
+      border-top: 2px solid #eeecea;
+      margin: 32px 0;
+    }
+
+    /* SIGN OFF */
+    .signoff {
+      padding: 0 44px 36px;
+    }
+
+    .signoff p {
+      font-size: 16px;
+      line-height: 1.8;
+      color: #2d2d2d;
+      margin: 0 0 14px;
+    }
+
+    .signoff .name {
+      font-family: 'Barlow Condensed', Arial Narrow, sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      letter-spacing: 2px;
+      color: #034A76;
+      margin: 20px 0 2px;
+      text-transform: uppercase;
+    }
+
+    .signoff .title {
+      font-size: 13px;
+      color: #888;
+      font-style: italic;
+      margin: 0;
+    }
+
+    .ps {
+      background-color: #fdf4f4;
+      border-left: 3px solid #F36F6B;
+      padding: 14px 18px;
+      margin-top: 24px;
+      font-size: 14px;
+      color: #444;
+      line-height: 1.7;
+    }
+
+    /* FOOTER */
+    .footer {
+      background-color: #002A52;
+      padding: 24px 40px;
+      text-align: center;
+    }
+
+    .footer p {
+      font-size: 12px;
+      color: #7799aa;
+      margin: 0 0 6px;
+      line-height: 1.6;
+    }
+
+    .footer a {
+      color: #F36F6B;
+      text-decoration: none;
+    }
+
+    .footer .tagline {
+      font-family: 'Barlow Condensed', Arial Narrow, sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 3px;
+      color: #ffffff;
+      margin: 14px 0 0;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+
+    <!-- HEADER -->
+    <div class="header">
+      <p class="header-eyebrow">Utah House District 21 &middot; We&rsquo;re In The Primary</p>
+      <p class="header-logo">Aaron Wiley</p>
+      <p class="header-sub">West Side Salt Lake City &middot; 2026 Primary</p>
+    </div>
+
+    <!-- HERO BAND -->
+    <div class="hero-band">
+      <p>&#x1F389; &nbsp; We Made It. Now Let&rsquo;s Go Win The Primary.</p>
+    </div>
+
+    <!-- BODY -->
+    <div class="body-content">
+
+      <p class="greeting">Dear [First Name],</p>
+
+      <p>We did it.</p>
+
+      <p>The delegates of House District 21 spoke &mdash; and because of you, we are headed to the primary. This is not just a political milestone. This is proof that the West Side is ready for change, and that you believe in this community enough to stand up and fight for it.</p>
+
+      <p>I want to say thank you. Not in a form-letter way. In a &ldquo;I stayed up thinking about each of you&rdquo; way. You gave up your time. You made your voice heard. You chose to stand behind a campaign built on the belief that every family on the West Side deserves a strong, fearless voice in the Utah House.</p>
+
+      <p>That means everything to me.</p>
+
+      <p class="punch">&ldquo;This is what democracy looks like up close &mdash; neighbors, leaders, and community members showing up together. You did that. We did that.&rdquo;</p>
+
+      <p>I also want to take a moment to honor the other candidates who stepped up. Running for office is not easy. Putting yourself out there, asking people for their support, and showing up for your community takes real courage. Every one of those candidates loves this district, and I respect them deeply for it. Their voices made this race better and our community stronger. <strong>Thank you for stepping up.</strong> You made your voices heard, and this community is better for it.</p>
+
+    </div>
+
+    <!-- ACTION CARD -->
+    <div style="padding: 0 44px;">
+      <div class="action-card">
+        <strong class="action-card-title">&#x1F525; &nbsp; Now The Real Work Begins</strong>
+        <p>We made it to the primary &mdash; and now it&rsquo;s time to get to work. Here&rsquo;s how you can help right now:</p>
+        <p>&#x1F91D; <strong>Stay connected</strong> &mdash; follow the campaign and keep in touch. You are part of this movement.</p>
+        <p>&#x1F4E3; <strong>Tell your friends</strong> &mdash; spread the word that we&rsquo;re in the primary. Word of mouth wins races.</p>
+        <p>&#x1F3E0; <strong>Throw a house party</strong> &mdash; invite your precinct neighbors. We&rsquo;ll come to you. Let&rsquo;s connect, talk issues, and build this block by block.</p>
+        <p>&#x1F5F3;&#xFE0F; <strong>Get involved</strong> &mdash; volunteer, knock doors, make calls. Every conversation plants a seed.</p>
+      </div>
+    </div>
+
+    <!-- CTA BLOCK -->
+    <div style="padding: 0 44px;">
+      <div class="cta-block">
+        <p class="cta-block-label">Let&rsquo;s Keep Moving</p>
+        <h3>Connect. Organize. Win.</h3>
+        <p>The primary is the next chapter. Let&rsquo;s write it together. Visit the campaign hub to get involved, RSVP to events, or reach out directly to organize your neighborhood.</p>
+        <a class="cta-button" href="https://wileyfor21.com">Get Involved &rarr;</a>
+      </div>
+    </div>
+
+    <div class="body-content" style="padding-top: 28px;">
+      <p>You were part of this from the beginning. You helped build this. Now let&rsquo;s take it all the way.</p>
+      <hr class="divider" />
+    </div>
+
+    <!-- SIGN OFF -->
+    <div class="signoff">
+      <p>The primary is the next chapter. Let&rsquo;s write it together.</p>
+      <p>With deep gratitude and West Side pride,</p>
+      <p class="name">Aaron Wiley</p>
+      <p class="title">Candidate &middot; Utah House District 21 &middot; <a href="https://wileyfor21.com" style="color:#034A76;">wileyfor21.com</a></p>
+
+      <div class="ps">
+        <strong>P.S.</strong> &mdash; If you&rsquo;re ready to throw a house party for the campaign, reply to this email and let&rsquo;s make it happen. Your precinct is listening. Your neighbors are ready. All you have to do is open the door.
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <p class="tagline">WE ARE 21. WE ARE HERE.</p>
+      <p style="margin-top:12px;">Paid for by Utah for Wiley &middot; Aaron Wiley for Utah House District 21</p>
+      <p><a href="mailto:utahforwiley@gmail.com">utahforwiley@gmail.com</a> &middot; <a href="https://wileyfor21.com">wileyfor21.com</a></p>
+      <p style="margin-top:10px; font-size:11px; color:#557788;">You are receiving this because you are a credentialed delegate for District 21.<br/>To unsubscribe, reply with &ldquo;unsubscribe&rdquo; and we&rsquo;ll remove you immediately.</p>
+    </div>
+
+  </div>
+</body>
+</html>
