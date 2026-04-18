@@ -679,6 +679,85 @@ function generateConventionTextMessage(firstName) {
   return `${firstName} — Today's the day and I am grateful beyond words.\n\nYou chose to rank me #1, and I don't take that lightly. Because of delegates like you, we head into this convention with the support of Rep. Sandra Hollins, Rep. Ashlee Matthews, Rep. Rosalba Dominguez, Councilwoman Natalie Pinkney, Liban Mohamed, and David Hollins behind this campaign.\n\nThat's not politics. That's a movement.\n\nCome find us at the Aaron Wiley table — we have SNACKS & WATER waiting for you.\n\n📍 Highland High School — 2166 S 1700 E, SLC\n🗓️ District 21 breakout: 1:40 PM | Voting: 2:00 PM\n⭐ Rank Aaron Wiley #1 — let's make it official.\n\nThank you for the opportunity to fight for our community. See you today.\n\n— Aaron Wiley | wileyfor21.com`;
 }
 
+// ─── Post-Convention Nominee ──────────────────────────────────────────────────
+
+function generatePostConventionNomineeEmailHTML(firstName) {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>We Won. Thank You for Making This Possible.</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:ital,wght@0,400;0,600;1,400&display=swap');
+    body{margin:0;padding:0;background-color:#f8f6f2;font-family:'Barlow',Arial,sans-serif;color:#1a1a1a;}
+    .wrapper{max-width:620px;margin:0 auto;background-color:#ffffff;}
+    .header{background-color:#002A52;padding:28px 40px 20px;text-align:center;border-bottom:5px solid #F36F6B;}
+    .header-eyebrow{font-family:'Barlow Condensed',Arial Narrow,sans-serif;font-size:13px;letter-spacing:4px;color:#F36F6B;margin:0 0 8px;text-transform:uppercase;}
+    .header-logo{font-family:'Barlow Condensed',Arial Narrow,sans-serif;font-weight:700;font-size:34px;letter-spacing:3px;color:#ffffff;margin:0;line-height:1;text-transform:uppercase;}
+    .header-sub{font-family:'Barlow',Arial,sans-serif;font-size:13px;color:#99bbcc;margin:6px 0 0;font-style:italic;}
+    .hero-band{background-color:#F36F6B;padding:22px 40px;text-align:center;}
+    .hero-band p{font-family:'Barlow Condensed',Arial Narrow,sans-serif;font-weight:700;font-size:22px;letter-spacing:3px;color:#ffffff;margin:0;text-transform:uppercase;line-height:1.3;}
+    .body-pad{padding:40px 44px;}
+    .greeting{font-size:22px;font-weight:600;color:#034A76;margin:0 0 24px;}
+    .body-copy{font-size:16px;line-height:1.8;color:#2d2d2d;margin:0 0 18px;}
+    .punch{font-size:18px;font-weight:600;color:#034A76;border-left:4px solid #F36F6B;padding-left:16px;margin:28px 0;}
+    .divider{border:none;border-top:2px solid #eeecea;margin:32px 0;}
+    .cta-wrap{text-align:center;padding:8px 44px 36px;}
+    .cta-btn{display:inline-block;background-color:#F36F6B;color:#ffffff;font-family:'Barlow Condensed',Arial Narrow,sans-serif;font-weight:700;font-size:18px;letter-spacing:3px;text-transform:uppercase;text-decoration:none;padding:16px 40px;border-radius:4px;}
+    .signoff-pad{padding:0 44px 36px;}
+    .signoff-copy{font-size:16px;line-height:1.8;color:#2d2d2d;margin:0 0 14px;}
+    .name{font-family:'Barlow Condensed',Arial Narrow,sans-serif;font-weight:700;font-size:22px;letter-spacing:2px;color:#034A76;margin:20px 0 2px;text-transform:uppercase;}
+    .title-line{font-size:13px;color:#888;font-style:italic;margin:0;}
+    .footer{background-color:#002A52;padding:24px 40px;text-align:center;}
+    .footer p{font-size:12px;color:#7799aa;margin:0 0 6px;line-height:1.6;}
+    .footer a{color:#F36F6B;text-decoration:none;}
+    .tagline{font-family:'Barlow Condensed',Arial Narrow,sans-serif;font-weight:700;font-size:16px;letter-spacing:3px;color:#ffffff;margin:14px 0 0;text-transform:uppercase;}
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <p class="header-eyebrow">Utah House District 21 &middot; Your Nominee</p>
+    <p class="header-logo">Aaron Wiley</p>
+    <p class="header-sub">West Side Salt Lake City &middot; April 2026</p>
+  </div>
+  <div class="hero-band">
+    <p>&#x2B50; We Won. Thank You for Making This Possible.</p>
+  </div>
+  <div class="body-pad">
+    <p class="greeting">Dear ${firstName},</p>
+    <p class="body-copy">I am still feeling it &mdash; the exhaustion, the hoarseness, the adrenaline crash after a very long day. But underneath all of that, what I feel most is <strong>profound gratitude</strong>. You showed up for me, and I will spend every day of this campaign showing up for you.</p>
+    <p class="body-copy">Before I say anything else, I want to take a moment to honor the other candidates who shared the floor with me at convention. Each of them brought real ideas, real passion, and real commitment to this community. Our party is stronger for the race they ran, and I am proud to call them friends. I look forward to uniting behind our shared values as we fight together for District 21.</p>
+    <p class="punch">I am deeply humbled to accept your nomination as the Democratic candidate for Utah House District 21 &mdash; and I promise to carry your trust with me every single day of this campaign.</p>
+    <p class="body-copy">Your vote on Saturday was more than a preference. It was a statement: that the West Side deserves a bold, fearless voice in the Utah House. I heard you. I will honor that.</p>
+    <p class="body-copy">Now the real work begins. We are heading into the general election with energy, momentum, and a growing coalition behind us. That fight starts today &mdash; and I hope you will join me in it, no matter who you voted for at convention.</p>
+    <hr class="divider"/>
+    <p class="body-copy">There is so much more ahead &mdash; doors to knock, neighbors to meet, and a seat to win. I cannot do it without you. Will you stand with me through November?</p>
+  </div>
+  <div class="cta-wrap">
+    <a href="https://wileyfor21.com/join" class="cta-btn">Join the Team</a>
+  </div>
+  <div class="signoff-pad">
+    <p class="signoff-copy">With deep gratitude and West Side pride,</p>
+    <p class="name">Aaron Wiley</p>
+    <p class="title-line">Democratic Nominee &middot; Utah House District 21 &middot; <a href="https://wileyfor21.com" style="color:#034A76;">wileyfor21.com</a></p>
+  </div>
+  <div class="footer">
+    <p class="tagline">WE ARE 21. WE ARE HERE.</p>
+    <p style="margin-top:12px;">Paid for by Utah for Wiley &middot; Aaron Wiley for Utah House District 21</p>
+    <p><a href="mailto:utahforwiley@gmail.com">utahforwiley@gmail.com</a> &middot; <a href="https://wileyfor21.com">wileyfor21.com</a></p>
+    <p style="margin-top:10px;font-size:11px;color:#557788;">You are receiving this because you are a credentialed delegate for District 21.<br/>To unsubscribe, reply with &ldquo;unsubscribe&rdquo; and we&rsquo;ll remove you immediately.</p>
+  </div>
+</div>
+</body>
+</html>`;
+}
+
+function generatePostConventionNomineeTextMessage(firstName) {
+  return `${firstName} — I'm still riding the wave from Saturday's convention, and I had to reach out.\n\nI am humbled and honored to be your Democratic nominee for Utah House District 21.\n\nBefore anything else — I want to recognize the other candidates who ran alongside me. They brought real passion and real ideas, and our party is stronger for it. I'm proud to call them friends.\n\nNow the real work begins. We're heading into the general election with energy, momentum, and a growing coalition — and I need you in this fight.\n\nWill you join the team?\n\n👉 wileyfor21.com/join\n\nWith deep gratitude and West Side pride,\n— Aaron Wiley | Democratic Nominee, HD 21`;
+}
+
 function DelegateConventionThankYouSection({ delegates }) {
   const [selected, setSelected] = useState(null);
   const [search, setSearch] = useState("");
@@ -860,6 +939,224 @@ function DelegateConventionThankYouSection({ delegates }) {
                 <iframe
                   srcDoc={emailHTML}
                   title="Convention thank-you email preview"
+                  className="w-full"
+                  style={{ height: 560, border: "none" }}
+                  sandbox="allow-same-origin"
+                />
+              </div>
+              <p className="text-xs text-gray-400 mt-2 text-center">
+                "Copy Rich Email" → paste into Gmail compose to send with full formatting
+              </p>
+            </div>
+          ) : (
+            <div>
+              <div className="flex flex-wrap items-center gap-3 mb-4">
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs text-gray-400 mb-0.5">To</div>
+                  <div className="text-sm font-medium text-navy">{selected.phone}</div>
+                </div>
+                <button
+                  onClick={handleCopy}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                    copyState === "copied" ? "bg-green-500 text-white"
+                    : copyState === "error" ? "bg-red-500 text-white"
+                    : "bg-navy text-white hover:bg-navy/90"
+                  }`}
+                >
+                  {copyState === "copied" ? "✓ Copied!" : copyState === "error" ? "Copy failed" : "Copy Text"}
+                </button>
+                <button
+                  onClick={handleSMS}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-green-600 text-white hover:bg-green-700 transition-all"
+                >
+                  Open in SMS ↗
+                </button>
+              </div>
+              <div className="bg-gray-100 rounded-2xl p-6 min-h-[200px]">
+                <div className="flex justify-end">
+                  <div className="max-w-[80%] bg-blue-500 text-white text-sm rounded-2xl rounded-tr-sm px-4 py-3 leading-relaxed shadow-sm whitespace-pre-line">
+                    {textMsg}
+                  </div>
+                </div>
+                <p className="text-xs text-gray-400 text-center mt-4">Preview — message is personalized with delegate's first name</p>
+              </div>
+              <p className="text-xs text-gray-400 mt-3 text-center">
+                "Copy Text" → paste into any SMS app &nbsp;·&nbsp; "Open in SMS" → opens your phone's messages app
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── Post-Convention Nominee Section ─────────────────────────────────────────
+
+function PostConventionNomineeSection({ delegates }) {
+  const [selected, setSelected] = useState(null);
+  const [search, setSearch] = useState("");
+  const [copyState, setCopyState] = useState("idle");
+  const [mode, setMode] = useState("email");
+
+  const inviteable = delegates
+    .filter((d) => (mode === "email" ? d.email : d.phone) && !d.isVacant && !d.isOpposingCandidate)
+    .filter((d) => {
+      if (!search) return true;
+      const q = search.toLowerCase();
+      return (d.name || "").toLowerCase().includes(q) ||
+        (d.email || "").toLowerCase().includes(q) ||
+        (d.phone || "").includes(q) ||
+        (d.precinct || "").toLowerCase().includes(q);
+    })
+    .sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+
+  const firstName = selected ? (selected.name || "").split(" ")[0] || "there" : "there";
+  const emailHTML = selected ? generatePostConventionNomineeEmailHTML(firstName) : null;
+  const textMsg = selected ? generatePostConventionNomineeTextMessage(firstName) : "";
+
+  const SUBJECT = "We Won. Thank You for Making This Possible. ⭐";
+
+  async function handleCopy() {
+    try {
+      if (mode === "email") {
+        if (!emailHTML) return;
+        if (window.ClipboardItem) {
+          const blob = new Blob([emailHTML], { type: "text/html" });
+          await navigator.clipboard.write([new ClipboardItem({ "text/html": blob })]);
+        } else {
+          await navigator.clipboard.writeText(emailHTML);
+        }
+      } else {
+        await navigator.clipboard.writeText(textMsg);
+      }
+      setCopyState("copied");
+      setTimeout(() => setCopyState("idle"), 2500);
+    } catch {
+      setCopyState("error");
+      setTimeout(() => setCopyState("idle"), 2500);
+    }
+  }
+
+  function handleGmail() {
+    if (!selected?.email) return;
+    const to = encodeURIComponent(selected.email);
+    const su = encodeURIComponent(SUBJECT);
+    window.open(`https://mail.google.com/mail/?view=cm&to=${to}&su=${su}`, "_blank");
+  }
+
+  function handleSMS() {
+    if (!selected?.phone) return;
+    const phone = selected.phone.replace(/\D/g, "");
+    window.open(`sms:+1${phone}?body=${encodeURIComponent(textMsg)}`, "_self");
+  }
+
+  return (
+    <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+      <div className="flex flex-wrap items-start justify-between gap-4 mb-5">
+        <div>
+          <h2 className="font-bold text-navy text-lg mb-0.5">Post-Convention Nominee Thank-You</h2>
+          <p className="text-xs text-gray-400">Personalized thank-you sent after winning the nomination — honors fellow candidates, accepts the nomination, and calls delegates to join the general election fight.</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="flex rounded-lg border border-gray-200 overflow-hidden text-xs font-semibold">
+            <button
+              onClick={() => { setMode("email"); setSelected(null); setCopyState("idle"); }}
+              className={`px-3 py-1.5 transition-all ${mode === "email" ? "bg-navy text-white" : "bg-white text-gray-500 hover:bg-gray-50"}`}
+            >
+              📧 Email
+            </button>
+            <button
+              onClick={() => { setMode("text"); setSelected(null); setCopyState("idle"); }}
+              className={`px-3 py-1.5 transition-all border-l border-gray-200 ${mode === "text" ? "bg-navy text-white" : "bg-white text-gray-500 hover:bg-gray-50"}`}
+            >
+              💬 Text
+            </button>
+          </div>
+          <span className="text-xs bg-blue-50 text-blue-600 font-semibold px-3 py-1.5 rounded-full border border-blue-100">
+            {inviteable.length} delegates with {mode === "email" ? "email" : "phone"}
+          </span>
+        </div>
+      </div>
+
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Left: delegate list */}
+        <div className="lg:w-72 flex-shrink-0">
+          <input
+            type="text"
+            placeholder="Search delegates…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-navy/20"
+          />
+          <div className="space-y-1 max-h-[420px] overflow-y-auto pr-1">
+            {inviteable.length === 0 && (
+              <p className="text-xs text-gray-400 text-center py-6">No delegates match.</p>
+            )}
+            {inviteable.map((d) => (
+              <button
+                key={d.id}
+                onClick={() => setSelected(d)}
+                className={`w-full text-left px-3 py-2.5 rounded-lg border transition-all text-sm ${
+                  selected?.id === d.id
+                    ? "bg-navy text-white border-navy"
+                    : "bg-white hover:bg-gray-50 border-gray-100"
+                }`}
+              >
+                <div className="font-semibold leading-snug">{d.name}</div>
+                <div className={`text-xs mt-0.5 truncate ${selected?.id === d.id ? "text-blue-200" : "text-gray-400"}`}>
+                  {mode === "email" ? d.email : d.phone}
+                </div>
+                {d.precinct && (
+                  <div className={`text-xs ${selected?.id === d.id ? "text-blue-300" : "text-gray-300"}`}>
+                    {d.precinct}{d.role ? ` · ${d.role}` : ""}
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Right: preview + actions */}
+        <div className="flex-1 min-w-0">
+          {!selected ? (
+            <div className="h-full min-h-[280px] flex items-center justify-center rounded-xl border-2 border-dashed border-gray-200">
+              <div className="text-center">
+                <div className="text-3xl mb-3">{mode === "email" ? "⭐" : "💬"}</div>
+                <p className="text-sm text-gray-400 font-medium">Select a delegate to preview their {mode === "email" ? "nominee thank-you email" : "text message"}</p>
+              </div>
+            </div>
+          ) : mode === "email" ? (
+            <div>
+              <div className="flex flex-wrap items-center gap-3 mb-4">
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs text-gray-400 mb-0.5">To</div>
+                  <div className="text-sm font-medium text-navy truncate">{selected.email}</div>
+                </div>
+                <button
+                  onClick={handleCopy}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                    copyState === "copied" ? "bg-green-500 text-white"
+                    : copyState === "error" ? "bg-red-500 text-white"
+                    : "bg-navy text-white hover:bg-navy/90"
+                  }`}
+                >
+                  {copyState === "copied" ? "✓ Copied!" : copyState === "error" ? "Copy failed" : "Copy Rich Email"}
+                </button>
+                <button
+                  onClick={handleGmail}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-coral text-white hover:bg-coral/90 transition-all"
+                >
+                  Open in Gmail ↗
+                </button>
+              </div>
+              <div className="text-xs text-gray-400 mb-3">
+                <strong className="text-gray-500">Subject:</strong> {SUBJECT}
+              </div>
+              <div className="border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+                <iframe
+                  srcDoc={emailHTML}
+                  title="Post-convention nominee email preview"
                   className="w-full"
                   style={{ height: 560, border: "none" }}
                   sandbox="allow-same-origin"
@@ -1703,6 +2000,9 @@ export default function AdminDashboard() {
 
         {/* Convention Thank-You Email Tool */}
         <DelegateConventionThankYouSection delegates={delegates} />
+
+        {/* Post-Convention Nominee Thank-You */}
+        <PostConventionNomineeSection delegates={delegates} />
       </main>
     </div>
   );
