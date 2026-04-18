@@ -1217,127 +1217,134 @@ function generateEventEmailHTML(firstName) {
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>You're Invited: Jordan River & Great Salt Lake Community Dialogue</title>
+  <title>Thank you — and what comes next</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:ital,wght@0,400;0,600;0,700;1,400&display=swap');
     body{margin:0;padding:0;background:#f0f4f8;font-family:'Barlow',Arial,sans-serif;color:#1a1a1a;}
     .wrapper{max-width:620px;margin:0 auto;background:#ffffff;}
     .header{background:linear-gradient(160deg,#001f3f 0%,#002A52 55%,#034A76 100%);padding:36px 40px 28px;text-align:center;border-bottom:5px solid #F36F6B;}
     .eyebrow{font-family:'Barlow Condensed',Arial,sans-serif;font-size:12px;letter-spacing:4px;color:#F36F6B;margin:0 0 10px;text-transform:uppercase;}
-    .header-title{font-family:'Barlow Condensed',Arial,sans-serif;font-weight:800;font-size:30px;letter-spacing:1px;color:#ffffff;margin:0 0 4px;line-height:1.15;text-transform:uppercase;}
-    .header-title span{color:#67d8ef;}
-    .header-sub{font-family:'Barlow',Arial,sans-serif;font-size:14px;color:#a8cfe0;margin:8px 0 0;font-style:italic;}
-    .hero-band{background:#034A76;padding:14px 40px;text-align:center;border-bottom:1px solid #0a5c8a;}
-    .hero-band p{margin:0;font-family:'Barlow Condensed',Arial,sans-serif;font-size:17px;font-weight:700;color:#67d8ef;letter-spacing:1px;text-transform:uppercase;}
-    .coffee-band{background:linear-gradient(135deg,#F36F6B,#e05a56);padding:18px 40px;text-align:center;}
-    .coffee-band p{margin:0;font-family:'Barlow Condensed',Arial,sans-serif;font-size:22px;font-weight:800;color:#ffffff;letter-spacing:2px;text-transform:uppercase;line-height:1.2;}
-    .coffee-band span{display:block;font-size:14px;font-weight:600;letter-spacing:3px;color:rgba(255,255,255,0.8);margin-top:4px;}
+    .header-title{font-family:'Barlow Condensed',Arial,sans-serif;font-weight:800;font-size:34px;letter-spacing:1px;color:#ffffff;margin:0 0 4px;line-height:1.1;text-transform:uppercase;}
+    .header-sub{font-family:'Barlow',Arial,sans-serif;font-size:14px;color:#a8cfe0;margin:10px 0 0;font-style:italic;}
+    .hero-band{background:#F36F6B;padding:16px 40px;text-align:center;}
+    .hero-band p{margin:0;font-family:'Barlow Condensed',Arial,sans-serif;font-size:19px;font-weight:800;color:#ffffff;letter-spacing:1px;text-transform:uppercase;}
     .body-pad{padding:32px 40px;}
-    .greeting{font-size:22px;font-weight:700;color:#002A52;margin:0 0 16px;}
-    .body-copy{font-size:15px;line-height:1.7;color:#374151;margin:0 0 20px;}
-    .event-card{background:#f8f9fb;border:1px solid #e2e8f0;border-radius:12px;padding:20px 24px;margin:24px 0;}
-    .event-card-title{font-family:'Barlow Condensed',Arial,sans-serif;font-size:13px;letter-spacing:3px;text-transform:uppercase;color:#F36F6B;margin:0 0 12px;font-weight:700;}
-    .event-detail{display:flex;align-items:center;gap:10px;font-size:14px;color:#374151;margin-bottom:8px;}
-    .event-icon{font-size:18px;width:24px;text-align:center;}
-    .speaker-card{display:flex;align-items:center;gap:16px;background:linear-gradient(135deg,#001f3f,#034A76);border-radius:12px;padding:20px 24px;margin:24px 0;}
-    .speaker-avatar{width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#67d8ef,#0ea5e9);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',Arial,sans-serif;font-size:20px;font-weight:800;color:#001f3f;flex-shrink:0;}
-    .speaker-name{font-family:'Barlow Condensed',Arial,sans-serif;font-size:20px;font-weight:800;color:#ffffff;margin:0;letter-spacing:0.5px;}
-    .speaker-title{font-size:13px;color:#a8cfe0;margin:2px 0 0;}
-    .agenda-title{font-family:'Barlow Condensed',Arial,sans-serif;font-size:13px;letter-spacing:3px;text-transform:uppercase;color:#034A76;margin:0 0 12px;font-weight:700;}
-    .agenda-item{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
-    .agenda-icon{font-size:20px;line-height:1;margin-top:1px;}
-    .agenda-text strong{font-size:14px;font-weight:700;color:#002A52;display:block;}
-    .agenda-text span{font-size:13px;color:#6b7280;}
-    .cta-wrap{text-align:center;padding:28px 40px;}
-    .cta-btn{display:inline-block;background:linear-gradient(135deg,#0891b2,#0ea5e9);color:#ffffff;font-family:'Barlow Condensed',Arial,sans-serif;font-size:18px;font-weight:800;letter-spacing:2px;text-transform:uppercase;text-decoration:none;padding:16px 44px;border-radius:50px;box-shadow:0 4px 18px rgba(8,145,178,0.4);}
-    .divider{height:1px;background:#e5e7eb;margin:0 40px;}
-    .footer{padding:24px 40px;text-align:center;}
+    .greeting{font-size:20px;font-weight:700;color:#002A52;margin:0 0 16px;}
+    .body-copy{font-size:15px;line-height:1.75;color:#374151;margin:0 0 18px;}
+    .italic-note{font-size:14px;line-height:1.7;color:#6b7280;font-style:italic;margin:0 0 20px;}
+    .divider{height:1px;background:#e5e7eb;margin:24px 0;}
+    .section-label{font-family:'Barlow Condensed',Arial,sans-serif;font-size:12px;letter-spacing:4px;text-transform:uppercase;color:#F36F6B;font-weight:700;margin:0 0 8px;}
+    .callout-box{background:#f8f9fb;border-left:4px solid #F36F6B;border-radius:0 10px 10px 0;padding:16px 20px;margin:20px 0;}
+    .callout-box p{font-size:15px;line-height:1.7;color:#374151;margin:0;}
+    .pillars{margin:20px 0;}
+    .pillar{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;}
+    .pillar-icon{font-size:22px;line-height:1;margin-top:2px;}
+    .pillar-text{font-size:15px;color:#002A52;font-weight:600;line-height:1.4;}
+    .speech-link{display:block;text-align:center;background:#002A52;color:#ffffff;font-family:'Barlow Condensed',Arial,sans-serif;font-size:16px;font-weight:800;letter-spacing:2px;text-transform:uppercase;text-decoration:none;padding:14px 32px;border-radius:8px;margin:24px 0;}
+    .cta-grid{display:table;width:100%;border-collapse:separate;border-spacing:8px;margin:24px 0;}
+    .cta-grid-row{display:table-row;}
+    .cta-cell{display:table-cell;width:33.33%;}
+    .cta-btn{display:block;text-align:center;font-family:'Barlow Condensed',Arial,sans-serif;font-size:14px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;padding:13px 8px;border-radius:8px;}
+    .cta-coral{background:#F36F6B;color:#ffffff;}
+    .cta-navy{background:#002A52;color:#ffffff;}
+    .cta-teal{background:#0891b2;color:#ffffff;}
+    .sign-off{padding:8px 40px 0;}
+    .sign-off p{font-size:15px;line-height:1.75;color:#374151;margin:0 0 6px;}
+    .sign-off .name{font-family:'Barlow Condensed',Arial,sans-serif;font-size:20px;font-weight:800;color:#002A52;margin:12px 0 2px;}
+    .sign-off .title{font-size:13px;color:#6b7280;}
+    .footer{padding:24px 40px;text-align:center;border-top:1px solid #e5e7eb;margin-top:32px;}
     .footer p{font-size:12px;color:#9ca3af;margin:4px 0;line-height:1.6;}
     .footer a{color:#9ca3af;}
   </style>
 </head>
 <body>
 <div class="wrapper">
+
   <!-- Header -->
   <div class="header">
-    <p class="eyebrow">Wiley for HD21 · Community Dialogue</p>
-    <h1 class="header-title">The Jordan River &amp;<br/><span>Great Salt Lake</span></h1>
-    <p class="header-sub">A Community Dialogue — You're Invited</p>
+    <p class="eyebrow">Wiley for HD21 · House District 21</p>
+    <h1 class="header-title">We're Moving<br/>Forward Together</h1>
+    <p class="header-sub">A message from Aaron Wiley</p>
   </div>
 
   <!-- Hero band -->
   <div class="hero-band">
-    <p>Connecting Our River to the Future of the Great Salt Lake</p>
-  </div>
-
-  <!-- Culture Coffee callout -->
-  <div class="coffee-band">
-    <p>Join Today at Culture Coffee<span>☕ Come as you are · Bring a friend</span></p>
+    <p>Thank you — from the bottom of my heart</p>
   </div>
 
   <!-- Body -->
   <div class="body-pad">
-    <p class="greeting">Hi ${firstName},</p>
-    <p class="body-copy">
-      In our recent delegate survey, clean air &amp; the Great Salt Lake rose to the top as our community's
-      most urgent concern — and I heard you. That's why I'm hosting a special community dialogue to dig
-      into what's happening with our water systems and what we can do together to protect them.
-    </p>
-    <p class="body-copy">
-      I'd love for you to join us for an honest, in-depth conversation with <strong>Sören Simonsen</strong>
-      of the Jordan River Commission — one of Utah's foremost experts on the river and lake system that
-      shapes life on the Westside every single day.
-    </p>
+    <p class="greeting">Dear ${firstName},</p>
 
-    <!-- Event details -->
-    <div class="event-card">
-      <p class="event-card-title">Event Details</p>
-      <div class="event-detail"><span class="event-icon">📅</span><span><strong>Thursday, April 9th · 5:00 – 6:30 PM</strong></span></div>
-      <div class="event-detail"><span class="event-icon">📍</span><span><strong>Culture Coffee</strong> · 285 N 900 W, Salt Lake City, UT 84116</span></div>
-      <div class="event-detail"><span class="event-icon">💬</span><span>Live Q&amp;A — bring your questions</span></div>
+    <p class="body-copy">It's been six days since we were together at Highland High — and I still haven't stopped smiling.</p>
+    <p class="italic-note">(Seriously. My kids can confirm.)</p>
+
+    <p class="body-copy">Before anything else, I want to recognize the people who stood in this race with me: <strong>Anthony Washburn, Darin Mann, and Jeneanne Lock.</strong> Each brought real passion, real ideas, and a deep love for our community. District 21 is stronger because of them — and I'm proud to call them friends. I hope they'll stand with us as we move forward together.</p>
+
+    <p class="body-copy">To every delegate who showed up, listened, and voted — <strong>thank you.</strong> Your trust means everything to me, and I carry it with me every single day.</p>
+
+    <div class="divider"></div>
+
+    <p class="section-label">Where Things Stand</p>
+    <div class="callout-box">
+      <p>Two of us advanced — myself and Stephen Otterstrom. This race will be decided on <strong>June 23rd.</strong> And the people who will shape what happens next are the same people who were in that room on Saturday.</p>
     </div>
 
-    <!-- Speaker -->
-    <div class="speaker-card">
-      <div class="speaker-avatar">SS</div>
-      <div>
-        <p class="speaker-name">Sören Simonsen</p>
-        <p class="speaker-title">Executive Director · Jordan River Commission</p>
+    <p class="body-copy">That's you. <strong>And I need you with me.</strong></p>
+
+    <p class="body-copy">There is no Republican in this race. Whoever wins this primary wins the seat. June 23rd isn't just a primary — <strong>it's the election.</strong></p>
+
+    <p class="body-copy">The stakes are real. And the window is short.</p>
+
+    <div class="divider"></div>
+
+    <p class="section-label">What We're Fighting For</p>
+    <p class="body-copy">I'm running to carry forward the legacy Sandra Hollins built on the West Side — and to take it even further. That means breaking down barriers and delivering real results:</p>
+
+    <div class="pillars">
+      <div class="pillar"><span class="pillar-icon">🏥</span><span class="pillar-text">Healthcare on the West Side — access, not obstacles</span></div>
+      <div class="pillar"><span class="pillar-icon">🏠</span><span class="pillar-text">Affordability on the West Side — so families can stay in the communities they built</span></div>
+      <div class="pillar"><span class="pillar-icon">✨</span><span class="pillar-text">A West Side that shines — vibrant, visible, and fully represented at the Capitol</span></div>
+    </div>
+
+    <p class="body-copy">We've already started building something special together — and now it's time to take the next step.</p>
+
+    <div class="divider"></div>
+
+    <p class="section-label">Here's How You Can Help</p>
+    <div class="cta-grid">
+      <div class="cta-grid-row">
+        <div class="cta-cell"><a class="cta-btn cta-coral" href="https://wileyfor21.com/join">Join the Team</a></div>
+        <div class="cta-cell"><a class="cta-btn cta-navy" href="https://wileyfor21.com/donate">Donate</a></div>
+        <div class="cta-cell"><a class="cta-btn cta-teal" href="https://wileyfor21.com/volunteer">Volunteer</a></div>
       </div>
     </div>
 
-    <!-- Agenda -->
-    <p class="agenda-title">What We'll Cover</p>
-    <div class="agenda-item">
-      <span class="agenda-icon">💧</span>
-      <div class="agenda-text"><strong>Impacts on Our Water Systems</strong><span>How the Jordan River connects to the future of the Great Salt Lake</span></div>
-    </div>
-    <div class="agenda-item">
-      <span class="agenda-icon">⚠️</span>
-      <div class="agenda-text"><strong>Challenges &amp; Solutions</strong><span>Real threats, real fixes — what policy can actually do</span></div>
-    </div>
-    <div class="agenda-item">
-      <span class="agenda-icon">👥</span>
-      <div class="agenda-text"><strong>Community Actions</strong><span>How delegates like you can drive change from the convention floor</span></div>
-    </div>
+    <p class="body-copy" style="text-align:center;font-size:14px;color:#6b7280;">👉 Knock doors &nbsp;·&nbsp; Make calls &nbsp;·&nbsp; Spread the word &nbsp;·&nbsp; Show up</p>
+
+    <a class="speech-link" href="https://wileyfor21.com/speech">Read My Convention Speech →</a>
+
+    <p class="body-copy" style="text-align:center;font-size:14px;color:#6b7280;font-style:italic;">Those words belong to all of us.</p>
   </div>
 
-  <div class="divider"></div>
-
-  <!-- CTA -->
-  <div class="cta-wrap">
-    <p style="font-size:15px;color:#374151;margin:0 0 20px;">Spots are limited — please RSVP so we can plan accordingly.</p>
-    <a class="cta-btn" href="https://luma.com/bhh7ss55">RSVP Now &rarr;</a>
+  <!-- Sign-off -->
+  <div class="sign-off">
+    <p>The West Side has always been here.</p>
+    <p><strong>Now it's time to make sure the Capitol sees us.</strong></p>
+    <br/>
+    <p>Let's go.</p>
+    <p class="name">— Aaron</p>
+    <p class="title">Aaron Wiley · Democratic Candidate, Utah House District 21</p>
+    <p class="title"><a href="https://wileyfor21.com" style="color:#034A76;">wileyfor21.com</a></p>
   </div>
-
-  <div class="divider"></div>
 
   <!-- Footer -->
   <div class="footer">
     <p>Paid for by Wiley for HD21 · Salt Lake City, Utah</p>
-    <p>You're receiving this because you're a delegate in House District 21.</p>
+    <p>You're receiving this as a delegate in House District 21.</p>
     <p><a href="#">Unsubscribe</a></p>
   </div>
+
 </div>
 </body>
 </html>`;
@@ -1373,7 +1380,7 @@ function DelegateEventInviteSection({ delegates }) {
   const emailHTML = selected ? generateEventEmailHTML(firstName) : null;
   const textMsg = selected ? generateTextMessage(firstName) : "";
 
-  const SUBJECT = "You're Invited: Jordan River & Great Salt Lake Community Dialogue";
+  const SUBJECT = "Thank you — and what comes next";
 
   async function handleCopy() {
     try {
