@@ -24,7 +24,7 @@
     /* HEADER */
     .header {
       background-color: #002A52;
-      padding: 28px 40px 20px;
+      padding: 28px 40px 24px;
       text-align: center;
       border-bottom: 5px solid #F36F6B;
     }
@@ -34,26 +34,20 @@
       font-size: 13px;
       letter-spacing: 4px;
       color: #F36F6B;
-      margin: 0 0 8px;
+      margin: 0 0 16px;
       text-transform: uppercase;
     }
 
-    .header-logo {
-      font-family: 'Barlow Condensed', Arial Narrow, sans-serif;
-      font-weight: 700;
-      font-size: 34px;
-      letter-spacing: 3px;
-      color: #ffffff;
-      margin: 0;
-      line-height: 1;
-      text-transform: uppercase;
+    .header img {
+      display: block;
+      margin: 0 auto;
     }
 
     .header-sub {
       font-family: 'Barlow', Arial, sans-serif;
       font-size: 13px;
       color: #99bbcc;
-      margin: 6px 0 0;
+      margin: 14px 0 0;
       font-style: italic;
     }
 
@@ -103,7 +97,52 @@
       margin: 28px 0;
     }
 
-    /* CTA BUTTON */
+    .body-content p.section-head {
+      font-family: 'Barlow Condensed', Arial Narrow, sans-serif;
+      font-weight: 700;
+      font-size: 20px;
+      letter-spacing: 1px;
+      color: #002A52;
+      margin: 28px 0 12px;
+    }
+
+    /* VIDEO THUMBNAIL */
+    .video-wrap {
+      padding: 0 44px 36px;
+      text-align: center;
+    }
+
+    .video-wrap a {
+      display: block;
+      position: relative;
+      text-decoration: none;
+    }
+
+    .video-wrap img {
+      display: block;
+      width: 100%;
+      max-width: 532px;
+      margin: 0 auto;
+      border-radius: 6px;
+    }
+
+    .video-play-btn {
+      display: block;
+      width: 72px;
+      height: 72px;
+      background-color: rgba(243, 111, 107, 0.92);
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      line-height: 72px;
+      text-align: center;
+      font-size: 28px;
+      color: #ffffff;
+    }
+
+    /* CTA BUTTONS */
     .cta-wrap {
       text-align: center;
       padding: 8px 44px 36px;
@@ -123,6 +162,26 @@
       border-radius: 4px;
     }
 
+    .cta-row {
+      text-align: center;
+      padding: 8px 44px 36px;
+    }
+
+    .cta-row a {
+      display: inline-block;
+      background-color: #002A52;
+      color: #ffffff !important;
+      font-family: 'Barlow Condensed', Arial Narrow, sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 14px 22px;
+      border-radius: 4px;
+      margin: 6px 5px;
+    }
+
     /* DIVIDER */
     .divider {
       border: none;
@@ -140,23 +199,6 @@
       line-height: 1.8;
       color: #2d2d2d;
       margin: 0 0 14px;
-    }
-
-    .signoff .name {
-      font-family: 'Barlow Condensed', Arial Narrow, sans-serif;
-      font-weight: 700;
-      font-size: 22px;
-      letter-spacing: 2px;
-      color: #034A76;
-      margin: 20px 0 2px;
-      text-transform: uppercase;
-    }
-
-    .signoff .title {
-      font-size: 13px;
-      color: #888;
-      font-style: italic;
-      margin: 0;
     }
 
     /* FOOTER */
@@ -192,10 +234,10 @@
 <body>
   <div class="wrapper">
 
-    <!-- HEADER -->
+    <!-- HEADER with logo image -->
     <div class="header">
       <p class="header-eyebrow">Utah House District 21 &middot; Your Nominee</p>
-      <p class="header-logo">Aaron Wiley</p>
+      <img src="https://wileyfor21.com/images/logo.png" alt="Aaron Wiley for House District 21" width="220" height="auto" />
       <p class="header-sub">West Side Salt Lake City &middot; April 2026</p>
     </div>
 
@@ -209,32 +251,65 @@
 
       <p class="greeting">Dear [First Name],</p>
 
-      <p>I am still feeling it &mdash; the exhaustion, the hoarseness, the adrenaline crash after a very long day. But underneath all of that, what I feel most is <strong>profound gratitude</strong>. You showed up for me, and I will spend every day of this campaign showing up for you.</p>
+      <p>It&rsquo;s been almost 2 weeks since we all gathered together at Highland High &mdash; and I have not stopped smiling. I am so excited for your support.</p>
 
-      <p>Before I say anything else, I want to take a moment to honor the other candidates who shared the floor with me at convention. Each of them brought real ideas, real passion, and real commitment to this community. Our party is stronger for the race they ran, and I am proud to call them friends. I look forward to uniting behind our shared values as we fight together for District 21.</p>
+      <p>As we gathered for the state convention I want to take a moment to honor the candidates who stood in this race alongside me: <strong>Anthony Washburn, Darin Mann, and Jeneanne Lock</strong>. Each of them brought real passion, real vision, and a genuine love for this community to this process. District 21 is stronger because they ran. I am proud to call them friends, and I hope they&rsquo;ll stand with us as we carry this fight forward together.</p>
 
-      <p class="punch">I am deeply humbled to accept your nomination as the Democratic candidate for Utah House District 21 &mdash; and I promise to carry your trust with me every single day of this campaign.</p>
-
-      <p>Your vote on Saturday was more than a preference. It was a statement: that the West Side deserves a bold, fearless voice in the Utah House. I heard you. I will honor that.</p>
-
-      <p>Now the real work begins. We are heading into the general election with energy, momentum, and a growing coalition behind us. That fight starts today &mdash; and I hope you will join me in it, no matter who you voted for at convention.</p>
+      <p>To every delegate who showed up, listened, and voted &mdash; thank you. Your trust is not something I take lightly, and I will carry it with me every single day.</p>
 
       <hr class="divider" />
 
-      <p>There is so much more ahead &mdash; doors to knock, neighbors to meet, and a seat to win. I cannot do it without you. Will you stand with me through November?</p>
+      <p class="section-head">Now &mdash; here&rsquo;s where we are.</p>
+
+      <p>Two of us advanced out of convention: myself and Stephen Otterstrom. That means the Democratic primary for Utah House District 21 will be decided on <strong>June 23rd</strong> &mdash; and the delegates, precinct chairs, and vice chairs who came to caucus night are exactly the people who will shape what happens next.</p>
+
+      <p>That&rsquo;s you. And I need you.</p>
+
+      <p class="punch">There is no Republican in this race. Whoever wins the Democratic primary wins the seat. That means June 23rd isn&rsquo;t just a primary &mdash; it is the election. The stakes couldn&rsquo;t be higher, and the window to act is short.</p>
+
+      <p>I am running to continue the legacy Sandra Hollins has built on the West Side &mdash; and to blaze a new trail. That means working across every aisle, every boundary, and every barrier to deliver what our community has always deserved:</p>
+
+      <p>&#x1F3E5; <strong>Healthcare on the West Side</strong> &mdash; our families deserve access, not obstacles.<br/>
+      &#x1F3E0; <strong>Affordability on the West Side</strong> &mdash; the neighborhood we built should be the one we can still afford to live in.<br/>
+      &#x2728; <strong>A West Side that shines</strong> &mdash; because our communities are vibrant, diverse, and full of extraordinary people who deserve to be seen and heard at the Capitol.</p>
+
+      <p>Go to my website and sign up &mdash; here&rsquo;s how you can help:</p>
+
+      <p>&#x1F449; <strong>JOIN THE TEAM</strong> &mdash; volunteer, knock doors, make calls<br/>
+      &#x1F449; <strong>DONATE</strong> &mdash; every dollar between now and June 23rd matters<br/>
+      &#x1F449; <strong>ATTEND A COMMUNITY EVENT</strong> &mdash; stay connected, stay engaged</p>
+
+      <hr class="divider" />
+
+      <p>I also want to share my full convention speech with you. Click below to watch the words I delivered on Saturday &mdash; because they belong to all of us.</p>
 
     </div>
 
-    <!-- CTA BUTTON -->
-    <div class="cta-wrap">
-      <a href="https://wileyfor21.com/join" class="cta-button">Join the Team</a>
+    <!-- VIDEO THUMBNAIL (clickable) -->
+    <div class="video-wrap">
+      <a href="https://youtu.be/sRvyAXNZ2Es?si=k0GHfbgjdCeufCbk" target="_blank">
+        <img src="https://img.youtube.com/vi/sRvyAXNZ2Es/hqdefault.jpg" alt="Watch Aaron Wiley's Convention Speech on YouTube" />
+        <span class="video-play-btn">&#x25B6;</span>
+      </a>
+    </div>
+
+    <!-- CLOSING -->
+    <div class="body-content" style="padding-top: 0;">
+      <p>The West Side has always been here. Now let&rsquo;s make sure the Capitol knows it.</p>
+      <p><strong>Let&rsquo;s go.</strong></p>
     </div>
 
     <!-- SIGN OFF -->
     <div class="signoff">
-      <p>With deep gratitude and West Side pride,</p>
-      <p class="name">Aaron Wiley</p>
-      <p class="title">Democratic Nominee &middot; Utah House District 21 &middot; <a href="https://wileyfor21.com" style="color:#034A76;">wileyfor21.com</a></p>
+      <p>&mdash; Aaron</p>
+      <p style="font-size:13px; color:#888; font-style:italic; margin:0;"><a href="https://wileyfor21.com" style="color:#034A76;">wileyfor21.com</a></p>
+    </div>
+
+    <!-- THREE CTA BUTTONS -->
+    <div class="cta-row">
+      <a href="https://wileyfor21.com/join">Join the Team</a>
+      <a href="https://wileyfor21.com/donate">Donate</a>
+      <a href="https://wileyfor21.com/volunteer">Volunteer Hub</a>
     </div>
 
     <!-- FOOTER -->
@@ -246,6 +321,12 @@
         Copyright &copy; 2026 Utah for Wiley. All rights reserved.<br/>
         <a href="[UPDATE_PREFERENCES_URL]">Update your preferences</a> &nbsp;&middot;&nbsp; <a href="[UNSUBSCRIBE_URL]">Unsubscribe</a>
       </p>
+    </div>
+
+    <!-- BOTTOM CAMPAIGN BANNER -->
+    <!-- Replace [CAMPAIGN_BANNER_URL] with the hosted URL of the "Fighting for the Future" image -->
+    <div style="line-height:0; font-size:0;">
+      <img src="[CAMPAIGN_BANNER_URL]" alt="Fighting for the Future of District 21 — Aaron Wiley" width="620" style="display:block; width:100%; max-width:620px;" />
     </div>
 
   </div>
