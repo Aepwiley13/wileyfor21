@@ -805,6 +805,12 @@ function generatePostConventionNomineeEmailHTML(firstName) {
     border-left: 2px solid #e8e4df;
   }
 
+  .body-link {
+    color: #044a77;
+    font-weight: 600;
+    text-decoration: underline;
+  }
+
   /* ── DIVIDER ── */
   .divider {
     height: 1px;
@@ -1129,15 +1135,16 @@ function generatePostConventionNomineeEmailHTML(firstName) {
 
   /* ── WORDMARK FOOTER ── */
   .wordmark-bar {
-    background: #044a77;
-    padding: 18px 40px;
+    background: #ffffff;
+    padding: 24px 40px 20px;
     text-align: center;
     border-top: 4px solid #f26f6c;
+    border-bottom: 4px solid #044a77;
   }
   .wordmark-bar img {
-    width: 200px;
-    max-width: 70%;
-    opacity: 0.9;
+    width: 240px;
+    max-width: 75%;
+    opacity: 1;
   }
 
   /* ── LEGAL FOOTER ── */
@@ -1226,6 +1233,7 @@ function generatePostConventionNomineeEmailHTML(firstName) {
     </div>
 
     <p>We've already started building something special together — and now it's time to take the next step.</p>
+    <p>Follow our progress, read our full platform, and find every way to help at <a href="https://wileyfor21.com" class="body-link">wileyfor21.com →</a></p>
 
     <div class="divider"></div>
 
@@ -1263,6 +1271,7 @@ function generatePostConventionNomineeEmailHTML(firstName) {
     <a href="https://wileyfor21.com/signup" class="cta-btn-primary">👉 &nbsp; Join the Team — Volunteer Now</a>
     <a href="https://buy.stripe.com/7sY9ASeNR0tr1Ng25b4ZG01" class="cta-btn-outline">💛 &nbsp; Donate — Every Dollar Matters</a>
     <a href="https://wileyfor21.com/signup" class="cta-btn-ghost">📍 &nbsp; Attend a Community Event</a>
+    <a href="https://wileyfor21.com" class="cta-btn-ghost" style="margin-top:8px;letter-spacing:2px;">🌐 &nbsp; Learn More at wileyfor21.com →</a>
   </div>
 
   <!-- SIGNATURE -->
