@@ -1088,22 +1088,22 @@ function generatePostConventionNomineeEmailHTML(firstName) {
 
   /* ── SIGNATURE ── */
   .sig-section {
-    padding: 40px 52px 32px;
+    padding: 32px 40px 24px;
     background: #ffffff;
     border-top: 1px solid #f0f0ec;
   }
   .sig-closing {
-    font-size: 17px;
-    line-height: 1.7;
+    font-size: 15px;
+    line-height: 1.65;
     color: #333;
     font-style: italic;
-    margin-bottom: 24px;
-    padding-left: 18px;
+    margin-bottom: 18px;
+    padding-left: 16px;
     border-left: 3px solid #f26f6c;
   }
   .sig-sign {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 32px;
+    font-size: 26px;
     font-weight: 900;
     color: #044a77;
     letter-spacing: 1px;
@@ -1130,13 +1130,13 @@ function generatePostConventionNomineeEmailHTML(firstName) {
   /* ── WORDMARK FOOTER ── */
   .wordmark-bar {
     background: #044a77;
-    padding: 24px 52px;
+    padding: 18px 40px;
     text-align: center;
-    border-top: 5px solid #f26f6c;
+    border-top: 4px solid #f26f6c;
   }
   .wordmark-bar img {
-    width: 280px;
-    max-width: 80%;
+    width: 200px;
+    max-width: 70%;
     opacity: 0.9;
   }
 
@@ -1271,7 +1271,7 @@ function generatePostConventionNomineeEmailHTML(firstName) {
     <p class="sig-sign">— Aaron</p>
     <p class="sig-name-line">Aaron Wiley · Democratic Candidate</p>
     <p class="sig-name-line" style="margin-bottom:6px;">Utah House District 21</p>
-    <a href="https://wileyfor21.com" class="sig-url">[wileyfor21.com](http://wileyfor21.com)</a>
+    <a href="https://wileyfor21.com" class="sig-url">wileyfor21.com</a>
   </div>
 
   <!-- WORDMARK -->
