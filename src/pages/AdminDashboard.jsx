@@ -1464,11 +1464,21 @@ function DelegateConventionThankYouSection({ delegates }) {
                 </button>
                 <button
                   onClick={handleGmail}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-coral text-white hover:bg-coral/90 transition-all"
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                    gmailState === "ready" ? "bg-green-600 text-white"
+                    : gmailState === "error" ? "bg-coral text-white"
+                    : "bg-coral text-white hover:bg-coral/90"
+                  }`}
                 >
-                  Open in Gmail ↗
+                  {gmailState === "ready" ? "✓ Gmail open — paste with ⌘V" : gmailState === "error" ? "Open in Gmail ↗" : "Open in Gmail ↗"}
                 </button>
               </div>
+              {gmailState === "ready" && (
+                <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-green-50 border border-green-200 text-green-800 text-sm font-medium mb-1">
+                  <span>📋</span>
+                  <span>Email body copied — click in the Gmail compose area and press <strong>⌘V</strong> (Mac) or <strong>Ctrl+V</strong> (Windows) to paste.</span>
+                </div>
+              )}
               <div className="text-xs text-gray-400 mb-3">
                 <strong className="text-gray-500">Subject:</strong> {SUBJECT}
               </div>
@@ -1482,7 +1492,7 @@ function DelegateConventionThankYouSection({ delegates }) {
                 />
               </div>
               <p className="text-xs text-gray-400 mt-2 text-center">
-                "Copy Rich Email" → paste into Gmail compose to send with full formatting
+                "Open in Gmail" auto-copies the email body — just paste with ⌘V / Ctrl+V in Gmail
               </p>
             </div>
           ) : (
@@ -1534,6 +1544,7 @@ function PostConventionNomineeSection({ delegates }) {
   const [selected, setSelected] = useState(null);
   const [search, setSearch] = useState("");
   const [copyState, setCopyState] = useState("idle");
+  const [gmailState, setGmailState] = useState("idle");
   const [mode, setMode] = useState("email");
 
   const inviteable = delegates
@@ -1575,8 +1586,21 @@ function PostConventionNomineeSection({ delegates }) {
     }
   }
 
-  function handleGmail() {
+  async function handleGmail() {
     if (!selected?.email) return;
+    try {
+      if (window.ClipboardItem) {
+        const blob = new Blob([emailHTML], { type: "text/html" });
+        await navigator.clipboard.write([new ClipboardItem({ "text/html": blob })]);
+      } else {
+        await navigator.clipboard.writeText(emailHTML);
+      }
+      setGmailState("ready");
+      setTimeout(() => setGmailState("idle"), 12000);
+    } catch {
+      setGmailState("error");
+      setTimeout(() => setGmailState("idle"), 3000);
+    }
     const to = encodeURIComponent(selected.email);
     const su = encodeURIComponent(SUBJECT);
     window.open(`https://mail.google.com/mail/?view=cm&to=${to}&su=${su}`, "_blank");
