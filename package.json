@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --open app.html",
-    "build": "vite build && cp -r index.html css js images data robots.txt sitemap.xml dist/",
+    "build": "vite build && cp -r index.html css js images data robots.txt sitemap.xml hub.html dist/",
     "preview": "vite preview"
   },
   "repository": {
