@@ -1,0 +1,2493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UTADCO Contact Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAKTkeIgi4BVxRPwNPjwzBYxAQU9TI-rcc",
+  authDomain: "utadco-hub.firebaseapp.com",
+  projectId: "utadco-hub",
+  storageBucket: "utadco-hub.firebasestorage.app",
+  messagingSenderId: "169107716524",
+  appId: "1:169107716524:web:07019c652e9640e82ae209"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
+const googleProvider = new firebase.auth.GoogleAuthProvider();
+</script>
+<style>
+:root {
+  --teal-50:#E1F5EE;--teal-100:#9FE1CB;--teal-200:#5DCAA5;--teal-400:#1D9E75;
+  --teal-600:#0F6E56;--teal-800:#085041;--teal-900:#04342C;
+  --gray-50:#F7F6F3;--gray-100:#EDEDEA;--gray-200:#DDDDD9;--gray-300:#C8C8C3;
+  --gray-400:#A0A09A;--gray-500:#7A7A75;--gray-600:#5A5A56;--gray-800:#2C2C2A;--gray-900:#1A1A18;
+  --blue-50:#E6F1FB;--blue-200:#85B7EB;--blue-600:#185FA5;--blue-800:#0C447C;
+  --amber-50:#FAEEDA;--amber-200:#EF9F27;--amber-600:#854F0B;--amber-800:#633806;
+  --purple-50:#EEEDFE;--purple-200:#AFA9EC;--purple-600:#534AB7;--purple-800:#3C3489;
+  --coral-50:#FAECE7;--coral-200:#F0997B;--coral-600:#993C1D;--coral-800:#712B13;
+  --green-50:#EAF3DE;--green-200:#97C459;--green-600:#3B6D11;--green-800:#27500A;
+  --pink-50:#FBEAF0;--pink-200:#ED93B1;--pink-600:#993556;--pink-800:#72243E;
+  --red-50:#FCEBEB;--red-400:#E24B4A;--red-600:#A32D2D;
+  --font:'DM Sans',system-ui,sans-serif;
+  --mono:'DM Mono',monospace;
+  --radius-sm:6px;--radius-md:10px;--radius-lg:14px;--radius-xl:20px;
+  --sidebar:224px;
+  --shadow:0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:0 4px 12px rgba(0,0,0,0.1),0 2px 4px rgba(0,0,0,0.06);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;font-family:var(--font);background:var(--gray-50);color:var(--gray-900);font-size:14px;-webkit-font-smoothing:antialiased;}
+button,input,select,textarea{font-family:var(--font);font-size:14px;}
+a{color:inherit;text-decoration:none;}
+
+/* ── LAYOUT ── */
+#app{display:flex;height:100vh;overflow:hidden;}
+#sidebar{width:var(--sidebar);flex-shrink:0;background:#fff;border-right:1px solid var(--gray-200);display:flex;flex-direction:column;overflow-y:auto;}
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+.topbar{padding:14px 24px;background:#fff;border-bottom:1px solid var(--gray-200);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:12px;}
+.content-area{flex:1;overflow-y:auto;padding:24px;}
+
+/* ── SIDEBAR ── */
+.sb-brand{padding:20px 18px 16px;border-bottom:1px solid var(--gray-100);}
+.sb-brandmark{font-size:10px;font-weight:600;letter-spacing:0.12em;color:var(--teal-600);text-transform:uppercase;}
+.sb-name{font-size:16px;font-weight:600;color:var(--gray-900);margin-top:2px;letter-spacing:-0.01em;}
+.sb-tagline{font-size:11px;color:var(--gray-400);margin-top:1px;}
+.sb-section{padding:12px 10px 6px;}
+.sb-label{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-400);padding:0 8px;margin-bottom:4px;}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--radius-md);cursor:pointer;font-size:13px;color:var(--gray-600);transition:all 0.12s;user-select:none;}
+.sb-item:hover{background:var(--gray-50);color:var(--gray-900);}
+.sb-item.active{background:var(--teal-50);color:var(--teal-600);font-weight:500;}
+.sb-item svg{flex-shrink:0;opacity:0.7;}
+.sb-item.active svg{opacity:1;}
+.sb-badge{margin-left:auto;font-size:11px;background:var(--gray-100);color:var(--gray-500);padding:1px 7px;border-radius:99px;min-width:22px;text-align:center;font-weight:500;}
+.sb-item.active .sb-badge{background:var(--teal-100);color:var(--teal-800);}
+.sb-sticker-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.sb-divider{height:1px;background:var(--gray-100);margin:8px 10px;}
+.sb-footer{margin-top:auto;padding:14px 16px;border-top:1px solid var(--gray-100);}
+.sb-user{display:flex;align-items:center;gap:9px;}
+.sb-avatar{width:30px;height:30px;border-radius:50%;background:var(--teal-50);color:var(--teal-600);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sb-user-name{font-size:13px;font-weight:500;color:var(--gray-800);}
+.sb-user-role{font-size:11px;color:var(--gray-400);}
+.sb-signout{font-size:12px;color:var(--teal-600);cursor:pointer;margin-top:4px;}
+.sb-signout:hover{text-decoration:underline;}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius-md);font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all 0.12s;white-space:nowrap;}
+.btn-primary{background:var(--teal-600);color:#fff;}
+.btn-primary:hover{background:var(--teal-800);}
+.btn-secondary{background:#fff;color:var(--gray-700);border:1px solid var(--gray-200);}
+.btn-secondary:hover{background:var(--gray-50);border-color:var(--gray-300);}
+.btn-danger{background:var(--red-50);color:var(--red-600);border:1px solid #F7C1C1;}
+.btn-danger:hover{background:#F7C1C1;}
+.btn-sm{padding:5px 12px;font-size:12px;}
+.btn-icon{padding:7px;border-radius:var(--radius-md);background:none;border:1px solid var(--gray-200);cursor:pointer;color:var(--gray-500);display:inline-flex;align-items:center;justify-content:center;transition:all 0.12s;}
+.btn-icon:hover{background:var(--gray-50);color:var(--gray-800);}
+
+/* ── FORMS ── */
+.f-group{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+.f-label{font-size:11px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.07em;}
+.f-input{border:1px solid var(--gray-200);border-radius:var(--radius-md);padding:9px 12px;font-size:13px;color:var(--gray-900);background:#fff;outline:none;width:100%;transition:border-color 0.12s;}
+.f-input:focus{border-color:var(--teal-200);box-shadow:0 0 0 3px rgba(93,202,165,0.12);}
+.f-input::placeholder{color:var(--gray-300);}
+.f-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.f-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+select.f-input{cursor:pointer;}
+textarea.f-input{resize:vertical;min-height:80px;line-height:1.5;}
+
+/* ── CARDS ── */
+.card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:20px 22px;box-shadow:var(--shadow);}
+.card-sm{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-md);padding:14px 16px;}
+
+/* ── STICKER PILLS ── */
+.stk{display:inline-flex;align-items:center;font-size:11px;padding:3px 9px;border-radius:99px;font-weight:500;white-space:nowrap;}
+
+/* ── AVATAR ── */
+.avatar{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;flex-shrink:0;overflow:hidden;}
+.avatar img{width:100%;height:100%;object-fit:cover;}
+
+/* ── STICKER WALL ── */
+.sticker-wall{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;}
+.sticker-tile{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:18px;cursor:pointer;transition:all 0.15s;box-shadow:var(--shadow);}
+.sticker-tile:hover{border-color:var(--gray-300);transform:translateY(-1px);box-shadow:var(--shadow-md);}
+.st-icon{width:12px;height:12px;border-radius:50%;margin-bottom:12px;}
+.st-name{font-size:14px;font-weight:600;color:var(--gray-900);margin-bottom:3px;letter-spacing:-0.01em;}
+.st-count{font-size:12px;color:var(--gray-400);}
+.new-sticker-tile{background:none;border:1.5px dashed var(--gray-200);border-radius:var(--radius-lg);padding:18px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;transition:all 0.15s;min-height:96px;}
+.new-sticker-tile:hover{background:var(--gray-50);border-color:var(--gray-300);}
+.nst-plus{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--gray-300);display:flex;align-items:center;justify-content:center;color:var(--gray-400);font-size:18px;line-height:1;}
+.nst-label{font-size:12px;color:var(--gray-400);font-weight:500;}
+
+/* ── CONTACT LIST ── */
+.list-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.search-wrap{position:relative;flex:1;min-width:180px;}
+.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--gray-300);pointer-events:none;}
+.search-input{border:1px solid var(--gray-200);border-radius:var(--radius-md);padding:8px 12px 8px 34px;font-size:13px;color:var(--gray-900);background:#fff;outline:none;width:100%;}
+.search-input:focus{border-color:var(--teal-200);box-shadow:0 0 0 3px rgba(93,202,165,0.12);}
+.view-toggle{display:flex;border:1px solid var(--gray-200);border-radius:var(--radius-md);overflow:hidden;background:#fff;}
+.vt-btn{padding:7px 12px;font-size:12px;cursor:pointer;background:none;color:var(--gray-500);border:none;font-family:var(--font);font-weight:500;transition:all 0.1s;}
+.vt-btn.active{background:var(--teal-50);color:var(--teal-600);}
+.contact-table{width:100%;border-collapse:collapse;}
+.contact-table th{text-align:left;padding:10px 14px;font-size:11px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.07em;border-bottom:1px solid var(--gray-200);background:#fff;position:sticky;top:0;z-index:1;}
+.contact-table td{padding:11px 14px;border-bottom:1px solid var(--gray-100);vertical-align:middle;}
+.contact-table tr:hover td{background:var(--gray-50);cursor:pointer;}
+.contact-table tr:last-child td{border-bottom:none;}
+.ct-name-cell{display:flex;align-items:center;gap:10px;}
+.ct-name{font-weight:500;color:var(--gray-900);font-size:13px;}
+.ct-org{font-size:11px;color:var(--gray-400);}
+.status-pill{display:inline-flex;align-items:center;font-size:11px;padding:3px 9px;border-radius:99px;font-weight:500;}
+.status-subscribed{background:#E1F5EE;color:#085041;}
+.status-unsubscribed{background:var(--gray-100);color:var(--gray-500);}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;}
+.contact-card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:16px;cursor:pointer;transition:all 0.15s;box-shadow:var(--shadow);}
+.contact-card:hover{border-color:var(--gray-300);transform:translateY(-1px);box-shadow:var(--shadow-md);}
+.cc-top{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.cc-name{font-size:13px;font-weight:600;color:var(--gray-900);letter-spacing:-0.01em;}
+.cc-sub{font-size:11px;color:var(--gray-400);margin-top:1px;}
+.cc-stickers{display:flex;flex-wrap:wrap;gap:4px;}
+
+/* ── DETAIL PANEL ── */
+#detail-panel{position:absolute;top:0;right:0;bottom:0;width:460px;background:#fff;border-left:1px solid var(--gray-200);box-shadow:-4px 0 20px rgba(0,0,0,0.08);display:flex;flex-direction:column;z-index:50;transform:translateX(100%);transition:transform 0.25s cubic-bezier(0.4,0,0.2,1);}
+#detail-panel.open{transform:translateX(0);}
+.dp-top{padding:16px 20px;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.dp-body{flex:1;overflow-y:auto;padding:20px;}
+.dp-hero{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px;}
+.dp-avatar{width:56px;height:56px;font-size:18px;}
+.dp-name{font-size:20px;font-weight:600;color:var(--gray-900);letter-spacing:-0.02em;}
+.dp-org{font-size:13px;color:var(--gray-500);margin-top:2px;}
+.dp-fields{display:grid;grid-template-columns:100px 1fr;gap:8px 12px;font-size:13px;margin-bottom:18px;}
+.dp-field-label{color:var(--gray-400);padding-top:1px;}
+.dp-field-val{color:var(--gray-900);}
+.dp-section-title{font-size:11px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;margin-top:20px;}
+.activity-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--gray-100);}
+.activity-item:last-child{border-bottom:none;}
+.act-dot{width:8px;height:8px;border-radius:50%;background:var(--teal-200);flex-shrink:0;margin-top:4px;}
+.act-type{font-size:12px;font-weight:500;color:var(--gray-700);}
+.act-detail{font-size:12px;color:var(--gray-400);margin-top:1px;}
+.act-date{font-size:11px;color:var(--gray-300);margin-left:auto;flex-shrink:0;padding-top:1px;}
+.dp-footer{padding:14px 20px;border-top:1px solid var(--gray-100);display:flex;gap:8px;flex-shrink:0;}
+
+/* ── MODALS ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:100;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:#fff;border-radius:var(--radius-xl);padding:28px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-md);}
+.modal-sm{max-width:360px;}
+.modal-title{font-size:18px;font-weight:600;color:var(--gray-900);margin-bottom:6px;letter-spacing:-0.02em;}
+.modal-sub{font-size:13px;color:var(--gray-400);margin-bottom:22px;}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--gray-100);}
+
+/* ── COLOR PICKER ── */
+.color-swatches{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
+.color-swatch{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2.5px solid transparent;transition:transform 0.1s;}
+.color-swatch:hover{transform:scale(1.15);}
+.color-swatch.selected{border-color:var(--gray-800);}
+
+/* ── STICKER PICKER ── */
+.stk-options{display:flex;flex-wrap:wrap;gap:7px;margin-top:6px;}
+.stk-opt{padding:5px 12px;border-radius:99px;font-size:12px;cursor:pointer;border:1px solid var(--gray-200);background:#fff;color:var(--gray-600);transition:all 0.1s;font-weight:500;user-select:none;}
+.stk-opt.selected{border-width:1.5px;}
+
+/* ── IMPORT ── */
+.drop-zone{border:2px dashed var(--gray-200);border-radius:var(--radius-lg);padding:36px;text-align:center;cursor:pointer;transition:all 0.15s;}
+.drop-zone:hover,.drop-zone.drag{background:var(--teal-50);border-color:var(--teal-200);}
+.dz-icon{color:var(--gray-300);margin:0 auto 12px;display:block;}
+.dz-title{font-size:14px;font-weight:600;color:var(--gray-700);margin-bottom:4px;}
+.dz-sub{font-size:12px;color:var(--gray-400);}
+.preview-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:14px;}
+.preview-table th{text-align:left;padding:7px 10px;background:var(--gray-50);font-size:11px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--gray-200);}
+.preview-table td{padding:7px 10px;border-bottom:1px solid var(--gray-100);color:var(--gray-700);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px;}
+
+/* ── PHOTO UPLOAD ── */
+.photo-upload{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+.photo-preview{width:56px;height:56px;border-radius:50%;background:var(--teal-50);color:var(--teal-600);font-size:18px;font-weight:600;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;border:2px solid var(--gray-100);}
+.photo-preview img{width:100%;height:100%;object-fit:cover;}
+.photo-upload-btn{padding:7px 14px;border:1px solid var(--gray-200);border-radius:var(--radius-md);font-size:12px;font-weight:500;cursor:pointer;background:#fff;color:var(--gray-600);}
+.photo-upload-btn:hover{background:var(--gray-50);}
+
+/* ── EMPTY STATE ── */
+.empty-state{text-align:center;padding:60px 20px;color:var(--gray-400);}
+.empty-icon{margin:0 auto 14px;color:var(--gray-200);}
+.empty-title{font-size:15px;font-weight:600;color:var(--gray-600);margin-bottom:4px;}
+.empty-sub{font-size:13px;color:var(--gray-400);}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--gray-900);color:#fff;padding:10px 20px;border-radius:var(--radius-lg);font-size:13px;font-weight:500;opacity:0;transition:all 0.25s;z-index:999;white-space:nowrap;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── LOGIN ── */
+#login-screen{display:none;position:fixed;inset:0;background:var(--gray-50);z-index:200;align-items:center;justify-content:center;}
+#login-screen.open{display:flex;}
+.login-card{background:#fff;border-radius:var(--radius-xl);padding:40px;width:100%;max-width:380px;box-shadow:var(--shadow-md);border:1px solid var(--gray-200);}
+.login-brand{font-size:10px;font-weight:700;letter-spacing:0.14em;color:var(--teal-600);text-transform:uppercase;margin-bottom:6px;}
+.login-title{font-size:24px;font-weight:700;color:var(--gray-900);margin-bottom:6px;letter-spacing:-0.03em;}
+.login-sub{font-size:13px;color:var(--gray-400);margin-bottom:28px;}
+.login-error{background:var(--red-50);color:var(--red-600);padding:10px 14px;border-radius:var(--radius-md);font-size:13px;margin-bottom:16px;display:none;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  #sidebar{display:none;}
+  #sidebar.mobile-open{display:flex;position:fixed;left:0;top:0;bottom:0;z-index:90;box-shadow:var(--shadow-md);}
+  .topbar{padding:12px 16px;}
+  .content-area{padding:16px;}
+  #detail-panel{width:100%;border-left:none;}
+  .f-row,.f-row-3{grid-template-columns:1fr;}
+  .sticker-wall{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));}
+  #mobile-menu-btn{display:flex;}
+}
+@media(min-width:769px){#mobile-menu-btn{display:none;}}
+
+/* ── TRANSITIONS ── */
+.view{display:none;animation:fadeIn 0.15s ease;}
+.view.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen" class="open">
+  <div class="login-card">
+    <div class="login-brand">UTADCO</div>
+    <div class="login-title">Contact Hub</div>
+    <div class="login-sub">Sign in with your Google account to access your team's contacts</div>
+    <div class="login-error" id="login-error">Access denied. Contact your admin to request access.</div>
+    <button class="btn" id="google-signin-btn" onclick="signInWithGoogle()" style="width:100%;justify-content:center;padding:11px;gap:10px;border:1px solid var(--gray-200);background:#fff;color:var(--gray-800);font-size:14px;margin-top:8px;">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 002.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A353" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 01-7.18-2.54H1.83v2.07A8 8 0 008.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 010-3.04V5.41H1.83a8 8 0 000 7.18l2.67-2.07z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 001.83 5.4L4.5 7.49a4.77 4.77 0 014.48-3.3z"/></svg>
+      Sign in with Google
+    </button>
+    <p style="font-size:11px;color:var(--gray-400);text-align:center;margin-top:14px;">Only approved team members can access this hub.</p>
+  </div>
+</div>
+
+<div id="pending-screen" style="display:none;position:fixed;inset:0;background:var(--gray-50);z-index:200;align-items:center;justify-content:center;">
+  <div class="login-card" style="text-align:center;">
+    <div class="login-brand">UTADCO</div>
+    <div class="login-title" style="font-size:20px;">Access Requested</div>
+    <div style="font-size:13px;color:var(--gray-400);margin:12px 0 20px;">Your request has been sent to the admin for approval. You'll be able to sign in once approved.</div>
+    <div style="background:var(--gray-100);border-radius:var(--border-radius-md);padding:12px;font-size:12px;color:var(--gray-500);margin-bottom:20px;" id="pending-email"></div>
+    <button class="btn btn-secondary" style="width:100%;justify-content:center;" onclick="firebase.auth().signOut();document.getElementById('pending-screen').style.display='none';document.getElementById('login-screen').classList.add('open');">Sign out</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+    <div class="sb-brand">
+      <div class="sb-brandmark">UTADCO</div>
+      <div class="sb-name">Contact Hub</div>
+      <div class="sb-tagline">The Dope Rolodex</div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-label">Views</div>
+      <div class="sb-item active" id="nav-wall" onclick="navTo('wall',this)">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" fill="currentColor"/><rect x="9" y="1" width="6" height="6" rx="1.5" fill="currentColor" opacity="0.5"/><rect x="1" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity="0.5"/><rect x="9" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity="0.5"/></svg>
+        Sticker wall
+      </div>
+      <div class="sb-item" id="nav-contacts" onclick="navTo('contacts',this)">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5.5" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M2.5 14c0-3 2.5-5 5.5-5s5.5 2 5.5 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        All contacts
+        <span class="sb-badge" id="sb-all-count">0</span>
+      </div>
+      <div class="sb-item" id="nav-add" onclick="navTo('add',this)">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5.5" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M2.5 14c0-3 2.5-5 5.5-5s5.5 2 5.5 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M11 2v4M9 4h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Add contact
+      </div>
+      <div class="sb-item" id="nav-import" onclick="navTo('import',this)">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M8 5v6M5 8l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Import / Export
+      </div>
+      <div class="sb-item" id="nav-team" onclick="navTo('team',this)" data-admin-only>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="5.5" cy="5" r="2" stroke="currentColor" stroke-width="1.3"/><circle cx="10.5" cy="5" r="2" stroke="currentColor" stroke-width="1.3"/><path d="M1 13c0-2.5 2-4 4.5-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M7.5 13c0-2.5 2-4 4.5-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Team
+      </div>
+      <div class="sb-item" id="nav-integrations" onclick="navTo('integrations',this)" data-admin-only>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1.5" y="5.5" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="10.5" y="1.5" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="10.5" y="9.5" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1.3"/><path d="M5.5 7.5H8a.5.5 0 00.5-.5V3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M5.5 8.5H8a.5.5 0 01.5.5v3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Integrations
+        <span class="sb-badge" style="background:#E1F5EE;color:#0F6E56;">0</span>
+      </div>
+    </div>
+    <div class="sb-divider"></div>
+    <div class="sb-section">
+      <div class="sb-label">Stickers</div>
+      <div id="sb-stickers-list"></div>
+    </div>
+    <div class="sb-footer">
+      <div class="sb-user">
+        <div class="sb-avatar" id="sb-user-avatar">?</div>
+        <div>
+          <div class="sb-user-name" id="sb-user-name">Loading...</div>
+          <div class="sb-user-role" id="sb-user-role"></div>
+        </div>
+      </div>
+      <div class="sb-signout" onclick="doLogout()">Sign out</div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div id="main" style="position:relative;">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <button class="btn-icon" id="mobile-menu-btn" onclick="toggleMobileMenu()">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+        <div>
+          <div style="font-size:15px;font-weight:600;color:var(--gray-900);letter-spacing:-0.01em;" id="topbar-title">Sticker wall</div>
+          <div style="font-size:11px;color:var(--gray-400);" id="topbar-sub">Your contact universe</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;" id="topbar-actions">
+        <button class="btn btn-secondary btn-sm" onclick="navTo('import',null)">Import list</button>
+        <button class="btn btn-primary btn-sm" onclick="navTo('add',null)" id="topbar-add-btn">+ Add contact</button>
+      </div>
+    </div>
+
+    <div class="content-area">
+
+      <!-- STICKER WALL -->
+      <div id="view-wall" class="view active">
+        <div class="sticker-wall" id="sticker-wall-grid"></div>
+      </div>
+
+      <!-- ALL CONTACTS -->
+      <div id="view-contacts" class="view">
+        <div id="phone-patch-banner" style="background:var(--amber-50);border:1px solid #FAC775;border-radius:var(--radius-md);padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+          <div style="font-size:13px;color:#633806;">
+            <strong>Duplicates detected</strong> from the Constant Contact import — click to find and remove duplicate contacts.
+          </div>
+          <button class="btn btn-sm" style="background:#854F0B;color:#fff;border:none;white-space:nowrap;" onclick="deduplicateContacts()">Clean up duplicates</button>
+        </div>
+        <div class="list-toolbar">
+          <div class="search-wrap">
+            <svg class="search-icon" width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.3"/><path d="M10 10l2.5 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            <input class="search-input" id="contact-search" placeholder="Search name, email, org..." oninput="renderContactList()">
+          </div>
+          <div class="view-toggle">
+            <button class="vt-btn active" id="vt-list" onclick="setContactView('list')">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 3.5h10M2 7h10M2 10.5h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            </button>
+            <button class="vt-btn" id="vt-card" onclick="setContactView('card')">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" fill="currentColor"/><rect x="8" y="1" width="5" height="5" rx="1" fill="currentColor" opacity="0.4"/><rect x="1" y="8" width="5" height="5" rx="1" fill="currentColor" opacity="0.4"/><rect x="8" y="8" width="5" height="5" rx="1" fill="currentColor" opacity="0.4"/></svg>
+            </button>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="exportContacts()">Export CSV</button>
+        </div>
+        <div id="contact-list-out"></div>
+      </div>
+
+      <!-- STICKER FILTERED VIEW -->
+      <div id="view-sticker-filtered" class="view">
+        <div class="list-toolbar">
+          <div class="search-wrap">
+            <svg class="search-icon" width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.3"/><path d="M10 10l2.5 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            <input class="search-input" id="stk-filter-search" placeholder="Search within this sticker..." oninput="renderFilteredList()">
+          </div>
+          <div class="view-toggle">
+            <button class="vt-btn active" id="sfvt-list" onclick="setStickerView('list')">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 3.5h10M2 7h10M2 10.5h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            </button>
+            <button class="vt-btn" id="sfvt-card" onclick="setStickerView('card')">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" fill="currentColor"/><rect x="8" y="1" width="5" height="5" rx="1" fill="currentColor" opacity="0.4"/><rect x="1" y="8" width="5" height="5" rx="1" fill="currentColor" opacity="0.4"/><rect x="8" y="8" width="5" height="5" rx="1" fill="currentColor" opacity="0.4"/></svg>
+            </button>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="exportFilteredContacts()">Export CSV</button>
+        </div>
+        <div id="stk-filtered-out"></div>
+      </div>
+
+      <!-- ADD CONTACT -->
+      <div id="view-add" class="view">
+        <div class="card" style="max-width:600px;">
+          <div class="photo-upload">
+            <div class="photo-preview" id="add-photo-preview">
+              <span id="add-photo-initials">?</span>
+            </div>
+            <div>
+              <button class="photo-upload-btn" onclick="document.getElementById('add-photo-input').click()">Upload photo</button>
+              <input type="file" id="add-photo-input" accept="image/*" style="display:none" onchange="previewPhoto(this,'add-photo-preview','add-photo-initials')">
+              <p style="font-size:11px;color:var(--gray-400);margin-top:4px;">JPG, PNG — works from phone camera</p>
+            </div>
+          </div>
+          <div class="f-row">
+            <div class="f-group"><label class="f-label">First name</label><input class="f-input" id="add-first" placeholder="Maria"></div>
+            <div class="f-group"><label class="f-label">Last name</label><input class="f-input" id="add-last" placeholder="Gonzalez"></div>
+          </div>
+          <div class="f-group"><label class="f-label">Email</label><input class="f-input" id="add-email" type="email" placeholder="maria@example.org"></div>
+          <div class="f-row">
+            <div class="f-group"><label class="f-label">Phone</label><input class="f-input" id="add-phone" placeholder="(801) 555-0100"></div>
+            <div class="f-group"><label class="f-label">Organization</label><input class="f-input" id="add-org" placeholder="Org name"></div>
+          </div>
+          <div class="f-row">
+            <div class="f-group">
+              <label class="f-label">Source</label>
+              <select class="f-input" id="add-source">
+                <option value="">Select source</option>
+                <option>Manual entry</option>
+                <option>Constant Contact</option>
+                <option>Luma event</option>
+                <option>CSV import</option>
+                <option>Google</option>
+                <option>Site owner</option>
+                <option>Referral</option>
+              </select>
+            </div>
+            <div class="f-group">
+              <label class="f-label">Email status</label>
+              <select class="f-input" id="add-email-status">
+                <option value="Subscribed">Subscribed</option>
+                <option value="Unsubscribed">Unsubscribed</option>
+                <option value="Unknown">Unknown</option>
+              </select>
+            </div>
+          </div>
+          <div class="f-group"><label class="f-label">Notes</label><textarea class="f-input" id="add-notes" placeholder="How we met, context, anything useful..."></textarea></div>
+          <div class="f-group">
+            <label class="f-label">Stickers</label>
+            <div class="stk-options" id="add-stk-picker"></div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:6px;">
+            <button class="btn btn-primary" onclick="saveContact()">Save contact</button>
+            <button class="btn btn-secondary" onclick="clearAddForm()">Clear</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- IMPORT / EXPORT -->
+      <div id="view-import" class="view">
+        <div style="max-width:620px;">
+          <div class="card" style="margin-bottom:16px;">
+            <div class="drop-zone" id="drop-zone" onclick="document.getElementById('csv-upload').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event)">
+              <svg class="dz-icon" width="36" height="36" viewBox="0 0 36 36" fill="none"><rect x="4" y="4" width="28" height="28" rx="5" stroke="currentColor" stroke-width="1.5"/><path d="M18 11v14M11 18l7 7 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <div class="dz-title">Upload CSV file</div>
+              <div class="dz-sub">Drag & drop or tap to browse · Works from your phone · Constant Contact, Luma, or any CSV</div>
+              <input type="file" id="csv-upload" accept=".csv" style="display:none" onchange="handleCSV(this)">
+            </div>
+            <div id="import-preview-section" style="display:none;margin-top:16px;">
+
+              <!-- STEP 1: Sticker for this import -->
+              <div style="background:var(--teal-50);border:1px solid var(--teal-100);border-radius:var(--radius-md);padding:14px 16px;margin-bottom:16px;">
+                <div style="font-size:12px;font-weight:600;color:var(--teal-800);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px;">Step 1 — Create a sticker for this import</div>
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                  <input class="f-input" id="import-new-stk-name" placeholder="Sticker name" style="flex:1;min-width:160px;max-width:280px;background:#fff;">
+                  <div style="display:flex;gap:6px;" id="import-color-swatches"></div>
+                  <button class="btn btn-primary btn-sm" onclick="createImportSticker()">+ Create sticker</button>
+                </div>
+                <div id="import-created-stickers" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;min-height:0;"></div>
+              </div>
+
+              <!-- STEP 2: Also tag with existing stickers -->
+              <div class="f-group" style="margin-bottom:16px;">
+                <label class="f-label">Step 2 — Also apply existing stickers (optional)</label>
+                <div class="stk-options" id="import-stk-picker"></div>
+              </div>
+
+              <!-- STEP 3: Smart duplicate check results -->
+              <div id="import-buckets" style="display:none;">
+                <div style="font-size:12px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px;">Step 3 — Review before importing</div>
+
+                <!-- Already in hub -->
+                <div id="bucket-exists-wrap" style="display:none;margin-bottom:12px;">
+                  <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#E1F5EE;border:1px solid #9FE1CB;border-radius:var(--radius-md);cursor:pointer;" onclick="toggleBucket('bucket-exists-list')">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#0F6E56" stroke-width="1.3"/><path d="M4.5 7l2 2 3-3" stroke="#0F6E56" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span style="font-size:13px;font-weight:500;color:#085041;flex:1;" id="bucket-exists-label">Already in hub — sticker will be added</span>
+                    <span style="font-size:11px;color:#0F6E56;">tap to expand ▾</span>
+                  </div>
+                  <div id="bucket-exists-list" style="display:none;border:1px solid #9FE1CB;border-top:none;border-radius:0 0 var(--radius-md) var(--radius-md);overflow:hidden;"></div>
+                </div>
+
+                <!-- Possible matches — needs review -->
+                <div id="bucket-fuzzy-wrap" style="display:none;margin-bottom:12px;">
+                  <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--amber-50);border:1px solid #FAC775;border-radius:var(--radius-md);cursor:pointer;" onclick="toggleBucket('bucket-fuzzy-list')">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#854F0B" stroke-width="1.3"/><path d="M7 4.5v3M7 9.5v.5" stroke="#854F0B" stroke-width="1.3" stroke-linecap="round"/></svg>
+                    <span style="font-size:13px;font-weight:500;color:#633806;flex:1;" id="bucket-fuzzy-label">Possible matches — review needed</span>
+                    <span style="font-size:11px;color:#854F0B;">tap to expand ▾</span>
+                  </div>
+                  <div id="bucket-fuzzy-list" style="display:block;border:1px solid #FAC775;border-top:none;border-radius:0 0 var(--radius-md) var(--radius-md);overflow:hidden;"></div>
+                </div>
+
+                <!-- New contacts -->
+                <div id="bucket-new-wrap" style="display:none;margin-bottom:12px;">
+                  <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--blue-50);border:1px solid var(--blue-200);border-radius:var(--radius-md);cursor:pointer;" onclick="toggleBucket('bucket-new-list')">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#185FA5" stroke-width="1.3"/><path d="M7 4.5v5M4.5 7h5" stroke="#185FA5" stroke-width="1.3" stroke-linecap="round"/></svg>
+                    <span style="font-size:13px;font-weight:500;color:#0C447C;flex:1;" id="bucket-new-label">New contacts — will be added</span>
+                    <span style="font-size:11px;color:#185FA5;">tap to expand ▾</span>
+                  </div>
+                  <div id="bucket-new-list" style="display:none;border:1px solid var(--blue-200);border-top:none;border-radius:0 0 var(--radius-md) var(--radius-md);overflow:hidden;"></div>
+                </div>
+              </div>
+
+              <div style="display:flex;gap:8px;margin-top:6px;">
+                <button class="btn btn-primary" id="import-analyze-btn" onclick="analyzeImport()">Analyze for duplicates →</button>
+                <button class="btn btn-primary" id="import-confirm-btn" onclick="confirmImport()" style="display:none;">Confirm import</button>
+                <button class="btn btn-secondary" onclick="cancelImport()">Cancel</button>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div style="font-size:14px;font-weight:600;color:var(--gray-900);margin-bottom:4px;">Export contacts</div>
+            <div style="font-size:13px;color:var(--gray-400);margin-bottom:14px;">Download your full contact list or a filtered segment as CSV</div>
+            <div class="f-group">
+              <label class="f-label">Filter by sticker (optional)</label>
+              <select class="f-input" id="export-sticker-select" style="max-width:280px;">
+                <option value="">All contacts</option>
+              </select>
+            </div>
+            <button class="btn btn-secondary" onclick="exportFromSelect()">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v8M4 8l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 12h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+              Download CSV
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TEAM -->
+      <div id="view-team" class="view">
+        <div style="max-width:580px;">
+          <div id="pending-requests" class="card" style="margin-bottom:16px;display:none;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+              <div style="width:8px;height:8px;border-radius:50%;background:#E24B4A;flex-shrink:0;"></div>
+              <div style="font-size:14px;font-weight:600;color:var(--gray-900);">Access requests</div>
+            </div>
+            <div id="pending-list"></div>
+          </div>
+          <div class="card" style="margin-bottom:16px;">
+            <div style="font-size:14px;font-weight:600;color:var(--gray-900);margin-bottom:4px;">Invite someone</div>
+            <div style="font-size:13px;color:var(--gray-400);margin-bottom:14px;">Share the hub URL — when they sign in with Google you'll see an approval request above.</div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input class="f-input" value="https://hub.utahadvocacy.org" readonly style="flex:1;color:var(--gray-500);font-size:12px;">
+              <button class="btn btn-secondary btn-sm" onclick="navigator.clipboard.writeText('https://hub.utahadvocacy.org');toast('Link copied');">Copy link</button>
+            </div>
+          </div>
+          <div class="card">
+            <div style="font-size:14px;font-weight:600;color:var(--gray-900);margin-bottom:14px;">Team members</div>
+            <div id="team-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INTEGRATIONS -->
+      <div id="view-integrations" class="view">
+        <div style="max-width:680px;">
+          <div style="font-size:13px;color:var(--gray-400);margin-bottom:20px;">Connect your data sources. Each integration syncs contacts into the hub with duplicate detection and automatic sticker tagging.</div>
+
+          <div class="card" style="margin-bottom:12px;">
+            <div style="display:flex;align-items:flex-start;gap:14px;">
+              <div style="width:40px;height:40px;border-radius:var(--radius-md);background:#000;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" fill="white"/><circle cx="9" cy="9" r="3" fill="black"/></svg>
+              </div>
+              <div style="flex:1;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
+                  <span style="font-size:14px;font-weight:600;color:var(--gray-900);">Luma</span>
+                  <span id="luma-status-pill" class="status-pill status-unsubscribed">Not connected</span>
+                </div>
+                <div style="font-size:12px;color:var(--gray-400);margin-bottom:12px;">Pull event attendees from any Luma event directly into the hub. Requires Luma Plus.</div>
+                <div id="luma-disconnected">
+                  <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;">
+                    <div class="f-group" style="margin:0;flex:1;min-width:200px;max-width:300px;">
+                      <label class="f-label">Luma API key</label>
+                      <input class="f-input" id="luma-api-key" type="password" placeholder="luma_api_••••••••">
+                    </div>
+                    <button class="btn btn-primary btn-sm" style="margin-bottom:1px;" onclick="connectLuma()">Connect</button>
+                  </div>
+                  <div style="font-size:11px;color:var(--gray-400);margin-top:6px;">Luma → Calendar Settings → Options → API Key</div>
+                </div>
+                <div id="luma-connected" style="display:none;">
+                  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
+                    <button class="btn btn-secondary btn-sm" onclick="lumaFetchEvents()">
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M10 6A4 4 0 112 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M10 3v3h-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                      Sync now
+                    </button>
+                    <span style="font-size:11px;color:var(--gray-400);" id="luma-last-sync">Never synced</span>
+                    <span style="font-size:12px;color:var(--red-600);cursor:pointer;margin-left:auto;" onclick="disconnectIntegration('luma')">Disconnect</span>
+                  </div>
+                  <div id="luma-events-list"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom:12px;">
+            <div style="display:flex;align-items:flex-start;gap:14px;">
+              <div style="width:40px;height:40px;border-radius:var(--radius-md);background:#005798;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="22" height="14" viewBox="0 0 22 14" fill="none"><path d="M11 1C5.477 1 1 5.03 1 10c0 .69.082 1.36.237 2h3.1A6.5 6.5 0 0111 4.5a6.5 6.5 0 016.663 7.5h3.1A9 9 0 0011 1z" fill="white"/><circle cx="11" cy="10" r="2.5" fill="white"/></svg>
+              </div>
+              <div style="flex:1;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
+                  <span style="font-size:14px;font-weight:600;color:var(--gray-900);">Constant Contact</span>
+                  <span id="cc-status-pill" class="status-pill status-unsubscribed">Not connected</span>
+                </div>
+                <div style="font-size:12px;color:var(--gray-400);margin-bottom:12px;">Pull contacts + list tags (as stickers) and push hub contacts back to Constant Contact. Two-way sync.</div>
+                <div id="cc-disconnected">
+                  <button class="btn btn-primary btn-sm" onclick="connectCC()">
+                    Connect with Constant Contact
+                  </button>
+                  <div style="font-size:11px;color:var(--gray-400);margin-top:6px;">You'll be redirected to Constant Contact to authorize — then brought back here.</div>
+                </div>
+                <div id="cc-connected" style="display:none;">
+                  <div style="background:var(--amber-50);border:1px solid #FAC775;border-radius:var(--radius-md);padding:8px 12px;font-size:12px;color:#633806;margin-bottom:10px;display:none;" id="cc-token-warning">
+                    ⚠️ CC token expires after ~2 hours. If push/pull fails with 401, click Disconnect then reconnect.
+                  </div>
+                  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
+                    <button class="btn btn-secondary btn-sm" onclick="ccPullContacts()">
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M10 6A4 4 0 112 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M10 3v3h-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                      Pull from CC
+                    </button>
+                    <button class="btn btn-secondary btn-sm" onclick="ccPushContacts()">
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6a4 4 0 108 0" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M2 9V6h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                      Push to CC
+                    </button>
+                    <span style="font-size:11px;color:var(--gray-400);" id="cc-last-sync">Never synced</span>
+                    <span style="font-size:12px;color:var(--red-600);cursor:pointer;margin-left:auto;" onclick="disconnectIntegration('cc')">Disconnect</span>
+                  </div>
+                  <div id="cc-sync-status" style="font-size:12px;color:var(--teal-600);margin-top:8px;padding:8px 10px;background:var(--gray-50);border-radius:var(--radius-md);display:none;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom:12px;">
+            <div style="display:flex;align-items:flex-start;gap:14px;">
+              <div style="width:40px;height:40px;border-radius:var(--radius-md);background:#0F9D58;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="20" height="22" viewBox="0 0 20 22" fill="none"><rect x="2" y="1" width="16" height="20" rx="2" stroke="white" stroke-width="1.5"/><path d="M5 8h10M5 12h10M5 16h6" stroke="white" stroke-width="1.2" stroke-linecap="round"/></svg>
+              </div>
+              <div style="flex:1;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
+                  <span style="font-size:14px;font-weight:600;color:var(--gray-900);">Google Sheets</span>
+                  <span class="status-pill" style="background:var(--amber-50);color:#854F0B;border:1px solid #FAC775;">Coming soon</span>
+                </div>
+                <div style="font-size:12px;color:var(--gray-400);">Sync contacts from a shared Google Sheet — useful for team lists and event sign-up sheets.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom:12px;">
+            <div style="display:flex;align-items:flex-start;gap:14px;">
+              <div style="width:40px;height:40px;border-radius:var(--radius-md);background:#FF4A00;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2v7M10 11v7M2 10h7M11 10h7M4.22 4.22l5 5M10.78 10.78l5 5M4.22 15.78l5-5M10.78 9.22l5-5" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </div>
+              <div style="flex:1;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
+                  <span style="font-size:14px;font-weight:600;color:var(--gray-900);">Zapier webhook</span>
+                  <span class="status-pill" style="background:var(--amber-50);color:#854F0B;border:1px solid #FAC775;">Coming soon</span>
+                </div>
+                <div style="font-size:12px;color:var(--gray-400);">Receive contacts from Typeform, Eventbrite, HubSpot, and 5,000+ other tools via Zapier.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom:12px;">
+            <div style="display:flex;align-items:flex-start;gap:14px;">
+              <div style="width:40px;height:40px;border-radius:var(--radius-md);background:var(--teal-600);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3.5" stroke="white" stroke-width="1.4"/><path d="M3 18c0-3.9 3.1-7 7-7s7 3.1 7 7" stroke="white" stroke-width="1.4" stroke-linecap="round"/><path d="M14 4v4M12 6h4" stroke="white" stroke-width="1.4" stroke-linecap="round"/></svg>
+              </div>
+              <div style="flex:1;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
+                  <span style="font-size:14px;font-weight:600;color:var(--gray-900);">Public signup page</span>
+                  <span class="status-pill" style="background:var(--purple-50);color:#534AB7;border:1px solid #AFA9EC;">Roadmap</span>
+                </div>
+                <div style="font-size:12px;color:var(--gray-400);">A public form where community members, event attendees, and volunteers can add themselves. Will live at utahadvocacy.org/join or embed into any page on your site.</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    <!-- DETAIL PANEL -->
+    <div id="detail-panel">
+      <div class="dp-top">
+        <span style="font-size:13px;font-weight:500;color:var(--gray-500);" id="dp-breadcrumb">Contact</span>
+        <div style="display:flex;gap:6px;">
+          <button class="btn-icon btn-sm" id="dp-edit-btn" onclick="editContact()" title="Edit">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 10L9.5 2.5a1.5 1.5 0 012 2L4 12H2v-2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="btn-icon btn-sm" id="dp-archive-btn" onclick="archiveContact()" title="Archive" data-admin-only>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1.5" y="3" width="11" height="2" rx="0.5" stroke="currentColor" stroke-width="1.3"/><path d="M2.5 5v6a1 1 0 001 1h7a1 1 0 001-1V5" stroke="currentColor" stroke-width="1.3"/><path d="M5.5 7.5h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          </button>
+          <button class="btn-icon btn-sm" onclick="closeDetail()">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="dp-body" id="dp-body"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- DUPLICATE CHECK MODAL -->
+<div class="modal-overlay" id="dup-modal">
+  <div class="modal">
+    <div class="modal-title" id="dup-modal-title">Possible duplicate found</div>
+    <div class="modal-sub" id="dup-modal-sub">Someone with this name is already in the hub. Is this the same person?</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px;">
+      <div style="background:var(--gray-50);border-radius:var(--radius-md);padding:12px;">
+        <div style="font-size:10px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px;">You're adding</div>
+        <div id="dup-new-card"></div>
+      </div>
+      <div style="background:var(--teal-50);border-radius:var(--radius-md);padding:12px;">
+        <div style="font-size:10px;font-weight:600;color:var(--teal-600);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px;">Already in hub</div>
+        <div id="dup-existing-card"></div>
+      </div>
+    </div>
+    <div class="modal-footer" style="flex-wrap:wrap;gap:8px;">
+      <button class="btn btn-primary btn-sm" onclick="dupDecision('merge')">Same person — add sticker</button>
+      <button class="btn btn-secondary btn-sm" onclick="dupDecision('new')">Different person — add anyway</button>
+      <button class="btn btn-secondary btn-sm" onclick="closeModal('dup-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="sticker-modal">
+  <div class="modal modal-sm">
+    <div class="modal-title" id="stk-modal-title">Create a sticker</div>
+    <div class="modal-sub" id="stk-modal-sub">Name it anything — event, role, campaign, status</div>
+    <input type="hidden" id="stk-edit-id">
+    <div class="f-group"><label class="f-label">Sticker name</label><input class="f-input" id="stk-name-input" placeholder="e.g. April 2025 Gala, Pitched, 2024 Events"></div>
+
+    <!-- Icon type toggle -->
+    <div class="f-group">
+      <label class="f-label">Icon type</label>
+      <div style="display:flex;gap:8px;margin-top:4px;">
+        <button class="btn btn-secondary btn-sm" id="stk-type-color" onclick="setStickerIconType('color')" style="flex:1;">Color dot</button>
+        <button class="btn btn-secondary btn-sm" id="stk-type-image" onclick="setStickerIconType('image')" style="flex:1;">Upload image</button>
+        <button class="btn btn-secondary btn-sm" id="stk-type-emoji" onclick="setStickerIconType('emoji')" style="flex:1;">Emoji</button>
+      </div>
+    </div>
+
+    <!-- Color picker -->
+    <div class="f-group" id="stk-color-section">
+      <label class="f-label">Color</label>
+      <div class="color-swatches" id="stk-color-swatches"></div>
+    </div>
+
+    <!-- Image upload -->
+    <div class="f-group" id="stk-image-section" style="display:none;">
+      <label class="f-label">Image</label>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div id="stk-image-preview" style="width:40px;height:40px;border-radius:var(--radius-md);border:1px solid var(--gray-200);background:var(--gray-50);overflow:hidden;display:flex;align-items:center;justify-content:center;">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.2"/><circle cx="5.5" cy="5.5" r="1.5" fill="currentColor" opacity="0.4"/><path d="M1 11l4-3 3 2.5 2-2 4 3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="document.getElementById('stk-image-input').click()">Upload image</button>
+        <input type="file" id="stk-image-input" accept="image/*" style="display:none" onchange="previewStickerImage(this)">
+        <span style="font-size:11px;color:var(--gray-400);">PNG, JPG — square works best</span>
+      </div>
+    </div>
+
+    <!-- Emoji picker -->
+    <div class="f-group" id="stk-emoji-section" style="display:none;">
+      <label class="f-label">Emoji</label>
+      <input class="f-input" id="stk-emoji-input" placeholder="Paste or type an emoji, e.g. 🎯 🏆 ❤️" style="font-size:20px;max-width:120px;">
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('sticker-modal')">Cancel</button>
+      <button class="btn btn-danger btn-sm" id="stk-delete-btn" style="display:none;margin-right:auto;" onclick="deleteSticker()">Delete sticker</button>
+      <button class="btn btn-primary" id="stk-save-btn" onclick="createSticker()">Create sticker</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD ACTIVITY MODAL -->
+<div class="modal-overlay" id="activity-modal">
+  <div class="modal modal-sm">
+    <div class="modal-title">Log activity</div>
+    <div class="modal-sub" id="activity-modal-sub"></div>
+    <div class="f-group">
+      <label class="f-label">Activity type</label>
+      <select class="f-input" id="act-type-select" onchange="updateActivityFields()">
+        <option value="event">Attended an event</option>
+        <option value="newsletter">Received a newsletter</option>
+        <option value="form">Submitted a form</option>
+        <option value="pitched">Was pitched</option>
+        <option value="donation">Made a donation</option>
+        <option value="volunteered">Volunteered</option>
+        <option value="custom">Custom activity</option>
+      </select>
+    </div>
+    <div class="f-group" id="act-detail-group"><label class="f-label" id="act-detail-label">Event name</label><input class="f-input" id="act-detail-input" placeholder=""></div>
+    <div class="f-group" id="act-amount-group" style="display:none"><label class="f-label">Amount (optional)</label><input class="f-input" id="act-amount-input" placeholder="$100" type="text"></div>
+    <div class="f-group"><label class="f-label">Date</label><input class="f-input" id="act-date-input" type="date"></div>
+    <div class="f-group"><label class="f-label">Notes (optional)</label><input class="f-input" id="act-notes-input" placeholder="Any additional context..."></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('activity-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveActivity()">Save activity</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT CONTACT MODAL -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <div class="modal-title">Edit contact</div>
+    <div class="photo-upload">
+      <div class="photo-preview" id="edit-photo-preview"><span id="edit-photo-initials">?</span></div>
+      <div>
+        <button class="photo-upload-btn" onclick="document.getElementById('edit-photo-input').click()">Change photo</button>
+        <input type="file" id="edit-photo-input" accept="image/*" style="display:none" onchange="previewPhoto(this,'edit-photo-preview','edit-photo-initials')">
+      </div>
+    </div>
+    <div class="f-row">
+      <div class="f-group"><label class="f-label">First name</label><input class="f-input" id="edit-first"></div>
+      <div class="f-group"><label class="f-label">Last name</label><input class="f-input" id="edit-last"></div>
+    </div>
+    <div class="f-group"><label class="f-label">Email</label><input class="f-input" id="edit-email" type="email"></div>
+    <div class="f-row">
+      <div class="f-group"><label class="f-label">Phone</label><input class="f-input" id="edit-phone"></div>
+      <div class="f-group"><label class="f-label">Organization</label><input class="f-input" id="edit-org"></div>
+    </div>
+    <div class="f-row">
+      <div class="f-group">
+        <label class="f-label">Source</label>
+        <select class="f-input" id="edit-source">
+          <option value="">Select source</option>
+          <option>Manual entry</option><option>Constant Contact</option>
+          <option>Luma event</option><option>CSV import</option>
+          <option>Google</option><option>Site owner</option><option>Referral</option>
+        </select>
+      </div>
+      <div class="f-group">
+        <label class="f-label">Email status</label>
+        <select class="f-input" id="edit-email-status">
+          <option value="Subscribed">Subscribed</option>
+          <option value="Unsubscribed">Unsubscribed</option>
+          <option value="Unknown">Unknown</option>
+        </select>
+      </div>
+    </div>
+    <div class="f-group"><label class="f-label">Notes</label><textarea class="f-input" id="edit-notes"></textarea></div>
+    <div class="f-group">
+      <label class="f-label">Stickers</label>
+      <div class="stk-options" id="edit-stk-picker"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('edit-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEditContact()">Save changes</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script data-cfasync="false">
+// ─── DATA ───────────────────────────────────────────────
+const PALETTE = [
+  {id:'teal',   dot:'#0F6E56', bg:'#E1F5EE', border:'#5DCAA5', text:'#085041'},
+  {id:'blue',   dot:'#185FA5', bg:'#E6F1FB', border:'#85B7EB', text:'#0C447C'},
+  {id:'purple', dot:'#534AB7', bg:'#EEEDFE', border:'#AFA9EC', text:'#3C3489'},
+  {id:'coral',  dot:'#993C1D', bg:'#FAECE7', border:'#F0997B', text:'#712B13'},
+  {id:'amber',  dot:'#854F0B', bg:'#FAEEDA', border:'#EF9F27', text:'#633806'},
+  {id:'pink',   dot:'#993556', bg:'#FBEAF0', border:'#ED93B1', text:'#72243E'},
+  {id:'green',  dot:'#3B6D11', bg:'#EAF3DE', border:'#97C459', text:'#27500A'},
+  {id:'gray',   dot:'#5A5A56', bg:'#F1EFE8', border:'#B4B2A9', text:'#444441'},
+];
+
+let currentUser = null;
+let stickers = [];
+let contacts = [];
+let teamMembers = [];
+let nextId = 1, nextStkId = 100;
+let currentView = 'wall', activeStickerId = null, activeContactId = null;
+let contactViewMode = 'list', stickerViewMode = 'list';
+let importRows = [], importStickerIds = [], selectedStickerColor = PALETTE[0];
+let editPhotoData = null, addPhotoData = null;
+
+// ─── AUTH ────────────────────────────────────────────────
+async function signInWithGoogle() {
+  try {
+    const result = await auth.signInWithPopup(googleProvider);
+    const user = result.user;
+    const userDoc = await db.collection('users').doc(user.uid).get();
+    if (userDoc.exists && userDoc.data().approved) {
+      // Existing approved user — let onAuthStateChanged handle it
+    } else if (!userDoc.exists) {
+      // New user — create pending request
+      await db.collection('users').doc(user.uid).set({
+        name: user.displayName,
+        email: user.email,
+        photo: user.photoURL,
+        role: 'viewer',
+        approved: false,
+        requestedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      // Notify admins
+      await db.collection('access_requests').add({
+        uid: user.uid,
+        name: user.displayName,
+        email: user.email,
+        requestedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        status: 'pending'
+      });
+      showPendingScreen(user.email);
+    } else {
+      // Not approved yet
+      showPendingScreen(user.email);
+    }
+  } catch (err) {
+    document.getElementById('login-error').style.display = 'block';
+    console.error(err);
+  }
+}
+
+function showPendingScreen(email) {
+  document.getElementById('login-screen').classList.remove('open');
+  const ps = document.getElementById('pending-screen');
+  ps.style.display = 'flex';
+  document.getElementById('pending-email').textContent = email;
+}
+
+auth.onAuthStateChanged(async (firebaseUser) => {
+  if (!firebaseUser) {
+    document.getElementById('login-screen').classList.add('open');
+    document.getElementById('pending-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'none';
+    return;
+  }
+  try {
+    const userDoc = await db.collection('users').doc(firebaseUser.uid).get();
+    if (!userDoc.exists || !userDoc.data().approved) {
+      showPendingScreen(firebaseUser.email);
+      document.getElementById('app').style.display = 'none';
+      return;
+    }
+    const userData = userDoc.data();
+    currentUser = {
+      uid: firebaseUser.uid,
+      name: userData.name || firebaseUser.displayName,
+      email: firebaseUser.email,
+      role: userData.role || 'viewer',
+      photo: firebaseUser.photoURL
+    };
+    document.getElementById('login-screen').classList.remove('open');
+    document.getElementById('pending-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    applyRoleUI();
+    await loadFromFirestore();
+  } catch(err) {
+    console.error('Auth error:', err);
+  }
+});
+
+async function doLogout() {
+  await auth.signOut();
+  currentUser = null;
+  contacts = []; stickers = []; teamMembers = [];
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-screen').classList.add('open');
+}
+
+function applyRoleUI() {
+  const isAdmin = currentUser.role === 'admin';
+  const isViewer = currentUser.role === 'viewer';
+  document.getElementById('sb-user-name').textContent = currentUser.name;
+  document.getElementById('sb-user-role').textContent = currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1);
+  document.getElementById('sb-user-avatar').textContent = (currentUser.name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  document.querySelectorAll('[data-admin-only]').forEach(el => el.style.display = isAdmin ? '' : 'none');
+  if (isViewer) {
+    document.getElementById('nav-import').style.display = 'none';
+    const addBtn = document.getElementById('topbar-add-btn');
+    if(addBtn) addBtn.style.display = 'none';
+  }
+}
+
+async function loadFromFirestore() {
+  // Load stickers
+  const stkSnap = await db.collection('stickers').orderBy('createdAt').get();
+  if (stkSnap.empty) {
+    // Seed default stickers on first load
+    const defaults = [
+      {id:'board',name:'Board member',colorId:'teal'},
+      {id:'coach',name:'Coach',colorId:'blue'},
+      {id:'donor',name:'Donor',colorId:'amber'},
+      {id:'giving',name:'Giving Voice',colorId:'purple'},
+      {id:'nonprofit',name:'Nonprofit',colorId:'green'},
+      {id:'volunteer',name:'Volunteer',colorId:'coral'},
+      {id:'events24',name:'2024 Events',colorId:'pink'},
+      {id:'pitched',name:'Pitched',colorId:'gray'},
+    ];
+    for (const s of defaults) {
+      await db.collection('stickers').doc(s.id).set({name:s.name,colorId:s.colorId,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+    }
+    stickers = defaults.map(s=>({id:s.id,name:s.name,color:PALETTE.find(p=>p.id===s.colorId)||PALETTE[0]}));
+  } else {
+    stickers = stkSnap.docs.map(d=>({id:d.id,...d.data(),color:PALETTE.find(p=>p.id===d.data().colorId)||PALETTE[0]}));
+  }
+
+  // Load contacts
+  const ctSnap = await db.collection('contacts').orderBy('dateAdded','desc').get();
+  contacts = ctSnap.docs.map(d=>({...d.data(),firestoreId:d.id}));
+  nextId = contacts.length + 1;
+
+  // Load team
+  const tmSnap = await db.collection('users').where('approved','==',true).get();
+  teamMembers = tmSnap.docs.map(d=>({uid:d.id,...d.data()}));
+
+  initApp();
+}
+
+function initApp() {
+  renderSidebar();
+  renderStickerWall();
+  updateExportSelect();
+  document.getElementById('sb-all-count').textContent = contacts.length;
+  navTo('wall', document.getElementById('nav-wall'));
+}
+
+// Hide app until auth resolves
+document.getElementById('app').style.display = 'none';
+
+// ─── NAV ─────────────────────────────────────────────────
+function navTo(view, el) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  const viewEl = document.getElementById('view-' + view);
+  if (viewEl) viewEl.classList.add('active');
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+  if (el) el.classList.add('active');
+  const navId = 'nav-' + view;
+  const navEl = document.getElementById(navId);
+  if (navEl) navEl.classList.add('active');
+  currentView = view;
+  closeDetail();
+  const titles = {wall:'Sticker wall', contacts:'All contacts', add:'Add contact', import:'Import / Export', team:'Team', integrations:'Integrations', 'sticker-filtered': activeStickerId ? getStickerName(activeStickerId) : 'Sticker'};
+  const subs = {wall:'Your contact universe', contacts:'Every contact in the hub', add:'Add a single contact', import:'Upload or download contacts', team:'Manage your team', integrations:'Connect your data sources', 'sticker-filtered':''};
+  document.getElementById('topbar-title').textContent = titles[view] || view;
+  document.getElementById('topbar-sub').textContent = subs[view] || '';
+
+  // Clear contact list when not on contacts view to prevent bleed-through
+  if (view !== 'contacts') document.getElementById('contact-list-out').innerHTML = '';
+  if (view !== 'sticker-filtered') document.getElementById('stk-filtered-out').innerHTML = '';
+
+  // Clear import state when navigating to import
+  if (view === 'import') cancelImport();
+
+  if (view === 'contacts') renderContactList();
+  if (view === 'add') { renderStickerPicker('add-stk-picker', []); resetAddForm(); }
+  if (view === 'team') renderTeam();
+  if (view === 'sticker-filtered') renderFilteredList();
+}
+
+function openStickerView(id) {
+  activeStickerId = id;
+  const s = getSticker(id);
+  navTo('sticker-filtered', null);
+  document.getElementById('topbar-title').textContent = s ? s.name : 'Sticker';
+  const ct = contacts.filter(c => c.stickers.includes(id)).length;
+  document.getElementById('topbar-sub').textContent = ct + ' contact' + (ct !== 1 ? 's' : '');
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+  const sbEl = document.getElementById('sb-stk-' + id);
+  if (sbEl) sbEl.classList.add('active');
+}
+
+// ─── STICKERS ─────────────────────────────────────────────
+function getSticker(id) { return stickers.find(s => s.id === id); }
+function getStickerName(id) { const s = getSticker(id); return s ? s.name : id; }
+
+function stickerPill(sid) {
+  const s = getSticker(sid); if (!s) return '';
+  const bg = s.color?.bg || '#F1EFE8';
+  const text = s.color?.text || '#444441';
+  const border = s.color?.border || '#B4B2A9';
+  let icon = '';
+  if (s.image) icon = `<img src="${s.image}" style="width:12px;height:12px;border-radius:2px;object-fit:cover;margin-right:4px;vertical-align:middle;">`;
+  else if (s.emoji) icon = `<span style="margin-right:3px;font-size:11px;">${s.emoji}</span>`;
+  return `<span class="stk" style="background:${bg};color:${text};border:1px solid ${border};display:inline-flex;align-items:center;">${icon}${s.name}</span>`;
+}
+
+function renderSidebar() {
+  let html = '';
+  stickers.forEach(s => {
+    const ct = contacts.filter(c => c.stickers.includes(s.id)).length;
+    html += `<div class="sb-item" id="sb-stk-${s.id}" onclick="openStickerView('${s.id}')"><span class="sb-sticker-dot" style="background:${s.color.dot}"></span>${s.name}<span class="sb-badge">${ct}</span></div>`;
+  });
+  html += `<div class="sb-item" onclick="openStickerModal()" style="color:var(--gray-400);font-size:12px;"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> New sticker</div>`;
+  document.getElementById('sb-stickers-list').innerHTML = html;
+  document.getElementById('sb-all-count').textContent = contacts.length;
+}
+
+function stickerIconHtml(s, size=12) {
+  if (s.image) return `<img src="${s.image}" style="width:${size}px;height:${size}px;border-radius:3px;object-fit:cover;">`;
+  if (s.emoji) return `<span style="font-size:${size+2}px;line-height:1;">${s.emoji}</span>`;
+  return `<div style="width:${size}px;height:${size}px;border-radius:50%;background:${s.color?.dot||'#888'};flex-shrink:0;display:inline-block;"></div>`;
+}
+
+function renderStickerWall() {
+  let html = '';
+  stickers.filter(s=>!s.archived).forEach(s => {
+    const ct = contacts.filter(c => (c.stickers||[]).includes(s.id)).length;
+    html += `<div class="sticker-tile" style="position:relative;">
+      <div onclick="openStickerView('${s.id}')" style="cursor:pointer;">
+        <div style="margin-bottom:10px;">${stickerIconHtml(s,20)}</div>
+        <div class="st-name">${s.name}</div>
+        <div class="st-count">${ct} contact${ct!==1?'s':''}</div>
+      </div>
+      <button onclick="event.stopPropagation();openEditStickerModal('${s.id}')" style="position:absolute;top:10px;right:10px;background:none;border:none;cursor:pointer;color:var(--gray-300);font-size:13px;padding:2px 6px;" title="Edit">✎</button>
+    </div>`;
+  });
+  html += `<div class="new-sticker-tile" onclick="openStickerModal()"><div class="nst-plus">+</div><div class="nst-label">New sticker</div></div>`;
+  document.getElementById('sticker-wall-grid').innerHTML = html;
+}
+
+let currentStickerIconType = 'color';
+let stickerImageData = null;
+
+function setStickerIconType(type) {
+  currentStickerIconType = type;
+  document.getElementById('stk-color-section').style.display = type==='color' ? '' : 'none';
+  document.getElementById('stk-image-section').style.display = type==='image' ? '' : 'none';
+  document.getElementById('stk-emoji-section').style.display = type==='emoji' ? '' : 'none';
+  ['color','image','emoji'].forEach(t => {
+    const btn = document.getElementById('stk-type-'+t);
+    if(btn){ btn.style.background=t===type?'var(--teal-50)':''; btn.style.color=t===type?'var(--teal-600)':''; btn.style.borderColor=t===type?'var(--teal-200)':''; }
+  });
+}
+
+function previewStickerImage(input) {
+  const file = input.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    stickerImageData = e.target.result;
+    document.getElementById('stk-image-preview').innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;">`;
+  };
+  reader.readAsDataURL(file);
+}
+
+function openStickerModal() {
+  document.getElementById('stk-modal-title').textContent = 'Create a sticker';
+  document.getElementById('stk-modal-sub').textContent = 'Name it anything — event, role, campaign, status';
+  document.getElementById('stk-edit-id').value = '';
+  document.getElementById('stk-name-input').value = '';
+  document.getElementById('stk-delete-btn').style.display = 'none';
+  document.getElementById('stk-save-btn').textContent = 'Create sticker';
+  document.getElementById('stk-save-btn').onclick = createSticker;
+  if(document.getElementById('stk-emoji-input')) document.getElementById('stk-emoji-input').value = '';
+  stickerImageData = null;
+  document.getElementById('stk-image-preview').innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.2"/></svg>';
+  selectedStickerColor = PALETTE[0];
+  setStickerIconType('color');
+  document.getElementById('stk-color-swatches').innerHTML = PALETTE.map((p,i) => `<div class="color-swatch${i===0?' selected':''}" style="background:${p.dot}" onclick="pickStickerColor(${i},this)" title="${p.id}"></div>`).join('');
+  openModal('sticker-modal');
+}
+
+function openEditStickerModal(id) {
+  const s = stickers.find(x=>x.id===id); if(!s) return;
+  document.getElementById('stk-modal-title').textContent = 'Edit sticker';
+  document.getElementById('stk-modal-sub').textContent = 'Update name, icon, or delete';
+  document.getElementById('stk-edit-id').value = id;
+  document.getElementById('stk-name-input').value = s.name;
+  const ct = contacts.filter(c=>(c.stickers||[]).includes(id)).length;
+  document.getElementById('stk-delete-btn').style.display = '';
+  document.getElementById('stk-save-btn').textContent = 'Save changes';
+  document.getElementById('stk-save-btn').onclick = saveEditSticker;
+  stickerImageData = s.image || null;
+  if (s.image) { setStickerIconType('image'); document.getElementById('stk-image-preview').innerHTML = `<img src="${s.image}" style="width:100%;height:100%;object-fit:cover;">`; }
+  else if (s.emoji) { setStickerIconType('emoji'); document.getElementById('stk-emoji-input').value = s.emoji; }
+  else {
+    setStickerIconType('color');
+    selectedStickerColor = s.color || PALETTE[0];
+    document.getElementById('stk-color-swatches').innerHTML = PALETTE.map((p,i) => `<div class="color-swatch${p.id===(s.color||PALETTE[0]).id?' selected':''}" style="background:${p.dot}" onclick="pickStickerColor(${i},this)" title="${p.id}"></div>`).join('');
+  }
+  openModal('sticker-modal');
+}
+
+function pickStickerColor(i, el) {
+  selectedStickerColor = PALETTE[i];
+  document.querySelectorAll('#stk-color-swatches .color-swatch').forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function buildStickerData(name) {
+  const data = { name };
+  if (currentStickerIconType === 'image' && stickerImageData) { data.image = stickerImageData; data.colorId = null; data.emoji = null; }
+  else if (currentStickerIconType === 'emoji') { data.emoji = document.getElementById('stk-emoji-input').value.trim(); data.colorId = null; data.image = null; }
+  else { data.colorId = selectedStickerColor.id; data.image = null; data.emoji = null; }
+  return data;
+}
+
+function createSticker() {
+  const name = document.getElementById('stk-name-input').value.trim();
+  if (!name) { toast('Enter a sticker name'); return; }
+  const id = 'stk_' + nextStkId++;
+  const data = buildStickerData(name);
+  const color = PALETTE.find(p=>p.id===data.colorId) || PALETTE[0];
+  stickers.push({ id, name, color, image: data.image||null, emoji: data.emoji||null });
+  db.collection('stickers').doc(id).set({...data, createdAt: firebase.firestore.FieldValue.serverTimestamp()}).catch(e=>console.error(e));
+  closeModal('sticker-modal');
+  renderSidebar(); renderStickerWall(); updateExportSelect();
+  toast('Sticker "' + name + '" created');
+}
+
+function saveEditSticker() {
+  const id = document.getElementById('stk-edit-id').value;
+  const name = document.getElementById('stk-name-input').value.trim();
+  if (!name || !id) { toast('Enter a sticker name'); return; }
+  const data = buildStickerData(name);
+  const s = stickers.find(x=>x.id===id); if(!s) return;
+  s.name = name; s.color = PALETTE.find(p=>p.id===data.colorId)||s.color||PALETTE[0]; s.image = data.image||null; s.emoji = data.emoji||null;
+  db.collection('stickers').doc(id).update(data).catch(e=>console.error(e));
+  closeModal('sticker-modal');
+  renderSidebar(); renderStickerWall(); updateExportSelect();
+  toast('Sticker updated');
+}
+
+async function deleteSticker() {
+  const id = document.getElementById('stk-edit-id').value; if(!id) return;
+  const s = stickers.find(x=>x.id===id); if(!s) return;
+  const ct = contacts.filter(c=>(c.stickers||[]).includes(id)).length;
+  const msg = ct > 0 ? `Delete "${s.name}"? It will be removed from ${ct} contact${ct!==1?'s':''}. This cannot be undone.` : `Delete "${s.name}"? This cannot be undone.`;
+  if (!confirm(msg)) return;
+  if (ct > 0) {
+    const batch = db.batch();
+    contacts.filter(c=>(c.stickers||[]).includes(id)).forEach(c => { c.stickers = c.stickers.filter(x=>x!==id); if(c.firestoreId) batch.update(db.collection('contacts').doc(c.firestoreId),{stickers:c.stickers}); });
+    await batch.commit();
+  }
+  db.collection('stickers').doc(id).delete().catch(e=>console.error(e));
+  stickers = stickers.filter(x=>x.id!==id);
+  closeModal('sticker-modal');
+  renderSidebar(); renderStickerWall(); updateExportSelect(); refreshCurrentView();
+  toast(`Sticker "${s.name}" deleted`);
+}
+
+
+// ─── AVATAR HELPERS ───────────────────────────────────────
+function initials(c) { return ((c.first||'')[0]||'').toUpperCase() + ((c.last||'')[0]||'').toUpperCase() || '?'; }
+function avatarColor(c) { return PALETTE[(c.first.charCodeAt(0)||0) % PALETTE.length]; }
+
+function avatarHtml(c, size=36) {
+  const col = avatarColor(c);
+  if (c.photo) return `<div class="avatar" style="width:${size}px;height:${size}px;font-size:${size*0.33}px;"><img src="${c.photo}" alt="${c.first}"></div>`;
+  return `<div class="avatar" style="width:${size}px;height:${size}px;background:${col.bg};color:${col.text};font-size:${size*0.33}px;">${initials(c)}</div>`;
+}
+
+// ─── CONTACT LIST ─────────────────────────────────────────
+function renderContactList() {
+  const q = (document.getElementById('contact-search')||{value:''}).value.toLowerCase();
+  let list = contacts.filter(c => (c.first+' '+c.last+' '+(c.org||'')+' '+c.email).toLowerCase().includes(q));
+  document.getElementById('contact-list-out').innerHTML = contactViewMode === 'list' ? buildListTable(list) : buildCardGrid(list);
+}
+
+function renderFilteredList() {
+  const q = (document.getElementById('stk-filter-search')||{value:''}).value.toLowerCase();
+  let list = contacts.filter(c => c.stickers.includes(activeStickerId) && (c.first+' '+c.last+' '+(c.org||'')+' '+c.email).toLowerCase().includes(q));
+  document.getElementById('stk-filtered-out').innerHTML = stickerViewMode === 'list' ? buildListTable(list) : buildCardGrid(list);
+}
+
+function buildListTable(list) {
+  if (!list.length) return `<div class="empty-state"><svg class="empty-icon" width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="16" r="8" stroke="currentColor" stroke-width="1.5"/><path d="M6 38c0-7.7 6.3-14 14-14s14 6.3 14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><div class="empty-title">No contacts found</div><div class="empty-sub">Try a different search or add a new contact</div></div>`;
+  const rows = list.map(c => `
+    <tr onclick="openDetail('${c.firestoreId||c.id}')">
+      <td style="width:44px;padding-left:16px;">${avatarHtml(c,32)}</td>
+      <td><div class="ct-name">${c.first} ${c.last}</div><div class="ct-org">${c.org||''}</div></td>
+      <td style="color:var(--gray-500);font-size:13px;">${c.email||'—'}</td>
+      <td style="color:var(--gray-500);font-size:13px;">${c.phone||'—'}</td>
+      <td><span class="status-pill ${c.emailStatus==='Subscribed'?'status-subscribed':'status-unsubscribed'}">${c.emailStatus||'Unknown'}</span></td>
+      <td style="font-size:12px;color:var(--gray-400);">${c.source||'—'}</td>
+      <td style="font-size:12px;color:var(--gray-400);">${formatDate(c.dateAdded)}</td>
+      <td><div style="display:flex;flex-wrap:wrap;gap:4px;">${(c.stickers||[]).map(stickerPill).join('')}</div></td>
+    </tr>`).join('');
+  return `<div style="overflow-x:auto;background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);box-shadow:var(--shadow);"><table class="contact-table"><thead><tr><th style="width:44px;padding-left:16px;"></th><th>Name</th><th>Email</th><th>Phone</th><th>Status</th><th>Source</th><th>Date added</th><th>Stickers</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+function buildCardGrid(list) {
+  if (!list.length) return `<div class="empty-state"><div class="empty-title">No contacts found</div></div>`;
+  return `<div class="card-grid">${list.map(c => `
+    <div class="contact-card" onclick="openDetail('${c.firestoreId||c.id}')">
+      <div class="cc-top">${avatarHtml(c,38)}<div><div class="cc-name">${c.first} ${c.last}</div><div class="cc-sub">${c.org||c.email||''}</div></div></div>
+      <div class="cc-stickers">${(c.stickers||[]).map(stickerPill).join('')}</div>
+    </div>`).join('')}</div>`;
+}
+
+function setContactView(mode) {
+  contactViewMode = mode;
+  document.getElementById('vt-list').classList.toggle('active', mode==='list');
+  document.getElementById('vt-card').classList.toggle('active', mode==='card');
+  renderContactList();
+}
+
+function setStickerView(mode) {
+  stickerViewMode = mode;
+  document.getElementById('sfvt-list').classList.toggle('active', mode==='list');
+  document.getElementById('sfvt-card').classList.toggle('active', mode==='card');
+  renderFilteredList();
+}
+
+// ─── DETAIL PANEL ─────────────────────────────────────────
+function openDetail(id) {
+  activeContactId = id;
+  const c = contacts.find(x => x.firestoreId === id || x.id === id); if (!c) return;
+  document.getElementById('dp-breadcrumb').textContent = c.first + ' ' + c.last;
+  const canEdit = currentUser && (currentUser.role === 'admin' || currentUser.role === 'editor');
+  const canArchive = currentUser && currentUser.role === 'admin';
+  document.getElementById('dp-edit-btn').style.display = canEdit ? '' : 'none';
+  document.getElementById('dp-archive-btn').style.display = canArchive ? '' : 'none';
+  const actHtml = c.activity && c.activity.length ? c.activity.map(a => `
+    <div class="activity-item">
+      <div class="act-dot"></div>
+      <div style="flex:1;">
+        <div class="act-type">${actLabel(a.type)}</div>
+        <div class="act-detail">${a.detail||''}${a.amount?' · '+a.amount:''}${a.notes?' · '+a.notes:''}</div>
+      </div>
+      <div class="act-date">${formatDate(a.date)}</div>
+    </div>`).join('') : `<div style="font-size:12px;color:var(--gray-300);padding:10px 0;">No activity logged yet</div>`;
+  document.getElementById('dp-body').innerHTML = `
+    <div class="dp-hero">
+      ${avatarHtml(c, 56)}
+      <div>
+        <div class="dp-name">${c.first} ${c.last}</div>
+        <div class="dp-org">${c.org||''}</div>
+      </div>
+    </div>
+    <div class="dp-fields">
+      <div class="dp-field-label">Email</div>
+      <div class="dp-field-val">
+        ${c.email ? `<a href="mailto:${c.email}" style="color:var(--blue-600);text-decoration:none;">${c.email}</a>` : '—'}
+        ${(c.extraEmails||[]).map(e=>`<div style="font-size:12px;color:var(--blue-600);margin-top:2px;"><a href="mailto:${e}" style="color:var(--blue-600);text-decoration:none;">${e}</a></div>`).join('')}
+      </div>
+      <div class="dp-field-label">Phone</div>
+      <div class="dp-field-val">
+        ${c.phone ? `<a href="tel:${c.phone}" style="color:var(--gray-800);text-decoration:none;">${c.phone}</a>` : '—'}
+        ${(c.extraPhones||[]).map(p=>`<div style="font-size:12px;color:var(--gray-500);margin-top:2px;">${p}</div>`).join('')}
+      </div>
+      <div class="dp-field-label">Source</div><div class="dp-field-val">${c.source||'—'}</div>
+      <div class="dp-field-label">Added</div><div class="dp-field-val">${formatDate(c.dateAdded)}</div>
+      <div class="dp-field-label">Email status</div><div class="dp-field-val"><span class="status-pill ${c.emailStatus==='Subscribed'?'status-subscribed':'status-unsubscribed'}">${c.emailStatus||'Unknown'}</span></div>
+      ${c.notes?`<div class="dp-field-label">Notes</div><div class="dp-field-val">${c.notes}</div>`:''}
+    </div>
+    <div class="dp-section-title">Stickers</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px;">${(c.stickers||[]).map(stickerPill).join('') || '<span style="font-size:12px;color:var(--gray-300)">No stickers</span>'}</div>
+    <div class="dp-section-title" style="margin-top:22px;">Activity timeline</div>
+    ${actHtml}
+    ${canEdit ? `<button class="btn btn-secondary btn-sm" style="margin-top:14px;" onclick="openActivityModal('${id}')">+ Log activity</button>` : ''}
+  `;
+  document.getElementById('detail-panel').classList.add('open');
+}
+
+function closeDetail() {
+  document.getElementById('detail-panel').classList.remove('open');
+  activeContactId = null;
+}
+
+function actLabel(type) {
+  const map = {event:'Attended event',newsletter:'Newsletter sent',form:'Submitted form',pitched:'Was pitched',donation:'Made donation',volunteered:'Volunteered',custom:'Activity'};
+  return map[type] || type;
+}
+
+// ─── ADD CONTACT ──────────────────────────────────────────
+function renderStickerPicker(containerId, selected) {
+  document.getElementById(containerId).innerHTML = stickers.map(s => {
+    const isSel = selected.includes(s.id);
+    return `<div class="stk-opt${isSel?' selected':''}" data-sid="${s.id}" onclick="toggleStickerOpt(this,'${containerId}')" ${isSel?`style="background:${s.color.bg};color:${s.color.text};border-color:${s.color.border}"`:''}>${s.name}</div>`;
+  }).join('');
+}
+
+function toggleStickerOpt(el, containerId) {
+  const s = getSticker(el.dataset.sid);
+  el.classList.toggle('selected');
+  if (el.classList.contains('selected')) {
+    el.style.background = s.color.bg; el.style.color = s.color.text; el.style.borderColor = s.color.border;
+  } else { el.style.background=''; el.style.color=''; el.style.borderColor=''; }
+}
+
+function getSelectedStickers(containerId) {
+  return [...document.querySelectorAll(`#${containerId} .stk-opt.selected`)].map(el => el.dataset.sid);
+}
+
+function resetAddForm() {
+  ['add-first','add-last','add-email','add-phone','add-org','add-notes'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
+  const src = document.getElementById('add-source'); if(src) src.value='';
+  const es = document.getElementById('add-email-status'); if(es) es.value='Subscribed';
+  const pp = document.getElementById('add-photo-preview'); if(pp) { pp.innerHTML='<span id="add-photo-initials">?</span>'; }
+  addPhotoData = null;
+}
+
+function clearAddForm() { resetAddForm(); renderStickerPicker('add-stk-picker',[]); }
+
+function previewPhoto(input, previewId, initialsId) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const prev = document.getElementById(previewId);
+    prev.innerHTML = `<img src="${e.target.result}" alt="photo">`;
+    if (previewId === 'add-photo-preview') addPhotoData = e.target.result;
+    else editPhotoData = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// ─── UNIVERSAL DUPLICATE ENGINE ──────────────────────────
+// Used by manual add, CSV import, and all integrations
+function checkDuplicate(candidate) {
+  const exact = findExactMatch(candidate);
+  if (exact) return { type: 'exact', match: exact };
+  const fuzzy = findFuzzyMatch(candidate);
+  if (fuzzy) return { type: 'fuzzy', match: fuzzy };
+  return { type: 'none' };
+}
+
+let pendingNewContact = null;
+let pendingDupMatch = null;
+
+function saveContact() {
+  const first = document.getElementById('add-first').value.trim();
+  const last = document.getElementById('add-last').value.trim();
+  if (!first && !last) { toast('Please enter a name'); return; }
+  const stkIds = getSelectedStickers('add-stk-picker');
+  const today = new Date().toISOString().split('T')[0];
+  const newContact = {
+    first, last,
+    org: document.getElementById('add-org').value.trim(),
+    email: document.getElementById('add-email').value.trim(),
+    phone: document.getElementById('add-phone').value.trim(),
+    notes: document.getElementById('add-notes').value.trim(),
+    source: document.getElementById('add-source').value || 'Manual entry',
+    emailStatus: document.getElementById('add-email-status').value,
+    photo: addPhotoData || null,
+    stickers: stkIds, dateAdded: today, activity: [],
+    createdBy: currentUser.uid,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  };
+
+  const result = checkDuplicate(newContact);
+
+  if (result.type === 'exact') {
+    const match = result.match;
+    const updates = mergeContactInfo(match, newContact, stkIds);
+    if (match.firestoreId) db.collection('contacts').doc(match.firestoreId).update(updates);
+    const addedEmail = updates.extraEmails ? ` + ${newContact.email} added` : '';
+    const addedPhone = updates.extraPhones ? ` + phone added` : '';
+    toast(`${match.first} ${match.last} already in hub — sticker added${addedEmail}${addedPhone}`);
+    clearAddForm();
+    navTo('contacts', document.getElementById('nav-contacts'));
+    return;
+  }
+
+  if (result.type === 'fuzzy') {
+    // Show side-by-side modal
+    pendingNewContact = newContact;
+    pendingDupMatch = result.match;
+    const n = newContact, m = result.match;
+    document.getElementById('dup-new-card').innerHTML = `
+      <div style="font-size:13px;font-weight:500;color:var(--gray-900);">${n.first} ${n.last}</div>
+      <div style="font-size:12px;color:var(--gray-500);margin-top:3px;">${n.email||'no email'}</div>
+      <div style="font-size:12px;color:var(--gray-500);">${n.phone||'no phone'}</div>
+      <div style="font-size:12px;color:var(--gray-400);">${n.org||''}</div>`;
+    document.getElementById('dup-existing-card').innerHTML = `
+      <div style="font-size:13px;font-weight:500;color:var(--gray-900);">${m.first} ${m.last}</div>
+      <div style="font-size:12px;color:var(--gray-500);margin-top:3px;">${m.email||'no email'}</div>
+      <div style="font-size:12px;color:var(--gray-500);">${m.phone||'no phone'}</div>
+      <div style="font-size:12px;color:var(--gray-400);">${m.org||''}</div>
+      <div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:3px;">${(m.stickers||[]).map(stickerPill).join('')}</div>`;
+    openModal('dup-modal');
+    return;
+  }
+
+  // No duplicate — save directly
+  commitNewContact(newContact);
+}
+
+function dupDecision(decision) {
+  closeModal('dup-modal');
+  if (decision === 'merge' && pendingDupMatch && pendingNewContact) {
+    const match = pendingDupMatch;
+    const updates = mergeContactInfo(match, pendingNewContact, pendingNewContact.stickers||[]);
+    if (match.firestoreId) db.collection('contacts').doc(match.firestoreId).update(updates);
+    toast(`${match.first} ${match.last} updated — sticker${updates.extraEmails?' + email':''} added`);
+    clearAddForm();
+    navTo('contacts', document.getElementById('nav-contacts'));
+  } else if (decision === 'new' && pendingNewContact) {
+    commitNewContact(pendingNewContact);
+  }
+  pendingNewContact = null;
+  pendingDupMatch = null;
+}
+
+function commitNewContact(newContact) {
+  db.collection('contacts').add(newContact).then(ref => {
+    contacts.unshift({...newContact, firestoreId: ref.id});
+    renderSidebar(); updateExportSelect();
+    document.getElementById('sb-all-count').textContent = contacts.length;
+    toast('Contact saved');
+    clearAddForm();
+    navTo('contacts', document.getElementById('nav-contacts'));
+  }).catch(err => toast('Error saving: ' + err.message));
+}
+
+// ─── EDIT CONTACT ─────────────────────────────────────────
+function editContact() {
+  const c = contacts.find(x => x.firestoreId === activeContactId || x.id === activeContactId); if (!c) return;
+  document.getElementById('edit-first').value = c.first;
+  document.getElementById('edit-last').value = c.last;
+  document.getElementById('edit-email').value = c.email||'';
+  document.getElementById('edit-phone').value = c.phone||'';
+  document.getElementById('edit-org').value = c.org||'';
+  document.getElementById('edit-notes').value = c.notes||'';
+  document.getElementById('edit-source').value = c.source||'';
+  document.getElementById('edit-email-status').value = c.emailStatus||'Subscribed';
+  const pp = document.getElementById('edit-photo-preview');
+  pp.innerHTML = c.photo ? `<img src="${c.photo}" alt="photo">` : `<span id="edit-photo-initials">${initials(c)}</span>`;
+  editPhotoData = c.photo || null;
+  renderStickerPicker('edit-stk-picker', c.stickers||[]);
+  openModal('edit-modal');
+}
+
+function saveEditContact() {
+  const c = contacts.find(x => x.id === activeContactId || x.firestoreId === activeContactId); if (!c) return;
+  c.first = document.getElementById('edit-first').value.trim();
+  c.last = document.getElementById('edit-last').value.trim();
+  c.email = document.getElementById('edit-email').value.trim();
+  c.phone = document.getElementById('edit-phone').value.trim();
+  c.org = document.getElementById('edit-org').value.trim();
+  c.notes = document.getElementById('edit-notes').value.trim();
+  c.source = document.getElementById('edit-source').value;
+  c.emailStatus = document.getElementById('edit-email-status').value;
+  if (editPhotoData) c.photo = editPhotoData;
+  c.stickers = getSelectedStickers('edit-stk-picker');
+  const {firestoreId, ...data} = c;
+  if (firestoreId) db.collection('contacts').doc(firestoreId).update(data).catch(e => console.error(e));
+  closeModal('edit-modal');
+  renderSidebar(); renderStickerWall();
+  openDetail(activeContactId);
+  refreshCurrentView();
+  toast('Contact updated');
+}
+
+function archiveContact() {
+  if (!confirm('Archive this contact? They will be removed from the hub.')) return;
+  const c = contacts.find(x => x.id === activeContactId || x.firestoreId === activeContactId);
+  if (c && c.firestoreId) db.collection('contacts').doc(c.firestoreId).delete().catch(e => console.error(e));
+  contacts = contacts.filter(x => x.id !== activeContactId && x.firestoreId !== activeContactId);
+  closeDetail(); renderSidebar(); renderStickerWall(); updateExportSelect();
+  document.getElementById('sb-all-count').textContent = contacts.length;
+  refreshCurrentView(); toast('Contact archived');
+}
+
+function refreshCurrentView() {
+  if (currentView === 'contacts') renderContactList();
+  if (currentView === 'sticker-filtered') renderFilteredList();
+}
+
+// ─── ACTIVITY ─────────────────────────────────────────────
+function openActivityModal(id) {
+  activeContactId = id;
+  const c = contacts.find(x => x.id === id);
+  document.getElementById('activity-modal-sub').textContent = c ? `Logging activity for ${c.first} ${c.last}` : '';
+  document.getElementById('act-date-input').value = new Date().toISOString().split('T')[0];
+  document.getElementById('act-notes-input').value = '';
+  document.getElementById('act-detail-input').value = '';
+  document.getElementById('act-amount-input').value = '';
+  updateActivityFields();
+  openModal('activity-modal');
+}
+
+function updateActivityFields() {
+  const type = document.getElementById('act-type-select').value;
+  const labels = {event:'Event name',newsletter:'Newsletter name',form:'Form name',pitched:'Campaign / context',donation:'',volunteered:'Activity / event',custom:'Description'};
+  const showDetail = type !== 'donation';
+  document.getElementById('act-detail-group').style.display = showDetail ? '' : 'none';
+  document.getElementById('act-detail-label').textContent = labels[type]||'Detail';
+  document.getElementById('act-amount-group').style.display = type === 'donation' ? '' : 'none';
+}
+
+function saveActivity() {
+  const c = contacts.find(x => x.id === activeContactId); if (!c) return;
+  if (!c.activity) c.activity = [];
+  const type = document.getElementById('act-type-select').value;
+  c.activity.unshift({
+    type, detail: document.getElementById('act-detail-input').value.trim(),
+    amount: document.getElementById('act-amount-input').value.trim(),
+    date: document.getElementById('act-date-input').value,
+    notes: document.getElementById('act-notes-input').value.trim()
+  });
+  closeModal('activity-modal');
+  openDetail(activeContactId);
+  toast('Activity logged');
+}
+
+// ─── IMPORT ───────────────────────────────────────────────
+let importCreatedStickerIds = [];
+let importSelectedStickerColor = PALETTE[0];
+let importAnalyzed = { exists: [], fuzzy: [], fresh: [] };
+
+function handleCSV(input) {
+  const file = input.files[0]; if (!file) return;
+  const suggestedName = file.name.replace(/\.csv$/i,'').replace(/[-_]/g,' ').replace(/\b\w/g, c => c.toUpperCase());
+  const reader = new FileReader();
+  reader.onload = e => parseCSV(e.target.result, suggestedName);
+  reader.readAsText(file);
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('drop-zone').classList.remove('drag');
+  const file = e.dataTransfer.files[0];
+  if (!file) return;
+  const suggestedName = file.name.replace(/\.csv$/i,'').replace(/[-_]/g,' ').replace(/\b\w/g, c => c.toUpperCase());
+  const reader = new FileReader();
+  reader.onload = ev => parseCSV(ev.target.result, suggestedName);
+  reader.readAsText(file);
+}
+
+function parseCSV(text, suggestedName) {
+  const lines = text.split('\n').filter(l => l.trim());
+  if (lines.length < 2) { toast('CSV needs at least one row of data'); return; }
+  const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/["\r]/g,''));
+  importRows = lines.slice(1).map(line => {
+    const cols = line.split(',').map(c => c.trim().replace(/["\r]/g,''));
+    const obj = {}; headers.forEach((h,i) => obj[h] = cols[i]||'');
+    return obj;
+  }).filter(r => r.name||r['first name']||r.first||r.email);
+
+  importCreatedStickerIds = [];
+  importSelectedStickerColor = PALETTE[0];
+  importAnalyzed = { exists: [], fuzzy: [], fresh: [] };
+
+  document.getElementById('import-analyze-btn').style.display = '';
+  document.getElementById('import-confirm-btn').style.display = 'none';
+  document.getElementById('import-buckets').style.display = 'none';
+  document.getElementById('import-new-stk-name').value = suggestedName || '';
+  document.getElementById('import-color-swatches').innerHTML = PALETTE.map((p,i) =>
+    `<div style="width:20px;height:20px;border-radius:50%;background:${p.dot};cursor:pointer;border:2.5px solid ${i===0?'var(--gray-800)':'transparent'};transition:transform 0.1s;flex-shrink:0;" onclick="pickImportColor(${i},this)" title="${p.id}"></div>`
+  ).join('');
+  document.getElementById('import-created-stickers').innerHTML = '';
+  renderStickerPicker('import-stk-picker', []);
+  document.getElementById('import-preview-section').style.display = 'block';
+}
+
+function pickImportColor(i, el) {
+  importSelectedStickerColor = PALETTE[i];
+  document.querySelectorAll('#import-color-swatches div').forEach(s => s.style.borderColor = 'transparent');
+  el.style.borderColor = 'var(--gray-800)';
+}
+
+function createImportSticker() {
+  const name = document.getElementById('import-new-stk-name').value.trim();
+  if (!name) { toast('Enter a sticker name'); return; }
+  if (stickers.find(s => s.name.toLowerCase() === name.toLowerCase())) {
+    toast('Sticker already exists — select it in Step 2'); return;
+  }
+  const id = 'stk_' + nextStkId++;
+  const color = importSelectedStickerColor;
+  stickers.push({ id, name, color });
+  importCreatedStickerIds.push(id);
+  const pill = document.createElement('span');
+  pill.className = 'stk';
+  pill.style.cssText = `background:${color.bg};color:${color.text};border:1px solid ${color.border};`;
+  pill.innerHTML = `${name} <span onclick="removeImportCreatedSticker('${id}',this.parentElement)" style="cursor:pointer;margin-left:4px;opacity:0.6;">×</span>`;
+  document.getElementById('import-created-stickers').appendChild(pill);
+  document.getElementById('import-new-stk-name').value = '';
+  document.querySelectorAll('#import-color-swatches div').forEach((s,i) => s.style.borderColor = i===0?'var(--gray-800)':'transparent');
+  importSelectedStickerColor = PALETTE[0];
+  renderStickerPicker('import-stk-picker', []);
+  renderSidebar(); renderStickerWall(); updateExportSelect();
+  toast('Sticker "' + name + '" created');
+}
+
+function removeImportCreatedSticker(id, pillEl) {
+  importCreatedStickerIds = importCreatedStickerIds.filter(s => s !== id);
+  stickers = stickers.filter(s => s.id !== id);
+  pillEl.remove();
+  renderSidebar(); renderStickerWall(); updateExportSelect();
+}
+
+// ── DUPLICATE DETECTION ──────────────────────────────────
+function normName(s) { return (s||'').toLowerCase().trim().replace(/\s+/g,' '); }
+function normEmail(s) { return (s||'').toLowerCase().trim(); }
+function normPhone(s) { return (s||'').replace(/\D/g,''); }
+
+// Get all emails for a contact (primary + extras)
+function allEmails(c) {
+  const extras = (c.extraEmails || []);
+  return [c.email, ...extras].filter(Boolean).map(normEmail);
+}
+
+// Get all phones for a contact (primary + extras)
+function allPhones(c) {
+  const extras = (c.extraPhones || []);
+  return [c.phone, ...extras].filter(Boolean).map(normPhone).filter(p => p.length >= 10);
+}
+
+// Merge a new email/phone into a contact without duplicating
+function mergeContactInfo(match, candidate, allTags) {
+  const updates = {};
+
+  // Merge stickers
+  allTags.forEach(tid => { if (!(match.stickers||[]).includes(tid)) match.stickers.push(tid); });
+  updates.stickers = match.stickers;
+
+  // Merge emails — add new email to extraEmails if not already present
+  const existingEmails = allEmails(match);
+  const newEmail = normEmail(candidate.email);
+  if (newEmail && !existingEmails.includes(newEmail)) {
+    match.extraEmails = [...(match.extraEmails||[]), candidate.email];
+    updates.extraEmails = match.extraEmails;
+  }
+
+  // Merge phones — add new phone to extraPhones if not already present
+  const existingPhones = allPhones(match);
+  const newPhone = normPhone(candidate.phone);
+  if (newPhone && newPhone.length >= 10 && !existingPhones.includes(newPhone)) {
+    match.extraPhones = [...(match.extraPhones||[]), candidate.phone];
+    updates.extraPhones = match.extraPhones;
+  }
+
+  // Fill in missing primary fields
+  if (!match.phone && candidate.phone) { match.phone = candidate.phone; updates.phone = candidate.phone; }
+  if (!match.org && candidate.org) { match.org = candidate.org; updates.org = candidate.org; }
+  if (!match.notes && candidate.notes) { match.notes = candidate.notes; updates.notes = candidate.notes; }
+
+  return updates;
+}
+
+function rowToCandidate(r) {
+  const firstName = r['First Name'] || r.first_name || r['first name'] || r.first || '';
+  const lastName  = r['Last Name']  || r.last_name  || r['last name']  || r.last  || '';
+  const fullName  = r.name || (firstName + ' ' + lastName).trim();
+  const parts     = fullName.trim().split(' ');
+
+  let email = r['E-mail 1 - Value'] || r['E-mail 2 - Value'] || r.email || '';
+  if (email.includes(':::')) email = email.split(':::')[0].trim();
+  email = email.toLowerCase().trim();
+
+  const phone = r['Phone 1 - Value'] || r['Phone 2 - Value'] || r.phone || r.phone_number || r['phone number'] || r.mobile || r.cell || '';
+  const org   = r['Organization Name'] || r.org || r.organization || r.company || '';
+
+  let first = firstName || parts[0] || '';
+  let last  = lastName  || parts.slice(1).join(' ') || '';
+
+  if (!first && !last && email) {
+    const prefix = email.split('@')[0].replace(/[._]/g, ' ');
+    const nameParts = prefix.split(' ');
+    first = nameParts[0] ? nameParts[0].charAt(0).toUpperCase() + nameParts[0].slice(1) : '';
+    last  = nameParts.slice(1).map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
+  }
+
+  return {
+    first, last, email, phone,
+    org: org || '',
+    source: r.source || 'CSV import',
+    emailStatus: r['email status'] || r.emailstatus || r.email_status || 'Subscribed',
+    dateAdded: r['date added'] || r.created_at?.split?.('T')?.[0] || new Date().toISOString().split('T')[0],
+    notes: r.Notes || r.notes || '',
+  };
+}
+
+function findExactMatch(c) {
+  const email = normEmail(c.email);
+  const phone = normPhone(c.phone);
+  return contacts.find(x => {
+    // Match on any stored email
+    if (email && allEmails(x).includes(email)) return true;
+    return false;
+  }) || null;
+}
+
+function findPhoneNameMatch(c) {
+  // Auto-merge: same name + same phone = definitely same person
+  const phone = normPhone(c.phone);
+  if (!phone || phone.length < 10) return null;
+  const cFirst = normName(c.first), cLast = normName(c.last);
+  if (!cFirst && !cLast) return null;
+  return contacts.find(x =>
+    normName(x.first) === cFirst &&
+    normName(x.last) === cLast &&
+    allPhones(x).includes(phone)
+  ) || null;
+}
+
+function findFuzzyMatch(c) {
+  // Name only match — needs human decision
+  const cFirst = normName(c.first), cLast = normName(c.last);
+  if (!cFirst && !cLast) return null;
+  return contacts.find(x => normName(x.first) === cFirst && normName(x.last) === cLast) || null;
+}
+
+function getAllImportTags() {
+  return [...new Set([...importCreatedStickerIds, ...getSelectedStickers('import-stk-picker')])];
+}
+
+function analyzeImport() {
+  const allTags = getAllImportTags();
+  importAnalyzed = { exists: [], phoneMatch: [], fuzzy: [], fresh: [] };
+  importRows.forEach(r => {
+    const candidate = rowToCandidate(r);
+    const exact = findExactMatch(candidate);
+    if (exact) { importAnalyzed.exists.push({ candidate, match: exact }); return; }
+    const phoneNameMatch = findPhoneNameMatch(candidate);
+    if (phoneNameMatch) { importAnalyzed.phoneMatch.push({ candidate, match: phoneNameMatch }); return; }
+    const fuzzy = findFuzzyMatch(candidate);
+    if (fuzzy) { importAnalyzed.fuzzy.push({ candidate, match: fuzzy, decision: null }); return; }
+    importAnalyzed.fresh.push({ candidate });
+  });
+  renderBuckets(allTags);
+  document.getElementById('import-buckets').style.display = 'block';
+  document.getElementById('import-analyze-btn').style.display = 'none';
+  document.getElementById('import-confirm-btn').style.display = '';
+}
+
+function renderBuckets(allTags) {
+  const { exists, phoneMatch, fuzzy, fresh } = importAnalyzed;
+
+  // ── EXACT EMAIL matches ──
+  const existsWrap = document.getElementById('bucket-exists-wrap');
+  const totalAutoMerge = (exists?.length||0) + (phoneMatch?.length||0);
+  if (totalAutoMerge) {
+    document.getElementById('bucket-exists-label').textContent = `Already in hub (${totalAutoMerge}) — sticker + any new emails/phones will be added`;
+    const allAutoMerge = [
+      ...(exists||[]).map(({candidate, match}) => ({candidate, match, reason: 'Email match'})),
+      ...(phoneMatch||[]).map(({candidate, match}) => ({candidate, match, reason: 'Phone + name match'})),
+    ];
+    document.getElementById('bucket-exists-list').innerHTML = allAutoMerge.map(({candidate, match, reason}) => `
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid #9FE1CB;background:#fff;font-size:12px;">
+        ${avatarHtml(match,28)}
+        <div style="flex:1;">
+          <span style="font-weight:500;color:var(--gray-900)">${match.first} ${match.last}</span>
+          <span style="color:var(--gray-400);margin-left:6px;">${match.email||''}</span>
+          ${candidate.email && normEmail(candidate.email) !== normEmail(match.email) ? `<span style="color:var(--teal-600);margin-left:6px;">+ ${candidate.email}</span>` : ''}
+          <div style="font-size:11px;color:var(--gray-400);margin-top:2px;">${reason}</div>
+        </div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;">${allTags.map(stickerPill).join('')}</div>
+      </div>`).join('');
+    existsWrap.style.display = 'block';
+  } else { existsWrap.style.display = 'none'; }
+
+  // ── FUZZY (name only) — needs decision ──
+  const fuzzyWrap = document.getElementById('bucket-fuzzy-wrap');
+  if (fuzzy?.length) {
+    document.getElementById('bucket-fuzzy-label').textContent = `Possible matches (${fuzzy.length}) — same name, is this the same person?`;
+    document.getElementById('bucket-fuzzy-list').innerHTML = fuzzy.map(({candidate, match}, idx) => `
+      <div style="padding:14px;border-bottom:1px solid #FAC775;background:#fff;" id="fuzzy-row-${idx}">
+        <div style="font-size:11px;font-weight:600;color:#854F0B;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px;">Same name — different contact info</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+          <div style="background:var(--gray-50);border-radius:var(--radius-md);padding:10px;">
+            <div style="font-size:10px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">In this import</div>
+            <div style="font-size:13px;font-weight:500;color:var(--gray-900);">${candidate.first} ${candidate.last}</div>
+            <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">${candidate.email||'no email'}</div>
+            <div style="font-size:12px;color:var(--gray-500);">${candidate.phone||'no phone'}</div>
+            <div style="font-size:12px;color:var(--gray-400);">${candidate.org||''}</div>
+          </div>
+          <div style="background:var(--teal-50);border-radius:var(--radius-md);padding:10px;">
+            <div style="font-size:10px;font-weight:600;color:var(--teal-600);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Already in hub</div>
+            <div style="font-size:13px;font-weight:500;color:var(--gray-900);">${match.first} ${match.last}</div>
+            <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">${match.email||'no email'}</div>
+            ${(match.extraEmails||[]).map(e=>`<div style="font-size:11px;color:var(--gray-400);">${e}</div>`).join('')}
+            <div style="font-size:12px;color:var(--gray-500);">${match.phone||'no phone'}</div>
+            ${(match.extraPhones||[]).map(p=>`<div style="font-size:11px;color:var(--gray-400);">${p}</div>`).join('')}
+            <div style="font-size:12px;color:var(--gray-400);">${match.org||''}</div>
+            <div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:3px;">${(match.stickers||[]).map(stickerPill).join('')}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-sm" style="background:#E1F5EE;color:#085041;border:1px solid #9FE1CB;" onclick="setFuzzyDecision(${idx},'merge')">Same person — add sticker + emails</button>
+          <button class="btn btn-sm" style="background:var(--blue-50);color:var(--blue-800);border:1px solid var(--blue-200);" onclick="setFuzzyDecision(${idx},'new')">Different person — add as new</button>
+          <button class="btn btn-sm btn-secondary" onclick="setFuzzyDecision(${idx},'skip')">Skip</button>
+        </div>
+        <div id="fuzzy-decision-${idx}" style="margin-top:8px;font-size:12px;font-weight:500;"></div>
+      </div>`).join('');
+    fuzzyWrap.style.display = 'block';
+  } else { fuzzyWrap.style.display = 'none'; }
+
+  // ── NEW contacts ──
+  const newWrap = document.getElementById('bucket-new-wrap');
+  if (fresh?.length) {
+    document.getElementById('bucket-new-label').textContent = `New contacts (${fresh.length}) — will be added`;
+    document.getElementById('bucket-new-list').innerHTML = fresh.map(({candidate}) => `
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--blue-200);background:#fff;font-size:12px;">
+        <div class="avatar" style="width:28px;height:28px;background:var(--blue-50);color:var(--blue-600);font-size:10px;font-weight:600;">${(candidate.first[0]||'').toUpperCase()}${(candidate.last[0]||'').toUpperCase()}</div>
+        <div style="flex:1;"><span style="font-weight:500;color:var(--gray-900)">${candidate.first} ${candidate.last}</span>
+        <span style="color:var(--gray-400);margin-left:6px;">${candidate.email||''}</span></div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;">${allTags.map(stickerPill).join('')}</div>
+      </div>`).join('');
+    newWrap.style.display = 'block';
+  } else { newWrap.style.display = 'none'; }
+}
+
+function setFuzzyDecision(idx, decision) {
+  importAnalyzed.fuzzy[idx].decision = decision;
+  const labels = { merge:'✓ Will merge — sticker added', new:'✓ Will add as new contact', skip:'✓ Skipped' };
+  const colors = { merge:'#0F6E56', new:'#185FA5', skip:'var(--gray-400)' };
+  const el = document.getElementById(`fuzzy-decision-${idx}`);
+  el.textContent = labels[decision]; el.style.color = colors[decision];
+}
+
+function toggleBucket(id) {
+  const el = document.getElementById(id);
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function confirmImport() {
+  const allTags = getAllImportTags();
+  let added = 0, merged = 0, skipped = 0;
+  const batch = db.batch();
+
+  // Exact email matches — merge using shared mergeContactInfo
+  importAnalyzed.exists.forEach(({candidate, match}) => {
+    const updates = mergeContactInfo(match, candidate, allTags);
+    if (match.firestoreId) batch.update(db.collection('contacts').doc(match.firestoreId), updates);
+    merged++;
+  });
+
+  // Phone + name matches — auto-merge, add new email to record
+  (importAnalyzed.phoneMatch||[]).forEach(({candidate, match}) => {
+    const updates = mergeContactInfo(match, candidate, allTags);
+    if (match.firestoreId) batch.update(db.collection('contacts').doc(match.firestoreId), updates);
+    merged++;
+  });
+
+  // Fuzzy (name only) — apply user decision
+  importAnalyzed.fuzzy.forEach(({candidate, match, decision}) => {
+    if (decision === 'merge') {
+      const updates = mergeContactInfo(match, candidate, allTags);
+      if (match.firestoreId) batch.update(db.collection('contacts').doc(match.firestoreId), updates);
+      merged++;
+    } else if (decision === 'new') {
+      const ref = db.collection('contacts').doc();
+      const newC = {...candidate, photo:null, stickers:[...allTags], activity:[], createdBy:currentUser.uid, createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+      batch.set(ref, newC);
+      contacts.unshift({...newC, firestoreId:ref.id});
+      added++;
+    } else { skipped++; }
+  });
+
+  // Fresh new contacts
+  importAnalyzed.fresh.forEach(({candidate}) => {
+    const ref = db.collection('contacts').doc();
+    const newC = {...candidate, photo:null, stickers:[...allTags], activity:[], createdBy:currentUser.uid, createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+    batch.set(ref, newC);
+    contacts.unshift({...newC, firestoreId:ref.id});
+    added++;
+  });
+
+  batch.commit().then(() => {
+    const parts = [];
+    if (added) parts.push(`${added} added`);
+    if (merged) parts.push(`${merged} updated`);
+    if (skipped) parts.push(`${skipped} skipped`);
+    toast(parts.join(' · ') || 'Import complete');
+    cancelImport();
+    renderSidebar(); renderStickerWall(); updateExportSelect();
+    document.getElementById('sb-all-count').textContent = contacts.length;
+  }).catch(err => toast('Import error: ' + err.message));
+}
+
+function cancelImport() {
+  importRows = []; importStickerIds = []; importCreatedStickerIds = [];
+  importAnalyzed = { exists: [], phoneMatch: [], fuzzy: [], fresh: [] };
+  const safe = id => document.getElementById(id);
+  if (safe('import-preview-section')) safe('import-preview-section').style.display = 'none';
+  if (safe('import-buckets')) safe('import-buckets').style.display = 'none';
+  if (safe('import-analyze-btn')) safe('import-analyze-btn').style.display = '';
+  if (safe('import-confirm-btn')) safe('import-confirm-btn').style.display = 'none';
+  if (safe('csv-upload')) safe('csv-upload').value = '';
+  if (safe('import-created-stickers')) safe('import-created-stickers').innerHTML = '';
+}
+
+// ─── EXPORT ───────────────────────────────────────────────
+function buildCSV(list) {
+  const header = 'First,Last,Email,Phone,Organization,Source,Email Status,Date Added,Notes,Stickers';
+  const rows = list.map(c => [
+    c.first, c.last, c.email||'', c.phone||'', c.org||'',
+    c.source||'', c.emailStatus||'', c.dateAdded||'', (c.notes||'').replace(/,/g,' '),
+    '"' + c.stickers.map(sid => getStickerName(sid)).join('; ') + '"'
+  ].join(',')).join('\n');
+  return header + '\n' + rows;
+}
+
+function downloadCSV(csv, filename) {
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = filename; a.click();
+}
+
+function exportContacts() { downloadCSV(buildCSV(contacts), 'utadco-all-contacts.csv'); }
+function exportFilteredContacts() {
+  const list = contacts.filter(c => c.stickers.includes(activeStickerId));
+  downloadCSV(buildCSV(list), `utadco-${activeStickerId||'contacts'}.csv`);
+}
+function exportFromSelect() {
+  const sid = document.getElementById('export-sticker-select').value;
+  const list = sid ? contacts.filter(c => c.stickers.includes(sid)) : contacts;
+  const name = sid ? getStickerName(sid).replace(/\s+/g,'-').toLowerCase() : 'all';
+  downloadCSV(buildCSV(list), `utadco-${name}.csv`);
+}
+function updateExportSelect() {
+  const sel = document.getElementById('export-sticker-select');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">All contacts</option>' + stickers.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+}
+
+// ─── TEAM ─────────────────────────────────────────────────
+function renderTeam() {
+  const rows = teamMembers.map(m => `
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--gray-100);">
+      <div class="avatar" style="width:34px;height:34px;background:var(--teal-50);color:var(--teal-600);font-size:11px;font-weight:600;">${(m.name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}</div>
+      <div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--gray-900);">${m.name||''}</div><div style="font-size:12px;color:var(--gray-400);">${m.email||''}</div></div>
+      <span class="status-pill status-subscribed" style="text-transform:capitalize;">${m.role||'viewer'}</span>
+      ${currentUser.role==='admin' && m.uid !== currentUser.uid ? `<span style="font-size:12px;color:var(--red-600);cursor:pointer;margin-left:8px;" onclick="removeTeamMember('${m.uid}','${m.email}')">Remove</span>` : ''}
+    </div>`).join('');
+  document.getElementById('team-list').innerHTML = rows || '<div style="font-size:13px;color:var(--gray-400);padding:12px 0;">No team members yet</div>';
+
+  // Load pending requests for admins
+  if (currentUser.role === 'admin') {
+    db.collection('access_requests').where('status','==','pending').get().then(snap => {
+      if (snap.empty) {
+        document.getElementById('pending-requests').style.display = 'none';
+        return;
+      }
+      document.getElementById('pending-requests').style.display = 'block';
+      document.getElementById('pending-list').innerHTML = snap.docs.map(d => {
+        const r = d.data();
+        return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--gray-100);">
+          <div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--gray-900);">${r.name||''}</div><div style="font-size:12px;color:var(--gray-400);">${r.email||''}</div></div>
+          <select id="role-${d.id}" style="border:1px solid var(--gray-200);border-radius:var(--border-radius-md);padding:4px 8px;font-size:12px;"><option value="viewer">Viewer</option><option value="editor">Editor</option><option value="admin">Admin</option></select>
+          <button class="btn btn-primary btn-sm" onclick="approveRequest('${d.id}','${r.uid}','${r.name}','${r.email}')">Approve</button>
+          <button class="btn btn-sm" style="color:var(--red-600);background:none;border:none;cursor:pointer;" onclick="denyRequest('${d.id}','${r.uid}')">Deny</button>
+        </div>`;
+      }).join('');
+    });
+  }
+}
+
+async function approveRequest(requestId, uid, name, email) {
+  const role = document.getElementById('role-' + requestId)?.value || 'viewer';
+  await db.collection('users').doc(uid).update({ approved: true, role, approvedAt: firebase.firestore.FieldValue.serverTimestamp(), approvedBy: currentUser.uid });
+  await db.collection('access_requests').doc(requestId).update({ status: 'approved' });
+  teamMembers.push({ uid, name, email, role, approved: true });
+  toast(`${name} approved as ${role}`);
+  renderTeam();
+}
+
+async function denyRequest(requestId, uid) {
+  await db.collection('access_requests').doc(requestId).update({ status: 'denied' });
+  await db.collection('users').doc(uid).update({ approved: false });
+  toast('Request denied');
+  renderTeam();
+}
+
+async function removeTeamMember(uid, email) {
+  if (!confirm(`Remove ${email} from the hub?`)) return;
+  await db.collection('users').doc(uid).update({ approved: false });
+  teamMembers = teamMembers.filter(m => m.uid !== uid);
+  toast(`${email} removed`);
+  renderTeam();
+}
+
+function sendInvite() {
+  toast('Share the hub URL and ask them to sign in with Google — you\'ll get an approval request automatically.');
+}
+
+// ─── UTILS ───────────────────────────────────────────────
+function formatDate(d) {
+  if (!d) return '—';
+  try { return new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+  catch(e) { return d; }
+}
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function toggleMobileMenu() {
+  document.getElementById('sidebar').classList.toggle('mobile-open');
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ─── INTEGRATIONS ─────────────────────────────────────────
+const INTEGRATIONS = {
+  luma: { key: 'utadco_luma_key', name: 'Luma' },
+  cc:   { key: 'utadco_cc_key',   name: 'Constant Contact' },
+};
+
+function connectLuma() {
+  const key = document.getElementById('luma-api-key').value.trim();
+  if (!key) { toast('Enter your Luma API key'); return; }
+  localStorage.setItem(INTEGRATIONS.luma.key, key);
+  setIntegrationConnected('luma');
+  toast('Luma connected — ready to sync');
+}
+
+function setIntegrationConnected(id) {
+  const disc = document.getElementById(`${id}-disconnected`);
+  const conn = document.getElementById(`${id}-connected`);
+  const pill = document.getElementById(`${id}-status-pill`);
+  if (disc) disc.style.display = 'none';
+  if (conn) conn.style.display = 'block';
+  if (pill) { pill.textContent = 'Connected'; pill.className = 'status-pill status-subscribed'; }
+  if (id === 'cc') {
+    const warn = document.getElementById('cc-token-warning');
+    if (warn) { warn.style.display = 'block'; setTimeout(() => warn.style.display = 'none', 10000); }
+  }
+  updateIntegrationBadge();
+}
+
+function disconnectIntegration(id) {
+  if (!confirm(`Disconnect ${INTEGRATIONS[id]?.name || id}?`)) return;
+  localStorage.removeItem(INTEGRATIONS[id].key);
+  const disc = document.getElementById(`${id}-disconnected`);
+  const conn = document.getElementById(`${id}-connected`);
+  const pill = document.getElementById(`${id}-status-pill`);
+  if (disc) disc.style.display = 'block';
+  if (conn) conn.style.display = 'none';
+  if (pill) { pill.textContent = 'Not connected'; pill.className = 'status-pill status-unsubscribed'; }
+  updateIntegrationBadge();
+  toast(`${INTEGRATIONS[id]?.name} disconnected`);
+}
+
+function updateIntegrationBadge() {
+  const count = Object.values(INTEGRATIONS).filter(i => localStorage.getItem(i.key)).length;
+  const badge = document.querySelector('#nav-integrations .sb-badge');
+  if (badge) badge.textContent = count;
+}
+
+function lumaFetchEvents() {
+  // Production: proxies to public-api.luma.com via Netlify function
+  const list = document.getElementById('luma-events-list');
+  list.innerHTML = `
+    <div style="font-size:12px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px;">Your Luma events</div>
+    <div style="border:1px solid var(--gray-200);border-radius:var(--radius-md);overflow:hidden;">
+      ${['West Side Community Night — Mar 15 2025','UTADCO Monthly Gathering — Feb 22 2025','Giving Voices Forum — Jan 18 2025'].map((name,i,a) => `
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:${i<a.length-1?'1px solid var(--gray-100)':'none'};font-size:13px;">
+          <div style="flex:1;font-weight:500;color:var(--gray-900);">${name}</div>
+          <button class="btn btn-secondary btn-sm" onclick="lumaImportEvent('${name}')">Import attendees</button>
+        </div>`).join('')}
+    </div>`;
+  document.getElementById('luma-last-sync').textContent = 'Last synced: just now';
+  toast('Events loaded');
+}
+
+function lumaImportEvent(eventName) {
+  navTo('import', null);
+  setTimeout(() => {
+    document.getElementById('import-new-stk-name').value = eventName;
+    toast('Upload the Luma CSV export for "' + eventName + '"');
+  }, 200);
+}
+
+function restoreIntegrations() {
+  Object.keys(INTEGRATIONS).forEach(id => {
+    if (localStorage.getItem(INTEGRATIONS[id].key)) setIntegrationConnected(id);
+  });
+  // Check if returning from CC OAuth redirect
+  const params = new URLSearchParams(window.location.search);
+  const ccCode = params.get('code');
+  const ccState = params.get('state');
+  if (ccCode && ccState === 'cc_oauth') {
+    window.history.replaceState({}, document.title, window.location.pathname);
+    exchangeCCToken(ccCode);
+  }
+  updateIntegrationBadge();
+}
+
+// ─── CONSTANT CONTACT OAUTH ──────────────────────────────
+const CC_API_KEY    = '1dd28f88-8035-48ca-99e8-a94b208326a3';
+const CC_REDIRECT   = 'https://hub.utahadvocacy.org';
+// Note: Client secret is stored in Firestore config, not in client code
+// For PKCE-less flow we use implicit token directly from CC
+
+function connectCC() {
+  const nonce = Math.random().toString(36).slice(2) + Date.now().toString(36);
+  sessionStorage.setItem('cc_nonce', nonce);
+  const authUrl = 'https://authz.constantcontact.com/oauth2/default/v1/authorize' +
+    '?response_type=token' +
+    '&client_id=' + CC_API_KEY +
+    '&redirect_uri=' + encodeURIComponent(CC_REDIRECT) +
+    '&scope=contact_data' +
+    '&nonce=' + nonce +
+    '&state=cc_oauth';
+  window.location.href = authUrl;
+}
+
+// Handle implicit flow token returned in URL hash
+function checkCCImplicitToken() {
+  const hash = window.location.hash;
+  if (!hash || !hash.includes('access_token')) return;
+  const params = new URLSearchParams(hash.slice(1));
+  const token = params.get('access_token');
+  const state = params.get('state');
+  if (token && state === 'cc_oauth') {
+    window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
+    window.location.hash = '';
+    localStorage.setItem(INTEGRATIONS.cc.key, token);
+    setIntegrationConnected('cc');
+    document.getElementById('cc-last-sync').textContent = 'Connected — never synced';
+    toast('Constant Contact connected!');
+  }
+}
+
+async function ccPullContacts() {
+  const token = localStorage.getItem(INTEGRATIONS.cc.key);
+  if (!token) { toast('Not connected to Constant Contact'); return; }
+  const statusEl = document.getElementById('cc-sync-status');
+  statusEl.style.display = 'block';
+  statusEl.style.color = 'var(--teal-600)';
+
+  // CC API requires a server-side proxy due to CORS
+  // Check if Netlify proxy is configured
+  const PROXY = localStorage.getItem('utadco_netlify_proxy');
+  if (!PROXY) {
+    statusEl.style.color = '#854F0B';
+    statusEl.innerHTML = `
+      <strong>Proxy required.</strong> CC's API blocks direct browser requests (CORS). 
+      To enable Pull from CC, enter your Netlify proxy URL below:
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <input class="f-input" id="proxy-url-input" placeholder="https://your-site.netlify.app" style="flex:1;font-size:12px;padding:6px 10px;">
+        <button class="btn btn-primary btn-sm" onclick="saveProxyUrl()">Save</button>
+      </div>
+      <div style="margin-top:6px;font-size:11px;color:var(--gray-400);">Deploy the Netlify function from the README, then paste your Netlify URL here.</div>`;
+    return;
+  }
+
+  statusEl.textContent = 'Pulling contacts from Constant Contact...';
+  try {
+    const res = await fetch(PROXY + '/.netlify/functions/cc-auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'contacts', access_token: token })
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      if (err.error === 'invalid_token' || res.status === 401) {
+        disconnectIntegration('cc');
+        statusEl.style.color = '#A32D2D';
+        statusEl.textContent = 'Token expired — please reconnect.';
+        return;
+      }
+      throw new Error(err.error || res.statusText);
+    }
+    const { contacts: ccContacts, total } = await res.json();
+    statusEl.textContent = `Processing ${total} contacts...`;
+
+    let added = 0, merged = 0;
+    const today = new Date().toISOString().split('T')[0];
+    const batch = db.batch();
+
+    for (const cc of ccContacts) {
+      const result = checkDuplicate(cc);
+      if (result.type === 'exact') {
+        const match = result.match;
+        const updates = {};
+        (cc.stickers||[]).forEach(sid => { if (!(match.stickers||[]).includes(sid)) match.stickers.push(sid); });
+        updates.stickers = match.stickers;
+        if (!match.phone && cc.phone) { match.phone = cc.phone; updates.phone = cc.phone; }
+        if (!match.org && cc.org) { match.org = cc.org; updates.org = cc.org; }
+        if (match.firestoreId) batch.update(db.collection('contacts').doc(match.firestoreId), updates);
+        merged++;
+      } else if (result.type === 'none') {
+        const ref = db.collection('contacts').doc();
+        const newC = { ...cc, stickers: cc.stickers||[], activity: [], photo: null, createdBy: currentUser.uid, createdAt: firebase.firestore.FieldValue.serverTimestamp() };
+        batch.set(ref, newC);
+        contacts.unshift({ ...newC, firestoreId: ref.id });
+        added++;
+      }
+    }
+
+    await batch.commit();
+    renderSidebar(); renderStickerWall(); updateExportSelect();
+    document.getElementById('sb-all-count').textContent = contacts.length;
+    const now = new Date().toLocaleTimeString();
+    document.getElementById('cc-last-sync').textContent = 'Last synced: ' + now;
+    statusEl.textContent = `✓ ${added} added · ${merged} updated`;
+    setTimeout(() => { statusEl.style.display = 'none'; }, 5000);
+    refreshCurrentView();
+  } catch(err) {
+    statusEl.style.color = '#A32D2D';
+    statusEl.textContent = 'Error: ' + err.message;
+  }
+}
+
+function saveProxyUrl() {
+  const url = (document.getElementById('proxy-url-input')?.value||'').trim().replace(/\/$/, '');
+  if (!url) return;
+  localStorage.setItem('utadco_netlify_proxy', url);
+  toast('Proxy URL saved — try Pull from CC again');
+  document.getElementById('cc-sync-status').style.display = 'none';
+}
+
+async function ccPushContacts() {
+  const token = localStorage.getItem(INTEGRATIONS.cc.key);
+  if (!token) { toast('Not connected to Constant Contact'); return; }
+  const PROXY = localStorage.getItem('utadco_netlify_proxy');
+  if (!PROXY) { toast('Netlify proxy URL not set — enter it after clicking Pull from CC'); return; }
+
+  const statusEl = document.getElementById('cc-sync-status');
+  statusEl.style.display = 'block';
+  statusEl.style.color = 'var(--teal-600)';
+  statusEl.textContent = 'Connecting to Constant Contact...';
+
+  // Get CC list ID first (CC v3 requires contacts be added to a list)
+  let listId = localStorage.getItem('utadco_cc_list_id');
+  if (!listId) {
+    try {
+      const res = await fetch(PROXY + '/.netlify/functions/cc-auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'get_lists', access_token: token })
+      });
+      const data = await res.json();
+      const lists = data.lists || [];
+      const target = lists.find(l => l.name === 'All Contacts') || lists[0];
+      if (target) { listId = target.list_id; localStorage.setItem('utadco_cc_list_id', listId); }
+    } catch(err) {
+      statusEl.style.color = '#A32D2D';
+      statusEl.textContent = 'Could not fetch CC lists: ' + err.message;
+      return;
+    }
+  }
+
+  const eligible = contacts.filter(c => c.email);
+  statusEl.textContent = `Pushing ${eligible.length} contacts to Constant Contact...`;
+
+  let pushed = 0, failed = 0, tokenExpired = false;
+
+  for (const c of eligible) {
+    if (tokenExpired) break;
+    try {
+      const res = await fetch(PROXY + '/.netlify/functions/cc-auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'push_contact', access_token: token, contact: c, list_id: listId })
+      });
+      if (res.status === 401) {
+        tokenExpired = true;
+        disconnectIntegration('cc');
+        statusEl.style.color = '#A32D2D';
+        statusEl.textContent = `Token expired after ${pushed} pushed — reconnect CC and try again`;
+        break;
+      }
+      if (res.ok) {
+        const data = await res.json();
+        const newId = data.contact_id || data.contact?.contact_id;
+        if (!c.ccContactId && newId && c.firestoreId) {
+          c.ccContactId = newId;
+          db.collection('contacts').doc(c.firestoreId).update({ ccContactId: newId }).catch(e => console.error(e));
+        }
+        pushed++;
+        if (pushed % 25 === 0) statusEl.textContent = `Pushing... ${pushed}/${eligible.length}`;
+      } else { failed++; }
+    } catch(err) { failed++; }
+  }
+
+  if (!tokenExpired) {
+    const now = new Date().toLocaleTimeString();
+    document.getElementById('cc-last-sync').textContent = 'Last synced: ' + now;
+    statusEl.style.color = failed > 0 ? '#854F0B' : 'var(--teal-600)';
+    statusEl.textContent = `✓ ${pushed} pushed to CC${failed ? ` · ${failed} skipped` : ''}`;
+    setTimeout(() => { statusEl.style.display = 'none'; }, 6000);
+  }
+}
+
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
+});
+checkCCImplicitToken();
+// ─── DEDUPLICATION CLEANUP ───────────────────────────────
+async function deduplicateContacts() {
+  const banner = document.getElementById('phone-patch-banner');
+  banner.querySelector('div').textContent = 'Scanning for duplicates...';
+
+  const snap = await db.collection('contacts').get();
+  const all = snap.docs.map(d => ({ firestoreId: d.id, ...d.data() }));
+
+  // Group by normalized email
+  const byEmail = {};
+  const noEmail = [];
+  all.forEach(c => {
+    const email = (c.email || '').toLowerCase().trim();
+    if (email) {
+      if (!byEmail[email]) byEmail[email] = [];
+      byEmail[email].push(c);
+    } else {
+      noEmail.push(c);
+    }
+  });
+
+  // Find groups with duplicates
+  const duplicateGroups = Object.values(byEmail).filter(g => g.length > 1);
+  if (!duplicateGroups.length) {
+    banner.querySelector('div').textContent = '✓ No duplicates found';
+    setTimeout(() => banner.style.display = 'none', 3000);
+    return;
+  }
+
+  let deleted = 0;
+  const batch = db.batch();
+
+  for (const group of duplicateGroups) {
+    // Sort: keep the one with most data (most fields filled)
+    group.sort((a, b) => {
+      const scoreA = [a.phone, a.org, a.notes, a.photo].filter(Boolean).length + (a.stickers||[]).length + (a.activity||[]).length;
+      const scoreB = [b.phone, b.org, b.notes, b.photo].filter(Boolean).length + (b.stickers||[]).length + (b.activity||[]).length;
+      return scoreB - scoreA;
+    });
+    const keeper = group[0];
+    const dupes = group.slice(1);
+
+    // Merge stickers from dupes into keeper
+    const mergedStickers = [...new Set([...(keeper.stickers||[]), ...dupes.flatMap(d => d.stickers||[])])];
+    const mergedActivity = [...(keeper.activity||[]), ...dupes.flatMap(d => d.activity||[])];
+    if (!keeper.phone) keeper.phone = dupes.find(d => d.phone)?.phone || '';
+    if (!keeper.org) keeper.org = dupes.find(d => d.org)?.org || '';
+
+    // Update keeper with merged data
+    batch.update(db.collection('contacts').doc(keeper.firestoreId), {
+      stickers: mergedStickers,
+      activity: mergedActivity,
+      phone: keeper.phone,
+      org: keeper.org
+    });
+
+    // Delete dupes
+    dupes.forEach(d => {
+      batch.delete(db.collection('contacts').doc(d.firestoreId));
+      deleted++;
+    });
+  }
+
+  await batch.commit();
+
+  // Reload contacts from Firestore
+  const fresh = await db.collection('contacts').orderBy('dateAdded', 'desc').get();
+  contacts = fresh.docs.map(d => ({ ...d.data(), firestoreId: d.id }));
+  renderSidebar(); renderStickerWall(); updateExportSelect();
+  document.getElementById('sb-all-count').textContent = contacts.length;
+  renderContactList();
+
+  banner.querySelector('div').innerHTML = `✓ Removed ${deleted} duplicate${deleted !== 1 ? 's' : ''} — ${contacts.length} unique contacts remain`;
+  banner.querySelector('button').style.display = 'none';
+  setTimeout(() => banner.style.display = 'none', 5000);
+  toast(`Cleaned up ${deleted} duplicates`);
+}
+// Patches phone numbers for the People Pitch import that missed them
+async function patchPeoplePitchPhones() {
+  const phoneMap = {"rfelton@theroadhome.org":"+14355131537","antonio_79@hotmail.com":"+18018245824","korirose10@gmail.com":"+18013097633","makaewright@gmail.com":"+18015502245","marierosetrudelle@gmail.com":"+16508889480","shannonsimonelli@gmail.com":"+13852026477","rotaryclub24@slcrotary.org":"+18017269670","events@jlmstr.me":"+18019998342","brandyp@rd-advantage.com":"+18012443428","cj.farrior@outlook.com":"+18017078678","pualeiala@gmail.com":"+18014725898","teresa@trifectaswag.com":"+18013474103","salesdivamichelle@gmail.com":"+18016969123","juancarlos@freethegame.org":"+18016512960","tony@4youre.com":"+18015095341","benm@made-simpler.com":"+13853899333","wendymoline2@gmail.com":"+18014587557","wildefitcoaching@gmail.com":"+16103482202","piba@slchamber.com":"+18049162858","jaimee@tibhospice.org":"+18014564560","jillian@tibhospice.org":"+16054153798","eastmanfitness2015@gmail.com":"+18018984321","maria@healthtree.org":"+18017592098","rozalynn@healthtree.org":"+18018974085","matt@indarena.com":"+18019480778","robin@rfpphoto.com":"+18153541758","sofia@healthtree.org":"+18007091113","sylvia@unitedangels.org":"+14084826323","atim.enyenihi@icloud.com":"+18654387752","harleysangelsslc1@gmail.com":"+13854812936","teinamarriescuderi@gmail.com":"+18016383945","lexiedunkley317@gmail.com":"+18016733453","ifisiuk@s-pro.io":"+18018350441","colleen@rainbirdut.com":"+18016364262","alison106@gmail.com":"+18016826765","sariah@wolfmaxbd.com":"+14359903000","aaron@idynify.com":"+18016049098","michael@jumpthemoon.org":"+14357505066","lizghamilton@gmail.com":"+18019135722","eliza@gatheringforimpact.org":"+16319464048","hamilton@deepbluecapital.ai":"+17655130577","emrys.johnson@yahoo.com":"+18018913905","lankfordyvette4@gmail.com":"+18016983585","lmcmullin@theroadhome.org":"+19136268227","deb@solmarketing.com":"+15125541538","aprilgarstin@gmail.com":"+19714012053","sarahtyau@gmail.com":"+12139247778","melissagonzalez1@gmail.com":"+18013180022","beatriz@utahadvocacycoalition.org":"+5511991943251","leppard.e@gmail.com":"+18016714510"};
+  let updated = 0;
+  const snap = await db.collection('contacts').get();
+  const batch = db.batch();
+  snap.docs.forEach(doc => {
+    const data = doc.data();
+    const email = (data.email||'').toLowerCase().trim();
+    if (phoneMap[email] && !data.phone) {
+      batch.update(doc.ref, { phone: phoneMap[email] });
+      // Also update local cache
+      const local = contacts.find(c => c.firestoreId === doc.id);
+      if (local) local.phone = phoneMap[email];
+      updated++;
+    }
+  });
+  await batch.commit();
+  toast(`✓ Updated ${updated} contacts with phone numbers`);
+  refreshCurrentView();
+}
+
+restoreIntegrations();
+</script>
+</body>
+</html>
