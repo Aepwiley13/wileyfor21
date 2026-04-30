@@ -24,6 +24,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
 const googleProvider = new firebase.auth.GoogleAuthProvider();
+googleProvider.addScope('https://www.googleapis.com/auth/gmail.send');
 </script>
 <style>
 :root {
@@ -251,6 +252,76 @@ textarea.f-input{resize:vertical;min-height:80px;line-height:1.5;}
 .view{display:none;animation:fadeIn 0.15s ease;}
 .view.active{display:block;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── CAMPAIGNS ── */
+.cmp-section-title{font-size:11px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;margin-top:24px;}
+.cmp-section-title:first-child{margin-top:0;}
+.cmp-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow);}
+.cmp-table th{text-align:left;padding:10px 14px;font-size:11px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.07em;border-bottom:1px solid var(--gray-200);background:#fff;}
+.cmp-table td{padding:11px 14px;border-bottom:1px solid var(--gray-100);vertical-align:middle;font-size:13px;color:var(--gray-700);}
+.cmp-table tr:last-child td{border-bottom:none;}
+.cmp-table tr:hover td{background:var(--gray-50);}
+.cmp-status{display:inline-flex;align-items:center;font-size:11px;padding:3px 9px;border-radius:99px;font-weight:500;}
+.cmp-status-draft{background:var(--gray-100);color:var(--gray-600);}
+.cmp-status-sending{background:var(--amber-50);color:var(--amber-600);}
+.cmp-status-sent{background:#E4ECF3;color:#02335A;}
+.cmp-empty{background:#fff;border:1px dashed var(--gray-200);border-radius:var(--radius-lg);padding:32px;text-align:center;color:var(--gray-400);font-size:13px;}
+
+/* ── CAMPAIGN BUILDER ── */
+.cb-wrap{max-width:920px;margin:0 auto;}
+.cb-stepbar{display:flex;align-items:center;gap:8px;margin-bottom:24px;flex-wrap:wrap;}
+.cb-step{display:flex;align-items:center;gap:8px;padding:7px 14px;border-radius:99px;font-size:12px;font-weight:500;color:var(--gray-500);background:#fff;border:1px solid var(--gray-200);cursor:pointer;}
+.cb-step.active{background:var(--teal-50);color:var(--teal-600);border-color:var(--teal-200);}
+.cb-step.done{background:var(--green-50);color:var(--green-600);border-color:#C5DDA1;}
+.cb-step-num{width:18px;height:18px;border-radius:50%;background:var(--gray-100);color:var(--gray-600);font-size:10px;font-weight:600;display:flex;align-items:center;justify-content:center;}
+.cb-step.active .cb-step-num{background:var(--teal-600);color:#fff;}
+.cb-step.done .cb-step-num{background:var(--green-600);color:#fff;}
+.cb-card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:24px;box-shadow:var(--shadow);margin-bottom:16px;}
+.cb-audience-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px;}
+.cb-audience-card{background:#fff;border:1.5px solid var(--gray-200);border-radius:var(--radius-lg);padding:18px;cursor:pointer;transition:all 0.15s;}
+.cb-audience-card:hover{border-color:var(--gray-300);}
+.cb-audience-card.selected{border-color:var(--teal-600);background:var(--teal-50);}
+.cb-audience-title{font-size:14px;font-weight:600;color:var(--gray-900);margin-bottom:4px;}
+.cb-audience-sub{font-size:12px;color:var(--gray-500);}
+.cb-recipient-count{margin-top:14px;padding:14px 16px;background:var(--teal-50);border:1px solid var(--teal-100);border-radius:var(--radius-md);font-size:14px;color:var(--teal-800);font-weight:500;}
+.cb-tabs{display:flex;border-bottom:1px solid var(--gray-200);margin-bottom:16px;}
+.cb-tab{padding:10px 16px;font-size:13px;font-weight:500;color:var(--gray-500);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;}
+.cb-tab.active{color:var(--teal-600);border-bottom-color:var(--teal-600);}
+.cb-tone-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.cb-tone{padding:9px 12px;border:1px solid var(--gray-200);border-radius:var(--radius-md);font-size:12px;font-weight:500;color:var(--gray-600);background:#fff;cursor:pointer;text-align:center;transition:all 0.1s;}
+.cb-tone.selected{background:var(--teal-50);color:var(--teal-600);border-color:var(--teal-200);}
+.cb-html-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.cb-html-editor{font-family:var(--mono);font-size:12px;line-height:1.5;min-height:360px;}
+.cb-html-preview{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-md);overflow:hidden;min-height:360px;}
+.cb-html-preview iframe{width:100%;height:100%;min-height:360px;border:none;display:block;}
+.cb-summary{display:grid;grid-template-columns:140px 1fr;gap:8px 14px;font-size:13px;}
+.cb-summary-label{color:var(--gray-400);}
+.cb-summary-val{color:var(--gray-900);}
+.cb-progress{margin-top:14px;padding:18px 20px;background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-md);}
+.cb-progress-title{font-size:13px;font-weight:500;color:var(--gray-700);margin-bottom:10px;}
+.cb-progress-bar{height:10px;background:var(--gray-100);border-radius:99px;overflow:hidden;margin-bottom:10px;}
+.cb-progress-fill{height:100%;background:var(--teal-600);transition:width 0.2s ease;}
+.cb-progress-stats{display:flex;gap:18px;font-size:12px;color:var(--gray-600);}
+.cb-progress-stats span{display:inline-flex;align-items:center;gap:4px;}
+.cb-gen-loader{display:inline-flex;align-items:center;gap:8px;color:var(--gray-500);font-size:12px;}
+.cb-gen-loader::before{content:'';width:12px;height:12px;border:2px solid var(--gray-200);border-top-color:var(--teal-600);border-radius:50%;animation:cb-spin 0.7s linear infinite;}
+@keyframes cb-spin{to{transform:rotate(360deg);}}
+
+/* ── SETTINGS ── */
+.set-wrap{max-width:600px;}
+.set-status{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;padding:3px 9px;border-radius:99px;}
+.set-status.connected{background:var(--green-50);color:var(--green-600);}
+.set-status.disconnected{background:var(--gray-100);color:var(--gray-500);}
+.set-status-dot{width:7px;height:7px;border-radius:50%;}
+.set-status.connected .set-status-dot{background:var(--green-600);}
+.set-status.disconnected .set-status-dot{background:var(--gray-400);}
+
+@media(max-width:768px){
+  .cb-audience-grid{grid-template-columns:1fr;}
+  .cb-html-grid{grid-template-columns:1fr;}
+  .cb-tone-grid{grid-template-columns:repeat(2,1fr);}
+  .cb-summary{grid-template-columns:100px 1fr;}
+}
 </style>
 </head>
 <body>
@@ -297,6 +368,10 @@ textarea.f-input{resize:vertical;min-height:80px;line-height:1.5;}
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M8 5v6M5 8l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
         Import / Export
       </div>
+      <div class="sb-item" id="nav-campaigns" onclick="navTo('campaigns',this)" data-admin-only>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1.5" y="3" width="13" height="10" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M2 4l6 5 6-5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Campaigns
+      </div>
     </div>
     <div class="sb-divider"></div>
     <div class="sb-section">
@@ -311,6 +386,7 @@ textarea.f-input{resize:vertical;min-height:80px;line-height:1.5;}
           <div class="sb-user-role" id="sb-user-role"></div>
         </div>
       </div>
+      <div class="sb-signout" onclick="navTo('settings',null)" data-admin-only style="margin-bottom:2px;">API Settings</div>
       <div class="sb-signout" onclick="doLogout()">Sign out</div>
     </div>
   </div>
@@ -525,6 +601,21 @@ textarea.f-input{resize:vertical;min-height:80px;line-height:1.5;}
 
 
 
+      <!-- CAMPAIGNS DASHBOARD -->
+      <div id="view-campaigns" class="view">
+        <div id="campaigns-dashboard"></div>
+      </div>
+
+      <!-- CAMPAIGN BUILDER -->
+      <div id="view-campaign-builder" class="view">
+        <div id="campaign-builder-out"></div>
+      </div>
+
+      <!-- API SETTINGS -->
+      <div id="view-settings" class="view">
+        <div id="settings-out"></div>
+      </div>
+
     <!-- DETAIL PANEL -->
     <div id="detail-panel">
       <div class="dp-top">
@@ -722,11 +813,25 @@ let contactViewMode = 'list', stickerViewMode = 'list';
 let importRows = [], importStickerIds = [], selectedStickerColor = PALETTE[0];
 let editPhotoData = null, addPhotoData = null;
 
+// ─── SPRINT 2 STATE ──────────────────────────────────────
+let campaigns = [];
+let anthropicKey = null;
+let gmailToken = null, gmailTokenExpiry = 0;
+let builderState = null; // { id, step, name, subject, audienceType, stickerId, prompt, tone, bodyHtml, previewText, writeTab }
+
 // ─── AUTH ────────────────────────────────────────────────
 async function signInWithGoogle() {
   try {
     const result = await auth.signInWithPopup(googleProvider);
     const user = result.user;
+    if (result.credential && result.credential.accessToken) {
+      try {
+        await db.collection('users').doc(user.uid).set({
+          gmailToken: result.credential.accessToken,
+          gmailTokenExpiry: Date.now() + 3500000
+        }, { merge: true });
+      } catch(e) { console.warn('Gmail token store failed', e); }
+    }
     const userDoc = await db.collection('users').doc(user.uid).get();
     const isAdminEmail = (user.email||'').toLowerCase() === ADMIN_EMAIL.toLowerCase();
     if (userDoc.exists) {
@@ -855,6 +960,28 @@ async function loadFromFirestore() {
   contacts = ctSnap.docs.map(d=>({...d.data(),firestoreId:d.id}));
   nextId = contacts.length + 1;
 
+  // Load campaigns
+  try {
+    const cmpSnap = await db.collection('campaigns').orderBy('createdAt','desc').get();
+    campaigns = cmpSnap.docs.map(d=>({...d.data(),id:d.id}));
+  } catch(e) { console.warn('Campaigns load failed', e); campaigns = []; }
+
+  // Load Anthropic API key
+  try {
+    const cfgDoc = await db.collection('config').doc('anthropic').get();
+    if (cfgDoc.exists) anthropicKey = cfgDoc.data().apiKey || null;
+  } catch(e) { console.warn('Anthropic key load failed', e); }
+
+  // Load cached Gmail token from user record
+  try {
+    const userDoc = await db.collection('users').doc(currentUser.uid).get();
+    if (userDoc.exists) {
+      const d = userDoc.data();
+      gmailToken = d.gmailToken || null;
+      gmailTokenExpiry = d.gmailTokenExpiry || 0;
+    }
+  } catch(e) { console.warn('Gmail token load failed', e); }
+
   initApp();
 }
 
@@ -881,10 +1008,20 @@ function navTo(view, el) {
   if (navEl) navEl.classList.add('active');
   currentView = view;
   closeDetail();
-  const titles = {wall:'Sticker wall', contacts:'All contacts', add:'Add contact', import:'Import / Export', 'sticker-filtered': activeStickerId ? getStickerName(activeStickerId) : 'Sticker'};
-  const subs = {wall:'Your contact universe', contacts:'Every contact in the hub', add:'Add a single contact', import:'Upload or download contacts', 'sticker-filtered':''};
+  const titles = {wall:'Sticker wall', contacts:'All contacts', add:'Add contact', import:'Import / Export', campaigns:'Campaigns', 'campaign-builder': builderState && builderState.id ? 'Edit campaign' : 'New campaign', settings:'API Settings', 'sticker-filtered': activeStickerId ? getStickerName(activeStickerId) : 'Sticker'};
+  const subs = {wall:'Your contact universe', contacts:'Every contact in the hub', add:'Add a single contact', import:'Upload or download contacts', campaigns:'Email campaigns powered by Claude AI', 'campaign-builder':'Compose, generate, review, send', settings:'Connect Anthropic and Gmail', 'sticker-filtered':''};
   document.getElementById('topbar-title').textContent = titles[view] || view;
   document.getElementById('topbar-sub').textContent = subs[view] || '';
+
+  // Topbar actions: keep default Add/Import buttons except on campaigns view
+  const actions = document.getElementById('topbar-actions');
+  if (view === 'campaigns') {
+    actions.innerHTML = '<button class="btn btn-primary btn-sm" onclick="openCampaignBuilder()">+ New Campaign</button>';
+  } else if (view === 'campaign-builder' || view === 'settings') {
+    actions.innerHTML = '<button class="btn btn-secondary btn-sm" onclick="navTo(\'campaigns\',document.getElementById(\'nav-campaigns\'))">← Back to Campaigns</button>';
+  } else {
+    actions.innerHTML = '<button class="btn btn-secondary btn-sm" onclick="navTo(\'import\',null)">Import list</button><button class="btn btn-primary btn-sm" onclick="navTo(\'add\',null)" id="topbar-add-btn">+ Add contact</button>';
+  }
 
   // Clear contact list when not on contacts view to prevent bleed-through
   if (view !== 'contacts') document.getElementById('contact-list-out').innerHTML = '';
@@ -896,6 +1033,8 @@ function navTo(view, el) {
   if (view === 'contacts') renderContactList();
   if (view === 'add') { renderStickerPicker('add-stk-picker', []); resetAddForm(); }
   if (view === 'sticker-filtered') renderFilteredList();
+  if (view === 'campaigns') renderCampaignDashboard();
+  if (view === 'settings') renderSettings();
 }
 
 function openStickerView(id) {
@@ -1870,6 +2009,701 @@ function toast(msg) {
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
   overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
 });
+
+// ─── SPRINT 2: API SETTINGS ─────────────────────────────
+function renderSettings() {
+  const gmailConnected = !!gmailToken && Date.now() < gmailTokenExpiry;
+  const anthroConnected = !!anthropicKey;
+  document.getElementById('settings-out').innerHTML = `
+    <div class="set-wrap">
+      <div class="card" style="margin-bottom:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <div style="font-size:14px;font-weight:600;color:var(--gray-900);">Anthropic AI</div>
+          <span class="set-status ${anthroConnected?'connected':'disconnected'}"><span class="set-status-dot"></span>${anthroConnected?'Connected':'Not connected'}</span>
+        </div>
+        <div style="font-size:13px;color:var(--gray-500);margin-bottom:14px;">Used to generate email copy in the Campaign Builder. Get your key at <a href="https://console.anthropic.com" target="_blank" style="color:var(--blue-600);">console.anthropic.com</a></div>
+        <div class="f-group" style="margin-bottom:8px;">
+          <label class="f-label">API Key</label>
+          <div style="display:flex;gap:8px;">
+            <input class="f-input" id="set-anthropic-key" type="password" placeholder="${anthroConnected?'sk-ant-•••••••••••••••':'sk-ant-...'}" style="flex:1;">
+            <button class="btn btn-primary" onclick="saveAnthropicKey()">Save</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <div style="font-size:14px;font-weight:600;color:var(--gray-900);">Gmail</div>
+          <span class="set-status ${gmailConnected?'connected':'disconnected'}"><span class="set-status-dot"></span>${gmailConnected?'Connected':'Not connected'}</span>
+        </div>
+        <div style="font-size:13px;color:var(--gray-500);margin-bottom:14px;">Used to deliver campaign emails from your Gmail account. Tokens last about 1 hour and refresh on sign-in.</div>
+        <button class="btn btn-secondary" onclick="connectGmail()">${gmailConnected?'Reconnect Gmail':'Connect Gmail'}</button>
+      </div>
+    </div>
+  `;
+}
+
+async function saveAnthropicKey() {
+  const key = (document.getElementById('set-anthropic-key').value||'').trim();
+  if (!key) { toast('Enter an API key'); return; }
+  try {
+    await db.collection('config').doc('anthropic').set({ apiKey: key });
+    anthropicKey = key;
+    toast('Anthropic key saved');
+    renderSettings();
+  } catch(e) { toast('Save failed: ' + e.message); }
+}
+
+async function connectGmail() {
+  try {
+    const result = await auth.signInWithPopup(googleProvider);
+    if (result.credential && result.credential.accessToken) {
+      gmailToken = result.credential.accessToken;
+      gmailTokenExpiry = Date.now() + 3500000;
+      await db.collection('users').doc(currentUser.uid).set({
+        gmailToken, gmailTokenExpiry
+      }, { merge: true });
+      toast('Gmail connected');
+      renderSettings();
+    } else { toast('Could not retrieve Gmail token'); }
+  } catch(e) { toast('Gmail connect failed: ' + e.message); }
+}
+
+// ─── SPRINT 2: CAMPAIGN DASHBOARD ───────────────────────
+function renderCampaignDashboard() {
+  const drafts = campaigns.filter(c => c.status === 'draft');
+  const sending = campaigns.filter(c => c.status === 'sending');
+  const sent = campaigns.filter(c => c.status === 'sent');
+
+  const draftRows = drafts.length ? drafts.map(c => `
+    <tr>
+      <td><div style="font-weight:500;color:var(--gray-900);">${escapeHtml(c.name||'(untitled)')}</div><div style="font-size:11px;color:var(--gray-400);">${escapeHtml(c.subject||'')}</div></td>
+      <td>${audienceLabel(c)}</td>
+      <td style="font-size:12px;color:var(--gray-400);">${formatTimestamp(c.createdAt)}</td>
+      <td style="text-align:right;">
+        <button class="btn btn-secondary btn-sm" onclick="openCampaignBuilder('${c.id}')">Edit</button>
+        <button class="btn btn-primary btn-sm" onclick="quickSendCampaign('${c.id}')">Send</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteCampaign('${c.id}')">Delete</button>
+      </td>
+    </tr>`).join('') : '';
+
+  const sentRows = sent.map(c => `
+    <tr>
+      <td><div style="font-weight:500;color:var(--gray-900);">${escapeHtml(c.name||'(untitled)')}</div></td>
+      <td style="font-size:12px;color:var(--gray-600);">${escapeHtml(c.subject||'')}</td>
+      <td style="font-size:12px;color:var(--gray-400);">${formatTimestamp(c.sentAt)}</td>
+      <td style="font-size:12px;color:var(--gray-500);">${c.recipientCount||0}</td>
+      <td style="font-size:12px;color:var(--green-600);font-weight:500;">${c.sentCount||0}</td>
+      <td style="font-size:12px;color:${(c.failedCount||0)>0?'var(--red-600)':'var(--gray-400)'};">${c.failedCount||0}</td>
+    </tr>`).join('');
+
+  const sendingRows = sending.map(c => `
+    <tr>
+      <td><div style="font-weight:500;color:var(--gray-900);">${escapeHtml(c.name||'(untitled)')}</div></td>
+      <td><span class="cmp-status cmp-status-sending">Sending…</span></td>
+      <td style="font-size:12px;color:var(--gray-500);">${c.sentCount||0} of ${c.recipientCount||0}</td>
+      <td></td>
+    </tr>`).join('');
+
+  document.getElementById('campaigns-dashboard').innerHTML = `
+    ${sending.length ? `<div class="cmp-section-title">In progress</div>
+      <table class="cmp-table"><thead><tr><th>Name</th><th>Status</th><th>Progress</th><th></th></tr></thead><tbody>${sendingRows}</tbody></table>` : ''}
+
+    <div class="cmp-section-title">Drafts</div>
+    ${drafts.length ? `<table class="cmp-table"><thead><tr><th>Name</th><th>Audience</th><th>Created</th><th></th></tr></thead><tbody>${draftRows}</tbody></table>`
+      : `<div class="cmp-empty">No drafts yet. Click <strong>+ New Campaign</strong> to start.</div>`}
+
+    <div class="cmp-section-title">Sent</div>
+    ${sent.length ? `<table class="cmp-table"><thead><tr><th>Name</th><th>Subject</th><th>Sent date</th><th>Recipients</th><th>Sent</th><th>Failed</th></tr></thead><tbody>${sentRows}</tbody></table>`
+      : `<div class="cmp-empty">No campaigns sent yet.</div>`}
+  `;
+}
+
+function audienceLabel(c) {
+  if (!c) return '—';
+  if (c.audienceType === 'all') return 'All subscribed contacts';
+  if (c.audienceType === 'sticker') {
+    const s = getSticker(c.stickerId);
+    return s ? `Sticker: ${s.name}` : 'Sticker (deleted)';
+  }
+  return '—';
+}
+
+function formatTimestamp(ts) {
+  if (!ts) return '—';
+  try {
+    const d = ts.toDate ? ts.toDate() : (ts.seconds ? new Date(ts.seconds*1000) : new Date(ts));
+    return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  } catch(e) { return '—'; }
+}
+
+function escapeHtml(s) {
+  return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+async function deleteCampaign(id) {
+  if (!confirm('Delete this draft? This cannot be undone.')) return;
+  try {
+    await db.collection('campaigns').doc(id).delete();
+    campaigns = campaigns.filter(c => c.id !== id);
+    renderCampaignDashboard();
+    toast('Draft deleted');
+  } catch(e) { toast('Delete failed: ' + e.message); }
+}
+
+async function quickSendCampaign(id) {
+  const c = campaigns.find(x => x.id === id); if (!c) return;
+  builderState = {
+    id: c.id, step: 4, name: c.name, subject: c.subject,
+    audienceType: c.audienceType, stickerId: c.stickerId,
+    bodyHtml: c.bodyHtml, prompt: '', tone: 'Warm', writeTab: 'html'
+  };
+  navTo('campaign-builder', null);
+}
+
+// ─── SPRINT 2: CAMPAIGN BUILDER ─────────────────────────
+function openCampaignBuilder(id) {
+  if (id) {
+    const c = campaigns.find(x => x.id === id);
+    builderState = c ? {
+      id: c.id, step: 1, name: c.name||'', subject: c.subject||'',
+      audienceType: c.audienceType||'', stickerId: c.stickerId||'',
+      bodyHtml: c.bodyHtml||'', prompt: '', tone: 'Warm', writeTab: 'ai'
+    } : null;
+  } else {
+    builderState = { id: null, step: 1, name: '', subject: '', audienceType: '', stickerId: '', bodyHtml: '', prompt: '', tone: 'Warm', writeTab: 'ai' };
+  }
+  navTo('campaign-builder', null);
+  renderBuilder();
+}
+
+function captureBuilderInputs() {
+  if (!builderState) return;
+  const map = {
+    'cb-name': 'name', 'cb-subject': 'subject',
+    'cb-prompt': 'prompt', 'cb-html': 'bodyHtml'
+  };
+  Object.keys(map).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) builderState[map[id]] = el.value;
+  });
+}
+
+function gotoBuilderStep(n) {
+  captureBuilderInputs();
+  builderState.step = n;
+  renderBuilder();
+}
+
+function getRecipientList() {
+  if (!builderState) return [];
+  if (builderState.audienceType === 'all') {
+    return contacts.filter(c => c.emailStatus === 'Subscribed' && c.email);
+  }
+  if (builderState.audienceType === 'sticker' && builderState.stickerId) {
+    return contacts.filter(c => c.emailStatus === 'Subscribed' && c.email && (c.stickers||[]).includes(builderState.stickerId));
+  }
+  return [];
+}
+
+function renderBuilder() {
+  if (!builderState) { document.getElementById('campaign-builder-out').innerHTML = ''; return; }
+  const s = builderState;
+  const stepHtml = [1,2,3,4].map(n => {
+    const labels = {1:'Setup',2:'Audience',3:'Write',4:'Review'};
+    const cls = s.step===n ? 'active' : (s.step>n ? 'done' : '');
+    return `<div class="cb-step ${cls}" onclick="gotoBuilderStep(${n})"><div class="cb-step-num">${n}</div>${labels[n]}</div>`;
+  }).join('<div style="color:var(--gray-300);">›</div>');
+
+  let body = '';
+  if (s.step === 1) body = renderBuilderStep1();
+  else if (s.step === 2) body = renderBuilderStep2();
+  else if (s.step === 3) body = renderBuilderStep3();
+  else if (s.step === 4) body = renderBuilderStep4();
+
+  document.getElementById('campaign-builder-out').innerHTML = `
+    <div class="cb-wrap">
+      <div class="cb-stepbar">${stepHtml}</div>
+      ${body}
+    </div>
+  `;
+
+  if (s.step === 3 && s.writeTab === 'html') {
+    setTimeout(refreshHtmlPreview, 0);
+  }
+  if (s.step === 4) {
+    setTimeout(() => {
+      const frame = document.getElementById('cb-final-preview');
+      if (frame) {
+        const sample = getRecipientList()[0] || { first:'Friend', last:'', org:'' };
+        frame.srcdoc = buildEmail(builderState.bodyHtml||'', sample);
+      }
+    }, 0);
+  }
+}
+
+function renderBuilderStep1() {
+  const s = builderState;
+  return `
+    <div class="cb-card">
+      <div style="font-size:15px;font-weight:600;color:var(--gray-900);margin-bottom:4px;">Step 1 — Setup</div>
+      <div style="font-size:13px;color:var(--gray-500);margin-bottom:18px;">Give this campaign a name and a subject line.</div>
+      <div class="f-group">
+        <label class="f-label">Campaign name (internal — never sent)</label>
+        <input class="f-input" id="cb-name" placeholder="e.g. May donor thank-you" value="${escapeHtml(s.name)}">
+      </div>
+      <div class="f-group">
+        <label class="f-label">Subject line</label>
+        <input class="f-input" id="cb-subject" placeholder="What recipients see in their inbox" value="${escapeHtml(s.subject)}">
+      </div>
+      <div style="display:flex;gap:8px;margin-top:6px;">
+        <button class="btn btn-primary" onclick="builderNext(1)">Continue →</button>
+        <button class="btn btn-secondary" onclick="saveDraft()">Save draft</button>
+      </div>
+    </div>
+  `;
+}
+
+function builderNext(from) {
+  captureBuilderInputs();
+  if (from === 1) {
+    if (!builderState.name.trim()) { toast('Enter a campaign name'); return; }
+    if (!builderState.subject.trim()) { toast('Enter a subject line'); return; }
+  }
+  if (from === 2) {
+    if (!builderState.audienceType) { toast('Pick an audience'); return; }
+    if (builderState.audienceType === 'sticker' && !builderState.stickerId) { toast('Pick a sticker'); return; }
+    if (!getRecipientList().length) { toast('No recipients match this audience'); return; }
+  }
+  if (from === 3) {
+    if (!builderState.bodyHtml.trim()) { toast('Generate or write the email body first'); return; }
+  }
+  builderState.step = from + 1;
+  renderBuilder();
+}
+
+function renderBuilderStep2() {
+  const s = builderState;
+  const allCount = contacts.filter(c => c.emailStatus === 'Subscribed' && c.email).length;
+  const stickerOpts = stickers.map(st => `<option value="${st.id}" ${s.stickerId===st.id?'selected':''}>${escapeHtml(st.name)}</option>`).join('');
+  let count = 0;
+  if (s.audienceType === 'all') count = allCount;
+  else if (s.audienceType === 'sticker' && s.stickerId) count = getRecipientList().length;
+
+  return `
+    <div class="cb-card">
+      <div style="font-size:15px;font-weight:600;color:var(--gray-900);margin-bottom:4px;">Step 2 — Audience</div>
+      <div style="font-size:13px;color:var(--gray-500);margin-bottom:18px;">Pick who receives this email.</div>
+      <div class="cb-audience-grid">
+        <div class="cb-audience-card ${s.audienceType==='all'?'selected':''}" onclick="setAudience('all')">
+          <div class="cb-audience-title">All contacts with email</div>
+          <div class="cb-audience-sub">${allCount} subscribed contacts</div>
+        </div>
+        <div class="cb-audience-card ${s.audienceType==='sticker'?'selected':''}" onclick="setAudience('sticker')">
+          <div class="cb-audience-title">Contacts with a specific sticker</div>
+          <div class="cb-audience-sub">Filter by any sticker you've created</div>
+        </div>
+      </div>
+      ${s.audienceType==='sticker' ? `
+        <div class="f-group" style="margin-top:18px;">
+          <label class="f-label">Sticker</label>
+          <select class="f-input" id="cb-sticker" onchange="setBuilderSticker(this.value)" style="max-width:320px;">
+            <option value="">— pick a sticker —</option>
+            ${stickerOpts}
+          </select>
+        </div>` : ''}
+      ${(s.audienceType==='all' || (s.audienceType==='sticker' && s.stickerId)) ? `
+        <div class="cb-recipient-count">${count} recipient${count!==1?'s':''} will receive this email.</div>` : ''}
+      <div style="display:flex;gap:8px;margin-top:18px;">
+        <button class="btn btn-secondary" onclick="gotoBuilderStep(1)">← Back</button>
+        <button class="btn btn-primary" onclick="builderNext(2)">Continue →</button>
+        <button class="btn btn-secondary" onclick="saveDraft()">Save draft</button>
+      </div>
+    </div>
+  `;
+}
+
+function setAudience(type) {
+  builderState.audienceType = type;
+  if (type === 'all') builderState.stickerId = '';
+  renderBuilder();
+}
+
+function setBuilderSticker(id) {
+  builderState.stickerId = id;
+  renderBuilder();
+}
+
+function renderBuilderStep3() {
+  const s = builderState;
+  const tones = ['Professional','Warm','Urgent','Celebratory'];
+  return `
+    <div class="cb-card">
+      <div style="font-size:15px;font-weight:600;color:var(--gray-900);margin-bottom:4px;">Step 3 — Write with Claude</div>
+      <div style="font-size:13px;color:var(--gray-500);margin-bottom:18px;">Describe what to say, generate, then review and edit the HTML.</div>
+      <div class="cb-tabs">
+        <div class="cb-tab ${s.writeTab==='ai'?'active':''}" onclick="setWriteTab('ai')">AI Writer</div>
+        <div class="cb-tab ${s.writeTab==='html'?'active':''}" onclick="setWriteTab('html')">HTML Editor</div>
+      </div>
+      ${s.writeTab === 'ai' ? `
+        <div class="f-group">
+          <label class="f-label">What should this email say?</label>
+          <textarea class="f-input" id="cb-prompt" rows="6" placeholder="Example: Thank you email to donors asking them to share our campaign with 3 friends. Warm and personal tone.">${escapeHtml(s.prompt)}</textarea>
+        </div>
+        <div class="f-group">
+          <label class="f-label">Tone</label>
+          <div class="cb-tone-grid">
+            ${tones.map(t => `<div class="cb-tone ${s.tone===t?'selected':''}" onclick="setTone('${t}')">${t}</div>`).join('')}
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:6px;">
+          <button class="btn btn-primary" id="cb-generate-btn" onclick="generateEmail()">Generate Email</button>
+          <span id="cb-gen-status" style="font-size:12px;color:var(--gray-400);"></span>
+        </div>
+        ${!anthropicKey ? `<div style="margin-top:12px;font-size:12px;color:var(--amber-600);">No Anthropic API key set. <a href="#" onclick="navTo('settings',null);return false;" style="color:var(--blue-600);">Add one in API Settings →</a></div>` : ''}
+      ` : `
+        <div style="font-size:11px;color:var(--gray-500);margin-bottom:8px;">Merge tags: <code>{{first_name}}</code> <code>{{last_name}}</code> <code>{{org}}</code> <code>{{unsubscribe_link}}</code></div>
+        <div class="cb-html-grid">
+          <textarea class="f-input cb-html-editor" id="cb-html" oninput="onHtmlInput()" placeholder="<html>...</html>">${escapeHtml(s.bodyHtml)}</textarea>
+          <div class="cb-html-preview"><iframe id="cb-html-preview-frame" sandbox=""></iframe></div>
+        </div>
+      `}
+      <div style="display:flex;gap:8px;margin-top:18px;">
+        <button class="btn btn-secondary" onclick="gotoBuilderStep(2)">← Back</button>
+        <button class="btn btn-primary" onclick="builderNext(3)">Continue →</button>
+        <button class="btn btn-secondary" onclick="saveDraft()">Save draft</button>
+      </div>
+    </div>
+  `;
+}
+
+function setWriteTab(tab) {
+  captureBuilderInputs();
+  builderState.writeTab = tab;
+  renderBuilder();
+}
+
+function setTone(t) {
+  builderState.tone = t;
+  renderBuilder();
+}
+
+function onHtmlInput() {
+  builderState.bodyHtml = document.getElementById('cb-html').value;
+  refreshHtmlPreview();
+}
+
+function refreshHtmlPreview() {
+  const frame = document.getElementById('cb-html-preview-frame');
+  if (!frame) return;
+  const sample = contacts.find(c => c.emailStatus === 'Subscribed' && c.email) || { first:'Friend', last:'', org:'' };
+  const html = buildEmail(builderState.bodyHtml || '<em style="color:#999;padding:24px;display:block;">Preview will appear here…</em>', sample);
+  frame.srcdoc = html;
+}
+
+async function generateEmail() {
+  captureBuilderInputs();
+  if (!anthropicKey) { toast('Add your Anthropic API key in API Settings'); return; }
+  if (!builderState.prompt.trim()) { toast('Describe what the email should say'); return; }
+  const btn = document.getElementById('cb-generate-btn');
+  const status = document.getElementById('cb-gen-status');
+  btn.disabled = true;
+  status.innerHTML = '<span class="cb-gen-loader">Generating…</span>';
+  try {
+    const recipientCount = getRecipientList().length;
+    const audienceDescription = builderState.audienceType === 'all'
+      ? `${recipientCount} subscribed contacts across the full list`
+      : `${recipientCount} contacts tagged "${getStickerName(builderState.stickerId)}"`;
+    const result = await generateEmailWithClaude(builderState.prompt, builderState.tone, audienceDescription);
+    if (!builderState.subject.trim() && result.subject) builderState.subject = result.subject;
+    builderState.bodyHtml = result.html || '';
+    builderState.previewText = result.previewText || '';
+    builderState.writeTab = 'html';
+    renderBuilder();
+    toast('Email generated');
+  } catch(e) {
+    console.error(e);
+    status.textContent = '';
+    toast('Generate failed: ' + (e.message||'unknown error'));
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+async function generateEmailWithClaude(prompt, tone, audienceDescription) {
+  const systemPrompt = `You are an expert political campaign email writer for Aaron Wiley,
+a candidate for Utah House District 21 representing the West Side of Salt Lake City.
+Aaron is a father, youth coach, and community builder running as a Democrat.
+His platform focuses on West Side community issues, housing, clean air, healthcare,
+immigrant protection, and LGBTQ+ rights.
+Write compelling, authentic HTML emails that feel personal and community-driven.
+The audience: ${audienceDescription}.
+Tone: ${tone}.
+Return ONLY a JSON object with these exact keys:
+{
+  "subject": "the subject line",
+  "previewText": "short preview text under 90 characters",
+  "html": "complete HTML email body — inline CSS only, mobile-friendly, no external dependencies"
+}
+No markdown. No explanation. Just the JSON.`;
+
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': anthropicKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 2000,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+
+  if (!response.ok) {
+    const err = await response.text();
+    throw new Error('Claude API error: ' + response.status + ' ' + err.slice(0,200));
+  }
+  const data = await response.json();
+  const text = data.content[0].text;
+  const clean = text.replace(/```json|```/g, '').trim();
+  return JSON.parse(clean);
+}
+
+function renderBuilderStep4() {
+  const s = builderState;
+  const recipients = getRecipientList();
+  return `
+    <div class="cb-card">
+      <div style="font-size:15px;font-weight:600;color:var(--gray-900);margin-bottom:4px;">Step 4 — Review & Send</div>
+      <div style="font-size:13px;color:var(--gray-500);margin-bottom:18px;">Last check before this goes out.</div>
+      <div class="cb-summary">
+        <div class="cb-summary-label">Campaign name</div><div class="cb-summary-val">${escapeHtml(s.name)}</div>
+        <div class="cb-summary-label">Subject line</div><div class="cb-summary-val">${escapeHtml(s.subject)}</div>
+        <div class="cb-summary-label">Audience</div><div class="cb-summary-val">${audienceLabel(s)}</div>
+        <div class="cb-summary-label">Recipients</div><div class="cb-summary-val">${recipients.length}</div>
+        <div class="cb-summary-label">From</div><div class="cb-summary-val">Aaron Wiley &lt;aaron@idynify.com&gt;</div>
+      </div>
+      <div style="margin-top:20px;">
+        <div class="f-label" style="margin-bottom:6px;">Email preview</div>
+        <div class="cb-html-preview" style="min-height:280px;"><iframe id="cb-final-preview" sandbox="" style="min-height:280px;"></iframe></div>
+      </div>
+      <div id="cb-progress-wrap"></div>
+      <div style="display:flex;gap:8px;margin-top:18px;" id="cb-final-actions">
+        <button class="btn btn-secondary" onclick="gotoBuilderStep(3)">← Back</button>
+        <button class="btn btn-secondary" onclick="saveDraft()">Save as Draft</button>
+        <button class="btn btn-primary" onclick="sendCampaign()">Send Campaign</button>
+      </div>
+    </div>
+  `;
+}
+
+async function saveDraft() {
+  captureBuilderInputs();
+  if (!builderState.name.trim()) { toast('Give this campaign a name first'); return; }
+  const recipients = getRecipientList();
+  const payload = {
+    name: builderState.name.trim(),
+    subject: builderState.subject.trim(),
+    audienceType: builderState.audienceType || '',
+    stickerId: builderState.stickerId || '',
+    bodyHtml: builderState.bodyHtml || '',
+    status: 'draft',
+    recipientCount: recipients.length,
+    sentCount: 0,
+    failedCount: 0,
+    sentAt: null
+  };
+  try {
+    if (builderState.id) {
+      await db.collection('campaigns').doc(builderState.id).update(payload);
+      const idx = campaigns.findIndex(c => c.id === builderState.id);
+      if (idx >= 0) campaigns[idx] = { ...campaigns[idx], ...payload };
+    } else {
+      payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+      const ref = await db.collection('campaigns').add(payload);
+      builderState.id = ref.id;
+      campaigns.unshift({ ...payload, id: ref.id, createdAt: { seconds: Math.floor(Date.now()/1000) } });
+    }
+    toast('Draft saved');
+  } catch(e) { toast('Save failed: ' + e.message); }
+}
+
+// ─── SPRINT 2: GMAIL SEND ENGINE ────────────────────────
+function buildEmail(htmlTemplate, contact) {
+  return (htmlTemplate||'')
+    .replace(/{{first_name}}/g, contact.first || '')
+    .replace(/{{last_name}}/g, contact.last || '')
+    .replace(/{{org}}/g, contact.org || '')
+    .replace(/{{unsubscribe_link}}/g, 'Reply STOP to unsubscribe');
+}
+
+async function sendViaGmail(to, subject, htmlBody, token) {
+  const email = [
+    `To: ${to}`,
+    `From: Aaron Wiley <aaron@idynify.com>`,
+    `Subject: ${subject}`,
+    'MIME-Version: 1.0',
+    'Content-Type: text/html; charset=utf-8',
+    '',
+    htmlBody
+  ].join('\n');
+
+  const encoded = btoa(unescape(encodeURIComponent(email)))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+
+  const res = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ raw: encoded })
+  });
+
+  return { ok: res.ok, status: res.status };
+}
+
+async function ensureGmailToken() {
+  if (gmailToken && Date.now() < gmailTokenExpiry) return gmailToken;
+  try {
+    const result = await auth.signInWithPopup(googleProvider);
+    if (result.credential && result.credential.accessToken) {
+      gmailToken = result.credential.accessToken;
+      gmailTokenExpiry = Date.now() + 3500000;
+      await db.collection('users').doc(currentUser.uid).set({
+        gmailToken, gmailTokenExpiry
+      }, { merge: true });
+      return gmailToken;
+    }
+  } catch(e) { console.error(e); }
+  return null;
+}
+
+async function sendCampaign() {
+  captureBuilderInputs();
+  const recipients = getRecipientList();
+  if (!recipients.length) { toast('No recipients to send to'); return; }
+  if (!builderState.bodyHtml.trim()) { toast('Email body is empty'); return; }
+
+  // Save as draft first to get an ID
+  await saveDraft();
+  if (!builderState.id) return;
+
+  const token = await ensureGmailToken();
+  if (!token) { toast('Gmail authorization required'); return; }
+
+  // Hide action buttons, show progress
+  document.getElementById('cb-final-actions').style.display = 'none';
+  document.getElementById('cb-progress-wrap').innerHTML = `
+    <div class="cb-progress">
+      <div class="cb-progress-title" id="cb-progress-title">Starting send…</div>
+      <div class="cb-progress-bar"><div class="cb-progress-fill" id="cb-progress-fill" style="width:0%;"></div></div>
+      <div class="cb-progress-stats" id="cb-progress-stats">
+        <span style="color:var(--green-600);">✓ 0 sent</span>
+        <span style="color:var(--red-600);">✗ 0 failed</span>
+        <span>⏳ ${recipients.length} remaining</span>
+      </div>
+    </div>
+  `;
+
+  await executeSend(builderState.id, recipients, builderState.subject, builderState.bodyHtml, token);
+}
+
+function updateSendProgress(sent, failed, total) {
+  const remaining = total - sent - failed;
+  const pct = total ? Math.round(((sent+failed)/total)*100) : 0;
+  const title = document.getElementById('cb-progress-title');
+  const fill = document.getElementById('cb-progress-fill');
+  const stats = document.getElementById('cb-progress-stats');
+  if (title) title.textContent = `Sending… ${sent+failed} / ${total}`;
+  if (fill) fill.style.width = pct + '%';
+  if (stats) stats.innerHTML = `
+    <span style="color:var(--green-600);">✓ ${sent} sent</span>
+    <span style="color:var(--red-600);">✗ ${failed} failed</span>
+    <span>⏳ ${remaining} remaining</span>
+  `;
+}
+
+async function executeSend(campaignId, recipients, subject, htmlTemplate, token) {
+  const BATCH_SIZE = 25;
+  const DELAY_MS = 1500;
+  let sent = 0, failed = 0, tokenExpired = false;
+
+  try {
+    await db.collection('campaigns').doc(campaignId).update({
+      status: 'sending',
+      recipientCount: recipients.length,
+      sentCount: 0,
+      failedCount: 0
+    });
+  } catch(e) { console.error(e); }
+
+  outer: for (let i = 0; i < recipients.length; i += BATCH_SIZE) {
+    const batch = recipients.slice(i, i + BATCH_SIZE);
+    for (const contact of batch) {
+      if (contact.emailStatus !== 'Subscribed' || !contact.email) continue;
+      const html = buildEmail(htmlTemplate, contact);
+      const personalSubject = buildEmail(subject, contact);
+      try {
+        const res = await sendViaGmail(contact.email, personalSubject, html, token);
+        if (res.ok) sent++;
+        else {
+          failed++;
+          if (res.status === 401) { tokenExpired = true; updateSendProgress(sent, failed, recipients.length); break outer; }
+        }
+      } catch(e) { failed++; }
+      updateSendProgress(sent, failed, recipients.length);
+    }
+    if (i + BATCH_SIZE < recipients.length) {
+      await new Promise(r => setTimeout(r, DELAY_MS));
+    }
+  }
+
+  if (tokenExpired) {
+    try {
+      await db.collection('campaigns').doc(campaignId).update({
+        status: 'draft', sentCount: sent, failedCount: failed
+      });
+    } catch(e) {}
+    document.getElementById('cb-progress-wrap').innerHTML += `
+      <div style="margin-top:12px;padding:12px 14px;background:var(--red-50);color:var(--red-600);border-radius:var(--radius-md);font-size:13px;">
+        Your Gmail session expired. Please reconnect Gmail and resume the send. Sent so far: ${sent}.
+      </div>`;
+    toast('Gmail session expired — reconnect in API Settings');
+    const idx = campaigns.findIndex(c => c.id === campaignId);
+    if (idx >= 0) { campaigns[idx].status = 'draft'; campaigns[idx].sentCount = sent; campaigns[idx].failedCount = failed; }
+    return;
+  }
+
+  try {
+    await db.collection('campaigns').doc(campaignId).update({
+      status: 'sent',
+      sentAt: firebase.firestore.FieldValue.serverTimestamp(),
+      sentCount: sent,
+      failedCount: failed
+    });
+  } catch(e) { console.error(e); }
+
+  const idx = campaigns.findIndex(c => c.id === campaignId);
+  if (idx >= 0) {
+    campaigns[idx].status = 'sent';
+    campaigns[idx].sentCount = sent;
+    campaigns[idx].failedCount = failed;
+    campaigns[idx].sentAt = { seconds: Math.floor(Date.now()/1000) };
+  }
+
+  document.getElementById('cb-progress-wrap').innerHTML += `
+    <div style="margin-top:12px;padding:12px 14px;background:var(--green-50);color:var(--green-600);border-radius:var(--radius-md);font-size:13px;">
+      Campaign sent. ${sent} delivered${failed?`, ${failed} failed`:''}.
+    </div>
+    <div style="margin-top:10px;"><button class="btn btn-secondary" onclick="navTo('campaigns',document.getElementById('nav-campaigns'))">Back to Campaigns</button></div>
+  `;
+  toast('Campaign sent');
+}
 </script>
 </body>
 </html>
