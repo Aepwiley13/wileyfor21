@@ -7,6 +7,12 @@
 [build.environment]
   SECRETS_SCAN_SMART_DETECTION_ENABLED = "false"
 
+# Sprint 1 Contact Hub — host-based routing for hub.wileyfor21.com lives in
+# netlify/edge-functions/hub-router.js. Netlify's redirect engine does not
+# support Host-header conditions, so an Edge Function handles the rewrite.
+# Aaron must add hub.wileyfor21.com as a domain alias in Netlify and create
+# the CNAME at the registrar before this resolves.
+
 [[redirects]]
   from = "/caucus"
   to = "/caucus.html"

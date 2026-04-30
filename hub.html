@@ -3,12 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UTADCO Contact Hub</title>
+<title>Wiley for HD21 — Contact Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
 <script>
 const firebaseConfig = {
   apiKey: "AIzaSyCUxZhynT5ApoE4IubUJrPNd5wqyYtALJo",
@@ -18,6 +19,7 @@ const firebaseConfig = {
   messagingSenderId: "275345805424",
   appId: "1:275345805424:web:45c5117f15d97c0f9ca4b5",
 };
+const ADMIN_EMAIL = "aaron@idynify.com";
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
@@ -25,14 +27,16 @@ const googleProvider = new firebase.auth.GoogleAuthProvider();
 </script>
 <style>
 :root {
-  --teal-50:#E1F5EE;--teal-100:#9FE1CB;--teal-200:#5DCAA5;--teal-400:#1D9E75;
-  --teal-600:#0F6E56;--teal-800:#085041;--teal-900:#04342C;
+  /* Campaign navy primary — replaces UTADCO teal. Brand color is --teal-600 = #034A76. */
+  --teal-50:#E4ECF3;--teal-100:#B7CCDD;--teal-200:#7BA4BF;--teal-400:#1D6796;
+  --teal-600:#034A76;--teal-800:#02335A;--teal-900:#011D31;
   --gray-50:#F7F6F3;--gray-100:#EDEDEA;--gray-200:#DDDDD9;--gray-300:#C8C8C3;
   --gray-400:#A0A09A;--gray-500:#7A7A75;--gray-600:#5A5A56;--gray-800:#2C2C2A;--gray-900:#1A1A18;
   --blue-50:#E6F1FB;--blue-200:#85B7EB;--blue-600:#185FA5;--blue-800:#0C447C;
   --amber-50:#FAEEDA;--amber-200:#EF9F27;--amber-600:#854F0B;--amber-800:#633806;
   --purple-50:#EEEDFE;--purple-200:#AFA9EC;--purple-600:#534AB7;--purple-800:#3C3489;
-  --coral-50:#FAECE7;--coral-200:#F0997B;--coral-600:#993C1D;--coral-800:#712B13;
+  /* Campaign coral accent — --coral-200 = #F36F6B. */
+  --coral-50:#FEEAEA;--coral-200:#F36F6B;--coral-600:#C53A36;--coral-800:#8C2825;
   --green-50:#EAF3DE;--green-200:#97C459;--green-600:#3B6D11;--green-800:#27500A;
   --pink-50:#FBEAF0;--pink-200:#ED93B1;--pink-600:#993556;--pink-800:#72243E;
   --red-50:#FCEBEB;--red-400:#E24B4A;--red-600:#A32D2D;
@@ -143,7 +147,7 @@ textarea.f-input{resize:vertical;min-height:80px;line-height:1.5;}
 .ct-name{font-weight:500;color:var(--gray-900);font-size:13px;}
 .ct-org{font-size:11px;color:var(--gray-400);}
 .status-pill{display:inline-flex;align-items:center;font-size:11px;padding:3px 9px;border-radius:99px;font-weight:500;}
-.status-subscribed{background:#E1F5EE;color:#085041;}
+.status-subscribed{background:#E4ECF3;color:#02335A;}
 .status-unsubscribed{background:var(--gray-100);color:var(--gray-500);}
 .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;}
 .contact-card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:16px;cursor:pointer;transition:all 0.15s;box-shadow:var(--shadow);}
@@ -254,25 +258,14 @@ textarea.f-input{resize:vertical;min-height:80px;line-height:1.5;}
 <!-- LOGIN SCREEN -->
 <div id="login-screen" class="open">
   <div class="login-card">
-    <div class="login-brand">UTADCO</div>
-    <div class="login-title">Contact Hub</div>
-    <div class="login-sub">Sign in with your Google account to access your team's contacts</div>
-    <div class="login-error" id="login-error">Access denied. Contact your admin to request access.</div>
+    <div class="login-brand">Wiley for HD21</div>
+    <div class="login-title">My Contact Hub</div>
+    <div class="login-sub">Sign in with your Google account to access the campaign contact hub</div>
+    <div class="login-error" id="login-error">Access denied. This hub is private to the campaign admin.</div>
     <button class="btn" id="google-signin-btn" onclick="signInWithGoogle()" style="width:100%;justify-content:center;padding:11px;gap:10px;border:1px solid var(--gray-200);background:#fff;color:var(--gray-800);font-size:14px;margin-top:8px;">
       <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 002.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A353" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 01-7.18-2.54H1.83v2.07A8 8 0 008.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 010-3.04V5.41H1.83a8 8 0 000 7.18l2.67-2.07z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 001.83 5.4L4.5 7.49a4.77 4.77 0 014.48-3.3z"/></svg>
       Sign in with Google
     </button>
-    <p style="font-size:11px;color:var(--gray-400);text-align:center;margin-top:14px;">Only approved team members can access this hub.</p>
-  </div>
-</div>
-
-<div id="pending-screen" style="display:none;position:fixed;inset:0;background:var(--gray-50);z-index:200;align-items:center;justify-content:center;">
-  <div class="login-card" style="text-align:center;">
-    <div class="login-brand">UTADCO</div>
-    <div class="login-title" style="font-size:20px;">Access Requested</div>
-    <div style="font-size:13px;color:var(--gray-400);margin:12px 0 20px;">Your request has been sent to the admin for approval. You'll be able to sign in once approved.</div>
-    <div style="background:var(--gray-100);border-radius:var(--border-radius-md);padding:12px;font-size:12px;color:var(--gray-500);margin-bottom:20px;" id="pending-email"></div>
-    <button class="btn btn-secondary" style="width:100%;justify-content:center;" onclick="firebase.auth().signOut();document.getElementById('pending-screen').style.display='none';document.getElementById('login-screen').classList.add('open');">Sign out</button>
   </div>
 </div>
 
@@ -281,9 +274,9 @@ textarea.f-input{resize:vertical;min-height:80px;line-height:1.5;}
   <!-- SIDEBAR -->
   <div id="sidebar">
     <div class="sb-brand">
-      <div class="sb-brandmark">UTADCO</div>
-      <div class="sb-name">Contact Hub</div>
-      <div class="sb-tagline">The Dope Rolodex</div>
+      <div class="sb-brandmark">Wiley for HD21</div>
+      <div class="sb-name">My Contact Hub</div>
+      <div class="sb-tagline">Aaron's Rolodex</div>
     </div>
     <div class="sb-section">
       <div class="sb-label">Views</div>
@@ -303,15 +296,6 @@ textarea.f-input{resize:vertical;min-height:80px;line-height:1.5;}
       <div class="sb-item" id="nav-import" onclick="navTo('import',this)">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M8 5v6M5 8l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
         Import / Export
-      </div>
-      <div class="sb-item" id="nav-team" onclick="navTo('team',this)" data-admin-only>
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="5.5" cy="5" r="2" stroke="currentColor" stroke-width="1.3"/><circle cx="10.5" cy="5" r="2" stroke="currentColor" stroke-width="1.3"/><path d="M1 13c0-2.5 2-4 4.5-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M7.5 13c0-2.5 2-4 4.5-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-        Team
-      </div>
-      <div class="sb-item" id="nav-integrations" onclick="navTo('integrations',this)" data-admin-only>
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1.5" y="5.5" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="10.5" y="1.5" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="10.5" y="9.5" width="4" height="4" rx="1" stroke="currentColor" stroke-width="1.3"/><path d="M5.5 7.5H8a.5.5 0 00.5-.5V3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M5.5 8.5H8a.5.5 0 01.5.5v3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-        Integrations
-        <span class="sb-badge" style="background:#E1F5EE;color:#0F6E56;">0</span>
       </div>
     </div>
     <div class="sb-divider"></div>
@@ -358,12 +342,6 @@ textarea.f-input{resize:vertical;min-height:80px;line-height:1.5;}
 
       <!-- ALL CONTACTS -->
       <div id="view-contacts" class="view">
-        <div id="phone-patch-banner" style="background:var(--amber-50);border:1px solid #FAC775;border-radius:var(--radius-md);padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
-          <div style="font-size:13px;color:#633806;">
-            <strong>Duplicates detected</strong> from the Constant Contact import — click to find and remove duplicate contacts.
-          </div>
-          <button class="btn btn-sm" style="background:#854F0B;color:#fff;border:none;white-space:nowrap;" onclick="deduplicateContacts()">Clean up duplicates</button>
-        </div>
         <div class="list-toolbar">
           <div class="search-wrap">
             <svg class="search-icon" width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.3"/><path d="M10 10l2.5 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
@@ -430,11 +408,9 @@ textarea.f-input{resize:vertical;min-height:80px;line-height:1.5;}
               <select class="f-input" id="add-source">
                 <option value="">Select source</option>
                 <option>Manual entry</option>
-                <option>Constant Contact</option>
-                <option>Luma event</option>
+                <option>VoteBuilder</option>
                 <option>CSV import</option>
                 <option>Google</option>
-                <option>Site owner</option>
                 <option>Referral</option>
               </select>
             </div>
@@ -466,7 +442,7 @@ textarea.f-input{resize:vertical;min-height:80px;line-height:1.5;}
             <div class="drop-zone" id="drop-zone" onclick="document.getElementById('csv-upload').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event)">
               <svg class="dz-icon" width="36" height="36" viewBox="0 0 36 36" fill="none"><rect x="4" y="4" width="28" height="28" rx="5" stroke="currentColor" stroke-width="1.5"/><path d="M18 11v14M11 18l7 7 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
               <div class="dz-title">Upload CSV file</div>
-              <div class="dz-sub">Drag & drop or tap to browse · Works from your phone · Constant Contact, Luma, or any CSV</div>
+              <div class="dz-sub">Drag & drop or tap to browse · Works from your phone · VoteBuilder, Google Contacts, or any CSV</div>
               <input type="file" id="csv-upload" accept=".csv" style="display:none" onchange="handleCSV(this)">
             </div>
             <div id="import-preview-section" style="display:none;margin-top:16px;">
@@ -494,12 +470,12 @@ textarea.f-input{resize:vertical;min-height:80px;line-height:1.5;}
 
                 <!-- Already in hub -->
                 <div id="bucket-exists-wrap" style="display:none;margin-bottom:12px;">
-                  <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#E1F5EE;border:1px solid #9FE1CB;border-radius:var(--radius-md);cursor:pointer;" onclick="toggleBucket('bucket-exists-list')">
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#0F6E56" stroke-width="1.3"/><path d="M4.5 7l2 2 3-3" stroke="#0F6E56" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    <span style="font-size:13px;font-weight:500;color:#085041;flex:1;" id="bucket-exists-label">Already in hub — sticker will be added</span>
-                    <span style="font-size:11px;color:#0F6E56;">tap to expand ▾</span>
+                  <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#E4ECF3;border:1px solid #B7CCDD;border-radius:var(--radius-md);cursor:pointer;" onclick="toggleBucket('bucket-exists-list')">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#034A76" stroke-width="1.3"/><path d="M4.5 7l2 2 3-3" stroke="#034A76" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span style="font-size:13px;font-weight:500;color:#02335A;flex:1;" id="bucket-exists-label">Already in hub — sticker will be added</span>
+                    <span style="font-size:11px;color:#034A76;">tap to expand ▾</span>
                   </div>
-                  <div id="bucket-exists-list" style="display:none;border:1px solid #9FE1CB;border-top:none;border-radius:0 0 var(--radius-md) var(--radius-md);overflow:hidden;"></div>
+                  <div id="bucket-exists-list" style="display:none;border:1px solid #B7CCDD;border-top:none;border-radius:0 0 var(--radius-md) var(--radius-md);overflow:hidden;"></div>
                 </div>
 
                 <!-- Possible matches — needs review -->
@@ -547,158 +523,7 @@ textarea.f-input{resize:vertical;min-height:80px;line-height:1.5;}
         </div>
       </div>
 
-      <!-- TEAM -->
-      <div id="view-team" class="view">
-        <div style="max-width:580px;">
-          <div id="pending-requests" class="card" style="margin-bottom:16px;display:none;">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
-              <div style="width:8px;height:8px;border-radius:50%;background:#E24B4A;flex-shrink:0;"></div>
-              <div style="font-size:14px;font-weight:600;color:var(--gray-900);">Access requests</div>
-            </div>
-            <div id="pending-list"></div>
-          </div>
-          <div class="card" style="margin-bottom:16px;">
-            <div style="font-size:14px;font-weight:600;color:var(--gray-900);margin-bottom:4px;">Invite someone</div>
-            <div style="font-size:13px;color:var(--gray-400);margin-bottom:14px;">Share the hub URL — when they sign in with Google you'll see an approval request above.</div>
-            <div style="display:flex;gap:8px;align-items:center;">
-              <input class="f-input" value="https://hub.utahadvocacy.org" readonly style="flex:1;color:var(--gray-500);font-size:12px;">
-              <button class="btn btn-secondary btn-sm" onclick="navigator.clipboard.writeText('https://hub.utahadvocacy.org');toast('Link copied');">Copy link</button>
-            </div>
-          </div>
-          <div class="card">
-            <div style="font-size:14px;font-weight:600;color:var(--gray-900);margin-bottom:14px;">Team members</div>
-            <div id="team-list"></div>
-          </div>
-        </div>
-      </div>
 
-      <!-- INTEGRATIONS -->
-      <div id="view-integrations" class="view">
-        <div style="max-width:680px;">
-          <div style="font-size:13px;color:var(--gray-400);margin-bottom:20px;">Connect your data sources. Each integration syncs contacts into the hub with duplicate detection and automatic sticker tagging.</div>
-
-          <div class="card" style="margin-bottom:12px;">
-            <div style="display:flex;align-items:flex-start;gap:14px;">
-              <div style="width:40px;height:40px;border-radius:var(--radius-md);background:#000;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" fill="white"/><circle cx="9" cy="9" r="3" fill="black"/></svg>
-              </div>
-              <div style="flex:1;">
-                <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
-                  <span style="font-size:14px;font-weight:600;color:var(--gray-900);">Luma</span>
-                  <span id="luma-status-pill" class="status-pill status-unsubscribed">Not connected</span>
-                </div>
-                <div style="font-size:12px;color:var(--gray-400);margin-bottom:12px;">Pull event attendees from any Luma event directly into the hub. Requires Luma Plus.</div>
-                <div id="luma-disconnected">
-                  <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;">
-                    <div class="f-group" style="margin:0;flex:1;min-width:200px;max-width:300px;">
-                      <label class="f-label">Luma API key</label>
-                      <input class="f-input" id="luma-api-key" type="password" placeholder="luma_api_••••••••">
-                    </div>
-                    <button class="btn btn-primary btn-sm" style="margin-bottom:1px;" onclick="connectLuma()">Connect</button>
-                  </div>
-                  <div style="font-size:11px;color:var(--gray-400);margin-top:6px;">Luma → Calendar Settings → Options → API Key</div>
-                </div>
-                <div id="luma-connected" style="display:none;">
-                  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
-                    <button class="btn btn-secondary btn-sm" onclick="lumaFetchEvents()">
-                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M10 6A4 4 0 112 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M10 3v3h-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                      Sync now
-                    </button>
-                    <span style="font-size:11px;color:var(--gray-400);" id="luma-last-sync">Never synced</span>
-                    <span style="font-size:12px;color:var(--red-600);cursor:pointer;margin-left:auto;" onclick="disconnectIntegration('luma')">Disconnect</span>
-                  </div>
-                  <div id="luma-events-list"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="card" style="margin-bottom:12px;">
-            <div style="display:flex;align-items:flex-start;gap:14px;">
-              <div style="width:40px;height:40px;border-radius:var(--radius-md);background:#005798;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                <svg width="22" height="14" viewBox="0 0 22 14" fill="none"><path d="M11 1C5.477 1 1 5.03 1 10c0 .69.082 1.36.237 2h3.1A6.5 6.5 0 0111 4.5a6.5 6.5 0 016.663 7.5h3.1A9 9 0 0011 1z" fill="white"/><circle cx="11" cy="10" r="2.5" fill="white"/></svg>
-              </div>
-              <div style="flex:1;">
-                <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
-                  <span style="font-size:14px;font-weight:600;color:var(--gray-900);">Constant Contact</span>
-                  <span id="cc-status-pill" class="status-pill status-unsubscribed">Not connected</span>
-                </div>
-                <div style="font-size:12px;color:var(--gray-400);margin-bottom:12px;">Pull contacts + list tags (as stickers) and push hub contacts back to Constant Contact. Two-way sync.</div>
-                <div id="cc-disconnected">
-                  <button class="btn btn-primary btn-sm" onclick="connectCC()">
-                    Connect with Constant Contact
-                  </button>
-                  <div style="font-size:11px;color:var(--gray-400);margin-top:6px;">You'll be redirected to Constant Contact to authorize — then brought back here.</div>
-                </div>
-                <div id="cc-connected" style="display:none;">
-                  <div style="background:var(--amber-50);border:1px solid #FAC775;border-radius:var(--radius-md);padding:8px 12px;font-size:12px;color:#633806;margin-bottom:10px;display:none;" id="cc-token-warning">
-                    ⚠️ CC token expires after ~2 hours. If push/pull fails with 401, click Disconnect then reconnect.
-                  </div>
-                  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
-                    <button class="btn btn-secondary btn-sm" onclick="ccPullContacts()">
-                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M10 6A4 4 0 112 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M10 3v3h-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                      Pull from CC
-                    </button>
-                    <button class="btn btn-secondary btn-sm" onclick="ccPushContacts()">
-                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6a4 4 0 108 0" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M2 9V6h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                      Push to CC
-                    </button>
-                    <span style="font-size:11px;color:var(--gray-400);" id="cc-last-sync">Never synced</span>
-                    <span style="font-size:12px;color:var(--red-600);cursor:pointer;margin-left:auto;" onclick="disconnectIntegration('cc')">Disconnect</span>
-                  </div>
-                  <div id="cc-sync-status" style="font-size:12px;color:var(--teal-600);margin-top:8px;padding:8px 10px;background:var(--gray-50);border-radius:var(--radius-md);display:none;"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="card" style="margin-bottom:12px;">
-            <div style="display:flex;align-items:flex-start;gap:14px;">
-              <div style="width:40px;height:40px;border-radius:var(--radius-md);background:#0F9D58;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                <svg width="20" height="22" viewBox="0 0 20 22" fill="none"><rect x="2" y="1" width="16" height="20" rx="2" stroke="white" stroke-width="1.5"/><path d="M5 8h10M5 12h10M5 16h6" stroke="white" stroke-width="1.2" stroke-linecap="round"/></svg>
-              </div>
-              <div style="flex:1;">
-                <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
-                  <span style="font-size:14px;font-weight:600;color:var(--gray-900);">Google Sheets</span>
-                  <span class="status-pill" style="background:var(--amber-50);color:#854F0B;border:1px solid #FAC775;">Coming soon</span>
-                </div>
-                <div style="font-size:12px;color:var(--gray-400);">Sync contacts from a shared Google Sheet — useful for team lists and event sign-up sheets.</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="card" style="margin-bottom:12px;">
-            <div style="display:flex;align-items:flex-start;gap:14px;">
-              <div style="width:40px;height:40px;border-radius:var(--radius-md);background:#FF4A00;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2v7M10 11v7M2 10h7M11 10h7M4.22 4.22l5 5M10.78 10.78l5 5M4.22 15.78l5-5M10.78 9.22l5-5" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
-              </div>
-              <div style="flex:1;">
-                <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
-                  <span style="font-size:14px;font-weight:600;color:var(--gray-900);">Zapier webhook</span>
-                  <span class="status-pill" style="background:var(--amber-50);color:#854F0B;border:1px solid #FAC775;">Coming soon</span>
-                </div>
-                <div style="font-size:12px;color:var(--gray-400);">Receive contacts from Typeform, Eventbrite, HubSpot, and 5,000+ other tools via Zapier.</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="card" style="margin-bottom:12px;">
-            <div style="display:flex;align-items:flex-start;gap:14px;">
-              <div style="width:40px;height:40px;border-radius:var(--radius-md);background:var(--teal-600);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3.5" stroke="white" stroke-width="1.4"/><path d="M3 18c0-3.9 3.1-7 7-7s7 3.1 7 7" stroke="white" stroke-width="1.4" stroke-linecap="round"/><path d="M14 4v4M12 6h4" stroke="white" stroke-width="1.4" stroke-linecap="round"/></svg>
-              </div>
-              <div style="flex:1;">
-                <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
-                  <span style="font-size:14px;font-weight:600;color:var(--gray-900);">Public signup page</span>
-                  <span class="status-pill" style="background:var(--purple-50);color:#534AB7;border:1px solid #AFA9EC;">Roadmap</span>
-                </div>
-                <div style="font-size:12px;color:var(--gray-400);">A public form where community members, event attendees, and volunteers can add themselves. Will live at utahadvocacy.org/join or embed into any page on your site.</div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
 
     <!-- DETAIL PANEL -->
     <div id="detail-panel">
@@ -847,9 +672,9 @@ textarea.f-input{resize:vertical;min-height:80px;line-height:1.5;}
         <label class="f-label">Source</label>
         <select class="f-input" id="edit-source">
           <option value="">Select source</option>
-          <option>Manual entry</option><option>Constant Contact</option>
-          <option>Luma event</option><option>CSV import</option>
-          <option>Google</option><option>Site owner</option><option>Referral</option>
+          <option>Manual entry</option><option>VoteBuilder</option>
+          <option>CSV import</option>
+          <option>Google</option><option>Referral</option>
         </select>
       </div>
       <div class="f-group">
@@ -878,10 +703,10 @@ textarea.f-input{resize:vertical;min-height:80px;line-height:1.5;}
 <script data-cfasync="false">
 // ─── DATA ───────────────────────────────────────────────
 const PALETTE = [
-  {id:'teal',   dot:'#0F6E56', bg:'#E1F5EE', border:'#5DCAA5', text:'#085041'},
+  {id:'teal',   dot:'#034A76', bg:'#E4ECF3', border:'#7BA4BF', text:'#02335A'},
   {id:'blue',   dot:'#185FA5', bg:'#E6F1FB', border:'#85B7EB', text:'#0C447C'},
   {id:'purple', dot:'#534AB7', bg:'#EEEDFE', border:'#AFA9EC', text:'#3C3489'},
-  {id:'coral',  dot:'#993C1D', bg:'#FAECE7', border:'#F0997B', text:'#712B13'},
+  {id:'coral',  dot:'#C53A36', bg:'#FEEAEA', border:'#F36F6B', text:'#8C2825'},
   {id:'amber',  dot:'#854F0B', bg:'#FAEEDA', border:'#EF9F27', text:'#633806'},
   {id:'pink',   dot:'#993556', bg:'#FBEAF0', border:'#ED93B1', text:'#72243E'},
   {id:'green',  dot:'#3B6D11', bg:'#EAF3DE', border:'#97C459', text:'#27500A'},
@@ -891,7 +716,6 @@ const PALETTE = [
 let currentUser = null;
 let stickers = [];
 let contacts = [];
-let teamMembers = [];
 let nextId = 1, nextStkId = 100;
 let currentView = 'wall', activeStickerId = null, activeContactId = null;
 let contactViewMode = 'list', stickerViewMode = 'list';
@@ -904,30 +728,34 @@ async function signInWithGoogle() {
     const result = await auth.signInWithPopup(googleProvider);
     const user = result.user;
     const userDoc = await db.collection('users').doc(user.uid).get();
-    if (userDoc.exists && userDoc.data().approved) {
-      // Existing approved user — let onAuthStateChanged handle it
-    } else if (!userDoc.exists) {
-      // New user — create pending request
+    const isAdminEmail = (user.email||'').toLowerCase() === ADMIN_EMAIL.toLowerCase();
+    if (userDoc.exists) {
+      // If the admin user record was created without admin role, upgrade it
+      const data = userDoc.data();
+      if (isAdminEmail && (!data.approved || data.role !== 'admin')) {
+        await db.collection('users').doc(user.uid).update({
+          approved: true,
+          role: 'admin',
+          name: data.name || user.displayName,
+          email: user.email
+        });
+      }
+    } else {
+      // First-time login — auto-provision the admin account; deny everyone else
+      if (!isAdminEmail) {
+        await auth.signOut();
+        document.getElementById('login-error').textContent = 'This hub is private. Sign in with the admin account.';
+        document.getElementById('login-error').style.display = 'block';
+        return;
+      }
       await db.collection('users').doc(user.uid).set({
         name: user.displayName,
         email: user.email,
         photo: user.photoURL,
-        role: 'viewer',
-        approved: false,
-        requestedAt: firebase.firestore.FieldValue.serverTimestamp()
+        role: 'admin',
+        approved: true,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
-      // Notify admins
-      await db.collection('access_requests').add({
-        uid: user.uid,
-        name: user.displayName,
-        email: user.email,
-        requestedAt: firebase.firestore.FieldValue.serverTimestamp(),
-        status: 'pending'
-      });
-      showPendingScreen(user.email);
-    } else {
-      // Not approved yet
-      showPendingScreen(user.email);
     }
   } catch (err) {
     document.getElementById('login-error').style.display = 'block';
@@ -935,24 +763,32 @@ async function signInWithGoogle() {
   }
 }
 
-function showPendingScreen(email) {
-  document.getElementById('login-screen').classList.remove('open');
-  const ps = document.getElementById('pending-screen');
-  ps.style.display = 'flex';
-  document.getElementById('pending-email').textContent = email;
-}
-
 auth.onAuthStateChanged(async (firebaseUser) => {
   if (!firebaseUser) {
     document.getElementById('login-screen').classList.add('open');
-    document.getElementById('pending-screen').style.display = 'none';
     document.getElementById('app').style.display = 'none';
     return;
   }
   try {
-    const userDoc = await db.collection('users').doc(firebaseUser.uid).get();
+    const isAdminEmail = (firebaseUser.email||'').toLowerCase() === ADMIN_EMAIL.toLowerCase();
+    let userDoc = await db.collection('users').doc(firebaseUser.uid).get();
+    if (!userDoc.exists && isAdminEmail) {
+      // Bootstrap the admin user document if it's missing (e.g. first session opened directly)
+      await db.collection('users').doc(firebaseUser.uid).set({
+        name: firebaseUser.displayName,
+        email: firebaseUser.email,
+        photo: firebaseUser.photoURL,
+        role: 'admin',
+        approved: true,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      userDoc = await db.collection('users').doc(firebaseUser.uid).get();
+    }
     if (!userDoc.exists || !userDoc.data().approved) {
-      showPendingScreen(firebaseUser.email);
+      await auth.signOut();
+      document.getElementById('login-error').textContent = 'This hub is private. Sign in with the admin account.';
+      document.getElementById('login-error').style.display = 'block';
+      document.getElementById('login-screen').classList.add('open');
       document.getElementById('app').style.display = 'none';
       return;
     }
@@ -961,11 +797,10 @@ auth.onAuthStateChanged(async (firebaseUser) => {
       uid: firebaseUser.uid,
       name: userData.name || firebaseUser.displayName,
       email: firebaseUser.email,
-      role: userData.role || 'viewer',
+      role: userData.role || 'admin',
       photo: firebaseUser.photoURL
     };
     document.getElementById('login-screen').classList.remove('open');
-    document.getElementById('pending-screen').style.display = 'none';
     document.getElementById('app').style.display = 'flex';
     applyRoleUI();
     await loadFromFirestore();
@@ -977,7 +812,7 @@ auth.onAuthStateChanged(async (firebaseUser) => {
 async function doLogout() {
   await auth.signOut();
   currentUser = null;
-  contacts = []; stickers = []; teamMembers = [];
+  contacts = []; stickers = [];
   document.getElementById('app').style.display = 'none';
   document.getElementById('login-screen').classList.add('open');
 }
@@ -1000,16 +835,12 @@ async function loadFromFirestore() {
   // Load stickers
   const stkSnap = await db.collection('stickers').orderBy('createdAt').get();
   if (stkSnap.empty) {
-    // Seed default stickers on first load
+    // Seed the four campaign defaults on first load
     const defaults = [
-      {id:'board',name:'Board member',colorId:'teal'},
-      {id:'coach',name:'Coach',colorId:'blue'},
       {id:'donor',name:'Donor',colorId:'amber'},
-      {id:'giving',name:'Giving Voice',colorId:'purple'},
-      {id:'nonprofit',name:'Nonprofit',colorId:'green'},
-      {id:'volunteer',name:'Volunteer',colorId:'coral'},
-      {id:'events24',name:'2024 Events',colorId:'pink'},
-      {id:'pitched',name:'Pitched',colorId:'gray'},
+      {id:'volunteer',name:'Volunteer',colorId:'teal'},
+      {id:'supporter',name:'Supporter',colorId:'blue'},
+      {id:'elected',name:'Elected Official',colorId:'purple'},
     ];
     for (const s of defaults) {
       await db.collection('stickers').doc(s.id).set({name:s.name,colorId:s.colorId,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
@@ -1023,10 +854,6 @@ async function loadFromFirestore() {
   const ctSnap = await db.collection('contacts').orderBy('dateAdded','desc').get();
   contacts = ctSnap.docs.map(d=>({...d.data(),firestoreId:d.id}));
   nextId = contacts.length + 1;
-
-  // Load team
-  const tmSnap = await db.collection('users').where('approved','==',true).get();
-  teamMembers = tmSnap.docs.map(d=>({uid:d.id,...d.data()}));
 
   initApp();
 }
@@ -1054,8 +881,8 @@ function navTo(view, el) {
   if (navEl) navEl.classList.add('active');
   currentView = view;
   closeDetail();
-  const titles = {wall:'Sticker wall', contacts:'All contacts', add:'Add contact', import:'Import / Export', team:'Team', integrations:'Integrations', 'sticker-filtered': activeStickerId ? getStickerName(activeStickerId) : 'Sticker'};
-  const subs = {wall:'Your contact universe', contacts:'Every contact in the hub', add:'Add a single contact', import:'Upload or download contacts', team:'Manage your team', integrations:'Connect your data sources', 'sticker-filtered':''};
+  const titles = {wall:'Sticker wall', contacts:'All contacts', add:'Add contact', import:'Import / Export', 'sticker-filtered': activeStickerId ? getStickerName(activeStickerId) : 'Sticker'};
+  const subs = {wall:'Your contact universe', contacts:'Every contact in the hub', add:'Add a single contact', import:'Upload or download contacts', 'sticker-filtered':''};
   document.getElementById('topbar-title').textContent = titles[view] || view;
   document.getElementById('topbar-sub').textContent = subs[view] || '';
 
@@ -1068,7 +895,6 @@ function navTo(view, el) {
 
   if (view === 'contacts') renderContactList();
   if (view === 'add') { renderStickerPicker('add-stk-picker', []); resetAddForm(); }
-  if (view === 'team') renderTeam();
   if (view === 'sticker-filtered') renderFilteredList();
 }
 
@@ -1420,7 +1246,7 @@ function previewPhoto(input, previewId, initialsId) {
 }
 
 // ─── UNIVERSAL DUPLICATE ENGINE ──────────────────────────
-// Used by manual add, CSV import, and all integrations
+// Used by manual add and CSV import
 function checkDuplicate(candidate) {
   const exact = findExactMatch(candidate);
   if (exact) return { type: 'exact', match: exact };
@@ -1842,7 +1668,7 @@ function renderBuckets(allTags) {
       ...(phoneMatch||[]).map(({candidate, match}) => ({candidate, match, reason: 'Phone + name match'})),
     ];
     document.getElementById('bucket-exists-list').innerHTML = allAutoMerge.map(({candidate, match, reason}) => `
-      <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid #9FE1CB;background:#fff;font-size:12px;">
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid #B7CCDD;background:#fff;font-size:12px;">
         ${avatarHtml(match,28)}
         <div style="flex:1;">
           <span style="font-weight:500;color:var(--gray-900)">${match.first} ${match.last}</span>
@@ -1882,7 +1708,7 @@ function renderBuckets(allTags) {
           </div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="btn btn-sm" style="background:#E1F5EE;color:#085041;border:1px solid #9FE1CB;" onclick="setFuzzyDecision(${idx},'merge')">Same person — add sticker + emails</button>
+          <button class="btn btn-sm" style="background:#E4ECF3;color:#02335A;border:1px solid #B7CCDD;" onclick="setFuzzyDecision(${idx},'merge')">Same person — add sticker + emails</button>
           <button class="btn btn-sm" style="background:var(--blue-50);color:var(--blue-800);border:1px solid var(--blue-200);" onclick="setFuzzyDecision(${idx},'new')">Different person — add as new</button>
           <button class="btn btn-sm btn-secondary" onclick="setFuzzyDecision(${idx},'skip')">Skip</button>
         </div>
@@ -1909,7 +1735,7 @@ function renderBuckets(allTags) {
 function setFuzzyDecision(idx, decision) {
   importAnalyzed.fuzzy[idx].decision = decision;
   const labels = { merge:'✓ Will merge — sticker added', new:'✓ Will add as new contact', skip:'✓ Skipped' };
-  const colors = { merge:'#0F6E56', new:'#185FA5', skip:'var(--gray-400)' };
+  const colors = { merge:'#034A76', new:'#185FA5', skip:'var(--gray-400)' };
   const el = document.getElementById(`fuzzy-decision-${idx}`);
   el.textContent = labels[decision]; el.style.color = colors[decision];
 }
@@ -2003,81 +1829,21 @@ function downloadCSV(csv, filename) {
   a.download = filename; a.click();
 }
 
-function exportContacts() { downloadCSV(buildCSV(contacts), 'utadco-all-contacts.csv'); }
+function exportContacts() { downloadCSV(buildCSV(contacts), 'wiley-hd21-all-contacts.csv'); }
 function exportFilteredContacts() {
   const list = contacts.filter(c => c.stickers.includes(activeStickerId));
-  downloadCSV(buildCSV(list), `utadco-${activeStickerId||'contacts'}.csv`);
+  downloadCSV(buildCSV(list), `wiley-hd21-${activeStickerId||'contacts'}.csv`);
 }
 function exportFromSelect() {
   const sid = document.getElementById('export-sticker-select').value;
   const list = sid ? contacts.filter(c => c.stickers.includes(sid)) : contacts;
   const name = sid ? getStickerName(sid).replace(/\s+/g,'-').toLowerCase() : 'all';
-  downloadCSV(buildCSV(list), `utadco-${name}.csv`);
+  downloadCSV(buildCSV(list), `wiley-hd21-${name}.csv`);
 }
 function updateExportSelect() {
   const sel = document.getElementById('export-sticker-select');
   if (!sel) return;
   sel.innerHTML = '<option value="">All contacts</option>' + stickers.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
-}
-
-// ─── TEAM ─────────────────────────────────────────────────
-function renderTeam() {
-  const rows = teamMembers.map(m => `
-    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--gray-100);">
-      <div class="avatar" style="width:34px;height:34px;background:var(--teal-50);color:var(--teal-600);font-size:11px;font-weight:600;">${(m.name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}</div>
-      <div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--gray-900);">${m.name||''}</div><div style="font-size:12px;color:var(--gray-400);">${m.email||''}</div></div>
-      <span class="status-pill status-subscribed" style="text-transform:capitalize;">${m.role||'viewer'}</span>
-      ${currentUser.role==='admin' && m.uid !== currentUser.uid ? `<span style="font-size:12px;color:var(--red-600);cursor:pointer;margin-left:8px;" onclick="removeTeamMember('${m.uid}','${m.email}')">Remove</span>` : ''}
-    </div>`).join('');
-  document.getElementById('team-list').innerHTML = rows || '<div style="font-size:13px;color:var(--gray-400);padding:12px 0;">No team members yet</div>';
-
-  // Load pending requests for admins
-  if (currentUser.role === 'admin') {
-    db.collection('access_requests').where('status','==','pending').get().then(snap => {
-      if (snap.empty) {
-        document.getElementById('pending-requests').style.display = 'none';
-        return;
-      }
-      document.getElementById('pending-requests').style.display = 'block';
-      document.getElementById('pending-list').innerHTML = snap.docs.map(d => {
-        const r = d.data();
-        return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--gray-100);">
-          <div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--gray-900);">${r.name||''}</div><div style="font-size:12px;color:var(--gray-400);">${r.email||''}</div></div>
-          <select id="role-${d.id}" style="border:1px solid var(--gray-200);border-radius:var(--border-radius-md);padding:4px 8px;font-size:12px;"><option value="viewer">Viewer</option><option value="editor">Editor</option><option value="admin">Admin</option></select>
-          <button class="btn btn-primary btn-sm" onclick="approveRequest('${d.id}','${r.uid}','${r.name}','${r.email}')">Approve</button>
-          <button class="btn btn-sm" style="color:var(--red-600);background:none;border:none;cursor:pointer;" onclick="denyRequest('${d.id}','${r.uid}')">Deny</button>
-        </div>`;
-      }).join('');
-    });
-  }
-}
-
-async function approveRequest(requestId, uid, name, email) {
-  const role = document.getElementById('role-' + requestId)?.value || 'viewer';
-  await db.collection('users').doc(uid).update({ approved: true, role, approvedAt: firebase.firestore.FieldValue.serverTimestamp(), approvedBy: currentUser.uid });
-  await db.collection('access_requests').doc(requestId).update({ status: 'approved' });
-  teamMembers.push({ uid, name, email, role, approved: true });
-  toast(`${name} approved as ${role}`);
-  renderTeam();
-}
-
-async function denyRequest(requestId, uid) {
-  await db.collection('access_requests').doc(requestId).update({ status: 'denied' });
-  await db.collection('users').doc(uid).update({ approved: false });
-  toast('Request denied');
-  renderTeam();
-}
-
-async function removeTeamMember(uid, email) {
-  if (!confirm(`Remove ${email} from the hub?`)) return;
-  await db.collection('users').doc(uid).update({ approved: false });
-  teamMembers = teamMembers.filter(m => m.uid !== uid);
-  toast(`${email} removed`);
-  renderTeam();
-}
-
-function sendInvite() {
-  toast('Share the hub URL and ask them to sign in with Google — you\'ll get an approval request automatically.');
 }
 
 // ─── UTILS ───────────────────────────────────────────────
@@ -2100,394 +1866,10 @@ function toast(msg) {
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-// ─── INTEGRATIONS ─────────────────────────────────────────
-const INTEGRATIONS = {
-  luma: { key: 'utadco_luma_key', name: 'Luma' },
-  cc:   { key: 'utadco_cc_key',   name: 'Constant Contact' },
-};
-
-function connectLuma() {
-  const key = document.getElementById('luma-api-key').value.trim();
-  if (!key) { toast('Enter your Luma API key'); return; }
-  localStorage.setItem(INTEGRATIONS.luma.key, key);
-  setIntegrationConnected('luma');
-  toast('Luma connected — ready to sync');
-}
-
-function setIntegrationConnected(id) {
-  const disc = document.getElementById(`${id}-disconnected`);
-  const conn = document.getElementById(`${id}-connected`);
-  const pill = document.getElementById(`${id}-status-pill`);
-  if (disc) disc.style.display = 'none';
-  if (conn) conn.style.display = 'block';
-  if (pill) { pill.textContent = 'Connected'; pill.className = 'status-pill status-subscribed'; }
-  if (id === 'cc') {
-    const warn = document.getElementById('cc-token-warning');
-    if (warn) { warn.style.display = 'block'; setTimeout(() => warn.style.display = 'none', 10000); }
-  }
-  updateIntegrationBadge();
-}
-
-function disconnectIntegration(id) {
-  if (!confirm(`Disconnect ${INTEGRATIONS[id]?.name || id}?`)) return;
-  localStorage.removeItem(INTEGRATIONS[id].key);
-  const disc = document.getElementById(`${id}-disconnected`);
-  const conn = document.getElementById(`${id}-connected`);
-  const pill = document.getElementById(`${id}-status-pill`);
-  if (disc) disc.style.display = 'block';
-  if (conn) conn.style.display = 'none';
-  if (pill) { pill.textContent = 'Not connected'; pill.className = 'status-pill status-unsubscribed'; }
-  updateIntegrationBadge();
-  toast(`${INTEGRATIONS[id]?.name} disconnected`);
-}
-
-function updateIntegrationBadge() {
-  const count = Object.values(INTEGRATIONS).filter(i => localStorage.getItem(i.key)).length;
-  const badge = document.querySelector('#nav-integrations .sb-badge');
-  if (badge) badge.textContent = count;
-}
-
-function lumaFetchEvents() {
-  // Production: proxies to public-api.luma.com via Netlify function
-  const list = document.getElementById('luma-events-list');
-  list.innerHTML = `
-    <div style="font-size:12px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px;">Your Luma events</div>
-    <div style="border:1px solid var(--gray-200);border-radius:var(--radius-md);overflow:hidden;">
-      ${['West Side Community Night — Mar 15 2025','UTADCO Monthly Gathering — Feb 22 2025','Giving Voices Forum — Jan 18 2025'].map((name,i,a) => `
-        <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:${i<a.length-1?'1px solid var(--gray-100)':'none'};font-size:13px;">
-          <div style="flex:1;font-weight:500;color:var(--gray-900);">${name}</div>
-          <button class="btn btn-secondary btn-sm" onclick="lumaImportEvent('${name}')">Import attendees</button>
-        </div>`).join('')}
-    </div>`;
-  document.getElementById('luma-last-sync').textContent = 'Last synced: just now';
-  toast('Events loaded');
-}
-
-function lumaImportEvent(eventName) {
-  navTo('import', null);
-  setTimeout(() => {
-    document.getElementById('import-new-stk-name').value = eventName;
-    toast('Upload the Luma CSV export for "' + eventName + '"');
-  }, 200);
-}
-
-function restoreIntegrations() {
-  Object.keys(INTEGRATIONS).forEach(id => {
-    if (localStorage.getItem(INTEGRATIONS[id].key)) setIntegrationConnected(id);
-  });
-  // Check if returning from CC OAuth redirect
-  const params = new URLSearchParams(window.location.search);
-  const ccCode = params.get('code');
-  const ccState = params.get('state');
-  if (ccCode && ccState === 'cc_oauth') {
-    window.history.replaceState({}, document.title, window.location.pathname);
-    exchangeCCToken(ccCode);
-  }
-  updateIntegrationBadge();
-}
-
-// ─── CONSTANT CONTACT OAUTH ──────────────────────────────
-const CC_API_KEY    = '1dd28f88-8035-48ca-99e8-a94b208326a3';
-const CC_REDIRECT   = 'https://hub.utahadvocacy.org';
-// Note: Client secret is stored in Firestore config, not in client code
-// For PKCE-less flow we use implicit token directly from CC
-
-function connectCC() {
-  const nonce = Math.random().toString(36).slice(2) + Date.now().toString(36);
-  sessionStorage.setItem('cc_nonce', nonce);
-  const authUrl = 'https://authz.constantcontact.com/oauth2/default/v1/authorize' +
-    '?response_type=token' +
-    '&client_id=' + CC_API_KEY +
-    '&redirect_uri=' + encodeURIComponent(CC_REDIRECT) +
-    '&scope=contact_data' +
-    '&nonce=' + nonce +
-    '&state=cc_oauth';
-  window.location.href = authUrl;
-}
-
-// Handle implicit flow token returned in URL hash
-function checkCCImplicitToken() {
-  const hash = window.location.hash;
-  if (!hash || !hash.includes('access_token')) return;
-  const params = new URLSearchParams(hash.slice(1));
-  const token = params.get('access_token');
-  const state = params.get('state');
-  if (token && state === 'cc_oauth') {
-    window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
-    window.location.hash = '';
-    localStorage.setItem(INTEGRATIONS.cc.key, token);
-    setIntegrationConnected('cc');
-    document.getElementById('cc-last-sync').textContent = 'Connected — never synced';
-    toast('Constant Contact connected!');
-  }
-}
-
-async function ccPullContacts() {
-  const token = localStorage.getItem(INTEGRATIONS.cc.key);
-  if (!token) { toast('Not connected to Constant Contact'); return; }
-  const statusEl = document.getElementById('cc-sync-status');
-  statusEl.style.display = 'block';
-  statusEl.style.color = 'var(--teal-600)';
-
-  // CC API requires a server-side proxy due to CORS
-  // Check if Netlify proxy is configured
-  const PROXY = localStorage.getItem('utadco_netlify_proxy');
-  if (!PROXY) {
-    statusEl.style.color = '#854F0B';
-    statusEl.innerHTML = `
-      <strong>Proxy required.</strong> CC's API blocks direct browser requests (CORS). 
-      To enable Pull from CC, enter your Netlify proxy URL below:
-      <div style="display:flex;gap:8px;margin-top:8px;">
-        <input class="f-input" id="proxy-url-input" placeholder="https://your-site.netlify.app" style="flex:1;font-size:12px;padding:6px 10px;">
-        <button class="btn btn-primary btn-sm" onclick="saveProxyUrl()">Save</button>
-      </div>
-      <div style="margin-top:6px;font-size:11px;color:var(--gray-400);">Deploy the Netlify function from the README, then paste your Netlify URL here.</div>`;
-    return;
-  }
-
-  statusEl.textContent = 'Pulling contacts from Constant Contact...';
-  try {
-    const res = await fetch(PROXY + '/.netlify/functions/cc-auth', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'contacts', access_token: token })
-    });
-    if (!res.ok) {
-      const err = await res.json();
-      if (err.error === 'invalid_token' || res.status === 401) {
-        disconnectIntegration('cc');
-        statusEl.style.color = '#A32D2D';
-        statusEl.textContent = 'Token expired — please reconnect.';
-        return;
-      }
-      throw new Error(err.error || res.statusText);
-    }
-    const { contacts: ccContacts, total } = await res.json();
-    statusEl.textContent = `Processing ${total} contacts...`;
-
-    let added = 0, merged = 0;
-    const today = new Date().toISOString().split('T')[0];
-    const batch = db.batch();
-
-    for (const cc of ccContacts) {
-      const result = checkDuplicate(cc);
-      if (result.type === 'exact') {
-        const match = result.match;
-        const updates = {};
-        (cc.stickers||[]).forEach(sid => { if (!(match.stickers||[]).includes(sid)) match.stickers.push(sid); });
-        updates.stickers = match.stickers;
-        if (!match.phone && cc.phone) { match.phone = cc.phone; updates.phone = cc.phone; }
-        if (!match.org && cc.org) { match.org = cc.org; updates.org = cc.org; }
-        if (match.firestoreId) batch.update(db.collection('contacts').doc(match.firestoreId), updates);
-        merged++;
-      } else if (result.type === 'none') {
-        const ref = db.collection('contacts').doc();
-        const newC = { ...cc, stickers: cc.stickers||[], activity: [], photo: null, createdBy: currentUser.uid, createdAt: firebase.firestore.FieldValue.serverTimestamp() };
-        batch.set(ref, newC);
-        contacts.unshift({ ...newC, firestoreId: ref.id });
-        added++;
-      }
-    }
-
-    await batch.commit();
-    renderSidebar(); renderStickerWall(); updateExportSelect();
-    document.getElementById('sb-all-count').textContent = contacts.length;
-    const now = new Date().toLocaleTimeString();
-    document.getElementById('cc-last-sync').textContent = 'Last synced: ' + now;
-    statusEl.textContent = `✓ ${added} added · ${merged} updated`;
-    setTimeout(() => { statusEl.style.display = 'none'; }, 5000);
-    refreshCurrentView();
-  } catch(err) {
-    statusEl.style.color = '#A32D2D';
-    statusEl.textContent = 'Error: ' + err.message;
-  }
-}
-
-function saveProxyUrl() {
-  const url = (document.getElementById('proxy-url-input')?.value||'').trim().replace(/\/$/, '');
-  if (!url) return;
-  localStorage.setItem('utadco_netlify_proxy', url);
-  toast('Proxy URL saved — try Pull from CC again');
-  document.getElementById('cc-sync-status').style.display = 'none';
-}
-
-async function ccPushContacts() {
-  const token = localStorage.getItem(INTEGRATIONS.cc.key);
-  if (!token) { toast('Not connected to Constant Contact'); return; }
-  const PROXY = localStorage.getItem('utadco_netlify_proxy');
-  if (!PROXY) { toast('Netlify proxy URL not set — enter it after clicking Pull from CC'); return; }
-
-  const statusEl = document.getElementById('cc-sync-status');
-  statusEl.style.display = 'block';
-  statusEl.style.color = 'var(--teal-600)';
-  statusEl.textContent = 'Connecting to Constant Contact...';
-
-  // Get CC list ID first (CC v3 requires contacts be added to a list)
-  let listId = localStorage.getItem('utadco_cc_list_id');
-  if (!listId) {
-    try {
-      const res = await fetch(PROXY + '/.netlify/functions/cc-auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'get_lists', access_token: token })
-      });
-      const data = await res.json();
-      const lists = data.lists || [];
-      const target = lists.find(l => l.name === 'All Contacts') || lists[0];
-      if (target) { listId = target.list_id; localStorage.setItem('utadco_cc_list_id', listId); }
-    } catch(err) {
-      statusEl.style.color = '#A32D2D';
-      statusEl.textContent = 'Could not fetch CC lists: ' + err.message;
-      return;
-    }
-  }
-
-  const eligible = contacts.filter(c => c.email);
-  statusEl.textContent = `Pushing ${eligible.length} contacts to Constant Contact...`;
-
-  let pushed = 0, failed = 0, tokenExpired = false;
-
-  for (const c of eligible) {
-    if (tokenExpired) break;
-    try {
-      const res = await fetch(PROXY + '/.netlify/functions/cc-auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'push_contact', access_token: token, contact: c, list_id: listId })
-      });
-      if (res.status === 401) {
-        tokenExpired = true;
-        disconnectIntegration('cc');
-        statusEl.style.color = '#A32D2D';
-        statusEl.textContent = `Token expired after ${pushed} pushed — reconnect CC and try again`;
-        break;
-      }
-      if (res.ok) {
-        const data = await res.json();
-        const newId = data.contact_id || data.contact?.contact_id;
-        if (!c.ccContactId && newId && c.firestoreId) {
-          c.ccContactId = newId;
-          db.collection('contacts').doc(c.firestoreId).update({ ccContactId: newId }).catch(e => console.error(e));
-        }
-        pushed++;
-        if (pushed % 25 === 0) statusEl.textContent = `Pushing... ${pushed}/${eligible.length}`;
-      } else { failed++; }
-    } catch(err) { failed++; }
-  }
-
-  if (!tokenExpired) {
-    const now = new Date().toLocaleTimeString();
-    document.getElementById('cc-last-sync').textContent = 'Last synced: ' + now;
-    statusEl.style.color = failed > 0 ? '#854F0B' : 'var(--teal-600)';
-    statusEl.textContent = `✓ ${pushed} pushed to CC${failed ? ` · ${failed} skipped` : ''}`;
-    setTimeout(() => { statusEl.style.display = 'none'; }, 6000);
-  }
-}
 
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
   overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
 });
-checkCCImplicitToken();
-// ─── DEDUPLICATION CLEANUP ───────────────────────────────
-async function deduplicateContacts() {
-  const banner = document.getElementById('phone-patch-banner');
-  banner.querySelector('div').textContent = 'Scanning for duplicates...';
-
-  const snap = await db.collection('contacts').get();
-  const all = snap.docs.map(d => ({ firestoreId: d.id, ...d.data() }));
-
-  // Group by normalized email
-  const byEmail = {};
-  const noEmail = [];
-  all.forEach(c => {
-    const email = (c.email || '').toLowerCase().trim();
-    if (email) {
-      if (!byEmail[email]) byEmail[email] = [];
-      byEmail[email].push(c);
-    } else {
-      noEmail.push(c);
-    }
-  });
-
-  // Find groups with duplicates
-  const duplicateGroups = Object.values(byEmail).filter(g => g.length > 1);
-  if (!duplicateGroups.length) {
-    banner.querySelector('div').textContent = '✓ No duplicates found';
-    setTimeout(() => banner.style.display = 'none', 3000);
-    return;
-  }
-
-  let deleted = 0;
-  const batch = db.batch();
-
-  for (const group of duplicateGroups) {
-    // Sort: keep the one with most data (most fields filled)
-    group.sort((a, b) => {
-      const scoreA = [a.phone, a.org, a.notes, a.photo].filter(Boolean).length + (a.stickers||[]).length + (a.activity||[]).length;
-      const scoreB = [b.phone, b.org, b.notes, b.photo].filter(Boolean).length + (b.stickers||[]).length + (b.activity||[]).length;
-      return scoreB - scoreA;
-    });
-    const keeper = group[0];
-    const dupes = group.slice(1);
-
-    // Merge stickers from dupes into keeper
-    const mergedStickers = [...new Set([...(keeper.stickers||[]), ...dupes.flatMap(d => d.stickers||[])])];
-    const mergedActivity = [...(keeper.activity||[]), ...dupes.flatMap(d => d.activity||[])];
-    if (!keeper.phone) keeper.phone = dupes.find(d => d.phone)?.phone || '';
-    if (!keeper.org) keeper.org = dupes.find(d => d.org)?.org || '';
-
-    // Update keeper with merged data
-    batch.update(db.collection('contacts').doc(keeper.firestoreId), {
-      stickers: mergedStickers,
-      activity: mergedActivity,
-      phone: keeper.phone,
-      org: keeper.org
-    });
-
-    // Delete dupes
-    dupes.forEach(d => {
-      batch.delete(db.collection('contacts').doc(d.firestoreId));
-      deleted++;
-    });
-  }
-
-  await batch.commit();
-
-  // Reload contacts from Firestore
-  const fresh = await db.collection('contacts').orderBy('dateAdded', 'desc').get();
-  contacts = fresh.docs.map(d => ({ ...d.data(), firestoreId: d.id }));
-  renderSidebar(); renderStickerWall(); updateExportSelect();
-  document.getElementById('sb-all-count').textContent = contacts.length;
-  renderContactList();
-
-  banner.querySelector('div').innerHTML = `✓ Removed ${deleted} duplicate${deleted !== 1 ? 's' : ''} — ${contacts.length} unique contacts remain`;
-  banner.querySelector('button').style.display = 'none';
-  setTimeout(() => banner.style.display = 'none', 5000);
-  toast(`Cleaned up ${deleted} duplicates`);
-}
-// Patches phone numbers for the People Pitch import that missed them
-async function patchPeoplePitchPhones() {
-  const phoneMap = {"rfelton@theroadhome.org":"+14355131537","antonio_79@hotmail.com":"+18018245824","korirose10@gmail.com":"+18013097633","makaewright@gmail.com":"+18015502245","marierosetrudelle@gmail.com":"+16508889480","shannonsimonelli@gmail.com":"+13852026477","rotaryclub24@slcrotary.org":"+18017269670","events@jlmstr.me":"+18019998342","brandyp@rd-advantage.com":"+18012443428","cj.farrior@outlook.com":"+18017078678","pualeiala@gmail.com":"+18014725898","teresa@trifectaswag.com":"+18013474103","salesdivamichelle@gmail.com":"+18016969123","juancarlos@freethegame.org":"+18016512960","tony@4youre.com":"+18015095341","benm@made-simpler.com":"+13853899333","wendymoline2@gmail.com":"+18014587557","wildefitcoaching@gmail.com":"+16103482202","piba@slchamber.com":"+18049162858","jaimee@tibhospice.org":"+18014564560","jillian@tibhospice.org":"+16054153798","eastmanfitness2015@gmail.com":"+18018984321","maria@healthtree.org":"+18017592098","rozalynn@healthtree.org":"+18018974085","matt@indarena.com":"+18019480778","robin@rfpphoto.com":"+18153541758","sofia@healthtree.org":"+18007091113","sylvia@unitedangels.org":"+14084826323","atim.enyenihi@icloud.com":"+18654387752","harleysangelsslc1@gmail.com":"+13854812936","teinamarriescuderi@gmail.com":"+18016383945","lexiedunkley317@gmail.com":"+18016733453","ifisiuk@s-pro.io":"+18018350441","colleen@rainbirdut.com":"+18016364262","alison106@gmail.com":"+18016826765","sariah@wolfmaxbd.com":"+14359903000","aaron@idynify.com":"+18016049098","michael@jumpthemoon.org":"+14357505066","lizghamilton@gmail.com":"+18019135722","eliza@gatheringforimpact.org":"+16319464048","hamilton@deepbluecapital.ai":"+17655130577","emrys.johnson@yahoo.com":"+18018913905","lankfordyvette4@gmail.com":"+18016983585","lmcmullin@theroadhome.org":"+19136268227","deb@solmarketing.com":"+15125541538","aprilgarstin@gmail.com":"+19714012053","sarahtyau@gmail.com":"+12139247778","melissagonzalez1@gmail.com":"+18013180022","beatriz@utahadvocacycoalition.org":"+5511991943251","leppard.e@gmail.com":"+18016714510"};
-  let updated = 0;
-  const snap = await db.collection('contacts').get();
-  const batch = db.batch();
-  snap.docs.forEach(doc => {
-    const data = doc.data();
-    const email = (data.email||'').toLowerCase().trim();
-    if (phoneMap[email] && !data.phone) {
-      batch.update(doc.ref, { phone: phoneMap[email] });
-      // Also update local cache
-      const local = contacts.find(c => c.firestoreId === doc.id);
-      if (local) local.phone = phoneMap[email];
-      updated++;
-    }
-  });
-  await batch.commit();
-  toast(`✓ Updated ${updated} contacts with phone numbers`);
-  refreshCurrentView();
-}
-
-restoreIntegrations();
 </script>
 </body>
 </html>
