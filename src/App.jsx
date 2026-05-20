@@ -15,6 +15,7 @@ import EndorsementPage from "@/pages/EndorsementPage";
 import EndorsementEditPage from "@/pages/EndorsementEditPage";
 import EndorsementsWallPage from "@/pages/EndorsementsWallPage";
 import ForgotPasswordPage from "@/pages/ForgotPasswordPage";
+import EventsPage from "@/pages/EventsPage";
 
 export default function App() {
   return (
@@ -53,6 +54,9 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+
+        {/* Public Events page */}
+        <Route path="/events" element={<EventsPage />} />
 
         {/* Public endorsement hub */}
         <Route path="/endorse" element={<EndorsementPage />} />

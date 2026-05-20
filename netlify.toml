@@ -82,3 +82,13 @@
   from = "/endorsements"
   to = "/app.html"
   status = 200
+
+[[redirects]]
+  from = "/events"
+  to = "/app.html"
+  status = 200
+
+[[redirects]]
+  from = "/events/*"
+  to = "/app.html"
+  status = 200

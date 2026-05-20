@@ -1,0 +1,81 @@
+[
+  {
+    "id": "westside-canvass-cookout-may-23",
+    "title": "Westside Canvass & Cookout",
+    "tag": "Flagship",
+    "date": "2026-05-23",
+    "dateLabel": "Saturday, May 23",
+    "timeLabel": "11:00 AM – 8:00 PM",
+    "startTime": "11:00",
+    "endTime": "20:00",
+    "location": "Riverside Park — West Pavilion",
+    "address": "1491 W 600 N, Salt Lake City, UT 84116",
+    "image": "/images/movement-rally.jpg",
+    "summary": "Knock doors with your neighbors all afternoon, then bring the whole family to the West Pavilion for music, food, games, and a Westside-strong block party.",
+    "highlights": ["Door Knocking", "Phone Banking", "BBQ Cookout", "Live Music"],
+    "shifts": [
+      "Canvass · 11:00 AM – 1:00 PM",
+      "Canvass · 12:00 PM – 2:00 PM",
+      "Canvass · 2:00 PM – 4:00 PM",
+      "Cookout · 4:00 PM – 8:00 PM"
+    ]
+  },
+  {
+    "id": "rose-park-doorknock-june-6",
+    "title": "Rose Park Doorknock Saturday",
+    "tag": "Canvass",
+    "date": "2026-06-06",
+    "dateLabel": "Saturday, June 6",
+    "timeLabel": "10:00 AM – 1:00 PM",
+    "startTime": "10:00",
+    "endTime": "13:00",
+    "location": "Rose Park Community Center",
+    "address": "1140 N American Beauty Dr, Salt Lake City, UT 84116",
+    "image": "/images/movement-baseball.jpg",
+    "summary": "Three-hour morning canvass through Rose Park. Coffee, donuts, training, and turf at 10. Out the door at 10:30.",
+    "highlights": ["Walk Lists", "New Volunteer Friendly", "Coffee Provided"],
+    "shifts": [
+      "Door Knocking · 10:00 AM – 1:00 PM",
+      "Phone Banking · 10:00 AM – 1:00 PM"
+    ]
+  },
+  {
+    "id": "glendale-community-bbq-june-21",
+    "title": "Glendale Community BBQ",
+    "tag": "Community",
+    "date": "2026-06-21",
+    "dateLabel": "Sunday, June 21",
+    "timeLabel": "3:00 PM – 7:00 PM",
+    "startTime": "15:00",
+    "endTime": "19:00",
+    "location": "Modesto Park",
+    "address": "1320 S Concord St, Salt Lake City, UT 84104",
+    "image": "/images/movement-foodbank.jpg",
+    "summary": "Free family BBQ in the heart of Glendale. Meet Aaron, meet your neighbors, and learn how the campaign is showing up for District 21.",
+    "highlights": ["Free Food", "Kids Activities", "Voter Registration"],
+    "shifts": [
+      "Setup · 1:00 PM – 3:00 PM",
+      "Grill Team · 3:00 PM – 7:00 PM",
+      "Tear Down · 7:00 PM – 8:00 PM"
+    ]
+  },
+  {
+    "id": "phonebank-tuesday-july-7",
+    "title": "Westside Phonebank Tuesdays",
+    "tag": "Phone Bank",
+    "date": "2026-07-07",
+    "dateLabel": "Tuesday, July 7",
+    "timeLabel": "6:00 PM – 8:30 PM",
+    "startTime": "18:00",
+    "endTime": "20:30",
+    "location": "Wiley HQ (Virtual + In-Person)",
+    "address": "Join from anywhere — Zoom link sent after RSVP",
+    "image": "/images/aaron-coaching.jpg",
+    "summary": "Weekly evening phonebank powered by neighbors. Calls, snacks, music, and a quick training for first-timers.",
+    "highlights": ["Virtual Option", "Training Included", "Snacks On Us"],
+    "shifts": [
+      "Phone Banking · 6:00 PM – 7:30 PM",
+      "Phone Banking · 7:00 PM – 8:30 PM"
+    ]
+  }
+]
