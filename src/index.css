@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Class-based dark mode so the Events page (and any future page) can toggle
+   independently of OS preference. Tailwind v4 needs the variant declared. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-navy: #034A76;
   --color-navy-dark: #00456F;
