@@ -194,86 +194,74 @@
   </section>
 
   <!-- ============================================
-       UPCOMING EVENTS PUMP-UP
-       Two-card teaser strip — full hub lives at /events
-       To update: edit the two .event-card blocks or the .events-strip headline below
+       ENDORSEMENTS & CONTRIBUTORS
+       Two grids of square portrait tiles (name banner is baked into each image).
+       To add/remove a person:
+         1. Drop their image in images/endorsements/ or images/contributors/
+         2. Add a matching <li> below with the correct src + alt
        ============================================ -->
-  <section class="events-pumpup" id="events-pumpup" aria-labelledby="events-pumpup-title">
-    <div class="events-strip">
-      <span class="events-strip-pulse" aria-hidden="true"></span>
-      <span class="events-strip-text">Join the Movement This Week</span>
-      <span class="events-strip-tag">Westside · District 21</span>
+  <section class="endorsements" id="endorsements" aria-labelledby="endorsements-title">
+    <div class="endorsements-strip">
+      <span class="endorsements-strip-pulse" aria-hidden="true"></span>
+      <span class="endorsements-strip-text">Backed by the Westside</span>
+      <span class="endorsements-strip-tag">District 21</span>
     </div>
 
-    <div class="events-pumpup-inner">
-      <div class="events-pumpup-header">
-        <div>
-          <p class="events-pumpup-kicker">Upcoming Events</p>
-          <h2 class="events-pumpup-title" id="events-pumpup-title">Show Up. <span class="accent">Show Out.</span></h2>
-          <p class="events-pumpup-sub">Every doorbell. Every burger. Every conversation. This is how District 21 wins.</p>
-        </div>
-        <a href="/events" class="events-pumpup-allbtn">See All Events →</a>
+    <div class="endorsements-inner">
+      <div class="endorsements-header">
+        <p class="endorsements-kicker">Endorsements &amp; Contributors</p>
+        <h2 class="endorsements-title" id="endorsements-title">Standing With <span class="accent">Aaron.</span></h2>
+        <p class="endorsements-sub">Proud to be supported by leaders, neighbors, and organizations making our community stronger every day.</p>
       </div>
 
-      <div class="events-grid">
-        <!-- EVENT 1 -->
-        <article class="event-card">
-          <div class="event-card-image" style="background-image:url('images/movement-rally.jpg');">
-            <span class="event-card-tag">Flagship</span>
-            <div class="event-card-date">
-              <span class="event-card-date-month">May</span>
-              <span class="event-card-date-day">23</span>
-            </div>
-          </div>
-          <div class="event-card-body">
-            <h3 class="event-card-title">Westside Canvass &amp; Cookout</h3>
-            <ul class="event-card-meta">
-              <li><span aria-hidden="true">📅</span> Saturday, May 23 · 11 AM – 8 PM</li>
-              <li><span aria-hidden="true">📍</span> Riverside Park — West Pavilion</li>
-            </ul>
-            <p class="event-card-summary">Knock doors all afternoon, then bring the whole family for music, food, games, and a Westside-strong block party.</p>
-            <div class="event-card-pills">
-              <span>Door Knocking</span>
-              <span>BBQ</span>
-              <span>Live Music</span>
-            </div>
-            <div class="event-card-actions">
-              <a href="/events#events" class="event-card-rsvp">RSVP</a>
-              <a href="/events#volunteer" class="event-card-volunteer">Volunteer</a>
-            </div>
-          </div>
-        </article>
-
-        <!-- EVENT 2 -->
-        <article class="event-card">
-          <div class="event-card-image" style="background-image:url('images/movement-baseball.jpg');">
-            <span class="event-card-tag">Canvass</span>
-            <div class="event-card-date">
-              <span class="event-card-date-month">Jun</span>
-              <span class="event-card-date-day">6</span>
-            </div>
-          </div>
-          <div class="event-card-body">
-            <h3 class="event-card-title">Rose Park Doorknock Saturday</h3>
-            <ul class="event-card-meta">
-              <li><span aria-hidden="true">📅</span> Saturday, June 6 · 10 AM – 1 PM</li>
-              <li><span aria-hidden="true">📍</span> Rose Park Community Center</li>
-            </ul>
-            <p class="event-card-summary">Coffee, donuts, training, turf at 10. Out the door at 10:30. Perfect first canvass.</p>
-            <div class="event-card-pills">
-              <span>New Volunteer Friendly</span>
-              <span>Coffee Provided</span>
-            </div>
-            <div class="event-card-actions">
-              <a href="/events#events" class="event-card-rsvp">RSVP</a>
-              <a href="/events#volunteer" class="event-card-volunteer">Volunteer</a>
-            </div>
-          </div>
-        </article>
+      <!-- ENDORSEMENTS -->
+      <div class="endorsements-group">
+        <h3 class="endorsements-group-title">Endorsements</h3>
+        <ul class="endorsements-grid" role="list">
+          <li class="endorse-card">
+            <img src="images/endorsements/sandra-hollins.jpg" alt="Sandra Hollins" loading="lazy" width="400" height="400" />
+          </li>
+          <li class="endorse-card">
+            <img src="images/endorsements/ashlee-matthews.jpg" alt="Ashlee Matthews" loading="lazy" width="400" height="400" />
+          </li>
+          <li class="endorse-card">
+            <img src="images/endorsements/rosalba-dominguez.jpg" alt="Rosalba Dominguez" loading="lazy" width="400" height="400" />
+          </li>
+          <li class="endorse-card">
+            <img src="images/endorsements/natalie-pinkney.jpg" alt="Natalie Pinkney" loading="lazy" width="400" height="400" />
+          </li>
+          <li class="endorse-card">
+            <img src="images/endorsements/liban-mohamed.jpg" alt="Liban Mohamed" loading="lazy" width="400" height="400" />
+          </li>
+          <li class="endorse-card">
+            <img src="images/endorsements/david-hollins.jpg" alt="David Hollins" loading="lazy" width="400" height="400" />
+          </li>
+        </ul>
       </div>
 
-      <div class="events-pumpup-footer">
-        <a href="/events" class="events-pumpup-cta">See the Full Events Calendar →</a>
+      <!-- CONTRIBUTORS -->
+      <div class="endorsements-group">
+        <h3 class="endorsements-group-title">Contributors</h3>
+        <ul class="endorsements-grid" role="list">
+          <li class="endorse-card">
+            <img src="images/contributors/ross-romero.jpg" alt="Ross Romero" loading="lazy" width="400" height="400" />
+          </li>
+          <li class="endorse-card">
+            <img src="images/contributors/evan-done.jpg" alt="Evan Done" loading="lazy" width="400" height="400" />
+          </li>
+          <li class="endorse-card">
+            <img src="images/contributors/carol-spackman-moss.jpg" alt="Carol Spackman Moss" loading="lazy" width="400" height="400" />
+          </li>
+          <li class="endorse-card">
+            <img src="images/contributors/victoria-petro.jpg" alt="Victoria Petro" loading="lazy" width="400" height="400" />
+          </li>
+          <li class="endorse-card">
+            <img src="images/contributors/nate-salazar.jpg" alt="Nate Salazar" loading="lazy" width="400" height="400" />
+          </li>
+          <li class="endorse-card">
+            <img src="images/contributors/jonathan-ruga.jpg" alt="Jonathan Ruga" loading="lazy" width="400" height="400" />
+          </li>
+        </ul>
       </div>
     </div>
   </section>

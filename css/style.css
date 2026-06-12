@@ -1073,17 +1073,18 @@ footer {
 .caucus-archive-notice a { color: #e86042; text-decoration: underline; }
 
 /* ============================================
-   EVENTS PUMP-UP (home page strip)
-   Two-card teaser linking to /events. To swap the two events,
-   edit the .event-card blocks in index.html.
+   ENDORSEMENTS & CONTRIBUTORS (home page)
+   Two square-portrait grids. Each image already has the
+   name banner baked in. To add/remove: drop image in
+   images/endorsements/ or images/contributors/ and edit index.html.
    ============================================ */
-.events-pumpup {
+.endorsements {
   position: relative;
   background: #f8f6f2;
   padding: 0 0 90px;
   overflow: hidden;
 }
-.events-strip {
+.endorsements-strip {
   background: linear-gradient(90deg, #F36F6B 0%, #E0413D 100%);
   color: #ffffff;
   display: flex;
@@ -1100,7 +1101,7 @@ footer {
   text-align: center;
   box-shadow: 0 6px 18px rgba(243,111,107,0.35);
 }
-.events-strip-pulse {
+.endorsements-strip-pulse {
   display: inline-block;
   width: 10px;
   height: 10px;
@@ -1114,8 +1115,8 @@ footer {
   70% { box-shadow: 0 0 0 12px rgba(255,255,255,0); }
   100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
 }
-.events-strip-text { font-size: 1.15rem; }
-.events-strip-tag {
+.endorsements-strip-text { font-size: 1.15rem; }
+.endorsements-strip-tag {
   display: inline-block;
   padding: 4px 10px;
   border: 1.5px solid rgba(255,255,255,0.7);
@@ -1123,20 +1124,16 @@ footer {
   font-size: 0.85rem;
   letter-spacing: 0.12em;
 }
-.events-pumpup-inner {
+.endorsements-inner {
   max-width: 1180px;
   margin: 0 auto;
   padding: 70px 6vw 0;
 }
-.events-pumpup-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 24px;
-  flex-wrap: wrap;
-  margin-bottom: 36px;
+.endorsements-header {
+  text-align: center;
+  margin-bottom: 48px;
 }
-.events-pumpup-kicker {
+.endorsements-kicker {
   display: inline-block;
   background: #002A52;
   color: #ffffff;
@@ -1149,7 +1146,7 @@ footer {
   border-radius: 3px;
   margin-bottom: 14px;
 }
-.events-pumpup-title {
+.endorsements-title {
   font-family: "Barlow Condensed", sans-serif;
   font-weight: 900;
   font-size: clamp(2.4rem, 5.5vw, 4rem);
@@ -1159,221 +1156,55 @@ footer {
   color: #002A52;
   margin: 0;
 }
-.events-pumpup-title .accent { color: #F36F6B; }
-.events-pumpup-sub {
-  margin-top: 10px;
+.endorsements-title .accent { color: #F36F6B; }
+.endorsements-sub {
+  margin: 14px auto 0;
   font-size: 1.1rem;
   color: rgba(0,42,82,0.75);
-  max-width: 520px;
+  max-width: 640px;
   line-height: 1.55;
 }
-.events-pumpup-allbtn {
-  background: transparent;
-  border: 2px solid #002A52;
-  color: #002A52;
-  padding: 12px 22px;
-  border-radius: 4px;
-  font-family: "Barlow Condensed", sans-serif;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  font-size: 0.95rem;
-  text-decoration: none;
-  transition: background-color 0.2s, color 0.2s, transform 0.2s;
-  white-space: nowrap;
-}
-.events-pumpup-allbtn:hover {
-  background: #002A52;
-  color: #ffffff;
-  transform: translateY(-2px);
-}
-.events-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 26px;
-}
-.event-card {
-  background: #ffffff;
-  border-radius: 14px;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0,42,82,0.10);
-  border: 1px solid rgba(0,42,82,0.06);
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-.event-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 44px rgba(0,42,82,0.18);
-}
-.event-card-image {
-  position: relative;
-  height: 220px;
-  background-size: cover;
-  background-position: center;
-}
-.event-card-image::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(0,31,63,0.15) 0%, rgba(0,31,63,0.55) 70%, rgba(0,31,63,0.85) 100%);
-}
-.event-card-tag {
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  z-index: 1;
-  background: #F36F6B;
-  color: #ffffff;
+.endorsements-group { margin-top: 48px; }
+.endorsements-group:first-of-type { margin-top: 0; }
+.endorsements-group-title {
   font-family: "Barlow Condensed", sans-serif;
   font-weight: 900;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  font-size: 0.7rem;
-  padding: 5px 10px;
-  border-radius: 3px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
-}
-.event-card-date {
-  position: absolute;
-  bottom: 14px;
-  left: 14px;
-  z-index: 1;
-  width: 64px;
-  background: #ffffff;
-  border-radius: 6px;
-  overflow: hidden;
-  text-align: center;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-}
-.event-card-date-month {
-  display: block;
-  background: #034A76;
-  color: #ffffff;
-  font-family: "Barlow Condensed", sans-serif;
-  font-weight: 900;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  font-size: 0.7rem;
-  padding: 4px 0;
-}
-.event-card-date-day {
-  display: block;
-  font-family: "Barlow Condensed", sans-serif;
-  font-weight: 900;
-  font-size: 1.65rem;
-  color: #002A52;
-  padding: 4px 0 6px;
-  line-height: 1;
-}
-.event-card-body {
-  padding: 22px 24px 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  flex: 1;
-}
-.event-card-title {
-  font-family: "Barlow Condensed", sans-serif;
-  font-weight: 900;
-  font-size: 1.65rem;
-  line-height: 1.05;
-  letter-spacing: -0.005em;
+  font-size: 1.75rem;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #002A52;
-  margin: 0;
+  margin: 0 0 22px;
+  padding-bottom: 10px;
+  border-bottom: 3px solid #F36F6B;
+  display: inline-block;
 }
-.event-card-meta {
+.endorsements-grid {
   list-style: none;
   padding: 0;
   margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  color: rgba(0,42,82,0.78);
-  font-family: "Barlow Condensed", sans-serif;
-  font-weight: 600;
-  letter-spacing: 0.02em;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 22px;
 }
-.event-card-meta li {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  font-size: 0.95rem;
+.endorse-card {
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 26px rgba(0,42,82,0.10);
+  border: 1px solid rgba(0,42,82,0.06);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  aspect-ratio: 1 / 1;
 }
-.event-card-meta li span { color: #F36F6B; }
-.event-card-summary {
-  color: rgba(0,42,82,0.78);
-  font-size: 0.95rem;
-  line-height: 1.55;
-  margin: 0;
+.endorse-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(0,42,82,0.18);
 }
-.event-card-pills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+.endorse-card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
-.event-card-pills span {
-  background: #f1ede6;
-  color: #002A52;
-  font-family: "Barlow Condensed", sans-serif;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  font-size: 0.7rem;
-  padding: 4px 8px;
-  border-radius: 3px;
-}
-.event-card-actions {
-  margin-top: auto;
-  display: flex;
-  gap: 10px;
-  padding-top: 6px;
-}
-.event-card-rsvp,
-.event-card-volunteer {
-  flex: 1;
-  text-align: center;
-  padding: 11px 14px;
-  border-radius: 4px;
-  font-family: "Barlow Condensed", sans-serif;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  font-size: 0.85rem;
-  text-decoration: none;
-  transition: background-color 0.2s, transform 0.2s;
-}
-.event-card-rsvp {
-  background: #F36F6B;
-  color: #ffffff;
-}
-.event-card-rsvp:hover { background: #F58A88; transform: translateY(-1px); }
-.event-card-volunteer {
-  background: #002A52;
-  color: #ffffff;
-}
-.event-card-volunteer:hover { background: #034A76; transform: translateY(-1px); }
-.events-pumpup-footer {
-  text-align: center;
-  margin-top: 36px;
-}
-.events-pumpup-cta {
-  display: inline-block;
-  background: #F36F6B;
-  color: #ffffff;
-  padding: 16px 32px;
-  border-radius: 4px;
-  font-family: "Barlow Condensed", sans-serif;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  font-size: 1.05rem;
-  text-decoration: none;
-  box-shadow: 0 10px 24px rgba(243,111,107,0.35);
-  transition: background-color 0.2s, transform 0.2s;
-}
-.events-pumpup-cta:hover { background: #F58A88; transform: translateY(-2px); }
 
 /* ============================================
    MOBILE RESPONSIVE
@@ -1381,14 +1212,14 @@ footer {
 @media (max-width: 900px) {
   section { padding: 70px 6vw; }
   .movement, .how-we-win, .convention, .conv-timeline, .donate, .involve { padding: 70px 6vw; }
-  .events-pumpup { padding: 0 0 70px; }
-  .events-pumpup-inner { padding: 50px 6vw 0; }
-  .events-strip { font-size: 0.9rem; padding: 12px 18px; gap: 10px; }
-  .events-strip-text { font-size: 1rem; }
-  .events-strip-tag { font-size: 0.75rem; }
-  .events-pumpup-header { flex-direction: column; align-items: flex-start; }
-  .events-pumpup-allbtn { width: 100%; text-align: center; }
-  .events-grid { grid-template-columns: 1fr; gap: 20px; }
+  .endorsements { padding: 0 0 70px; }
+  .endorsements-inner { padding: 50px 6vw 0; }
+  .endorsements-strip { font-size: 0.9rem; padding: 12px 18px; gap: 10px; }
+  .endorsements-strip-text { font-size: 1rem; }
+  .endorsements-strip-tag { font-size: 0.75rem; }
+  .endorsements-header { margin-bottom: 36px; }
+  .endorsements-group { margin-top: 36px; }
+  .endorsements-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
   nav { padding: 0 20px; position: relative; }
   .nav-links, .nav-right { display: none; }
   .hamburger { display: flex; }
