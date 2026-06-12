@@ -13,3 +13,4 @@ Recommended format: square `.jpg` (the banner/name is already baked into the ima
 | Victoria Petro | `victoria-petro.jpg` |
 | Nate Salazar | `nate-salazar.jpg` |
 | Jonathan Ruga | `jonathan-ruga.jpg` |
+| Luz Escamilla | `luz-escamilla.jpg` |
