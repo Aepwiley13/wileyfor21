@@ -527,6 +527,168 @@ section { padding: 100px 8vw; }
 }
 
 /* ============================================
+   MY PRIORITIES  (dark navy background — Westside investment)
+   ============================================ */
+.priorities {
+  background-color: #002A52;
+  position: relative;
+  overflow: hidden;
+  padding: 110px 8vw;
+}
+.priorities::before {
+  content: "WESTSIDE";
+  position: absolute;
+  left: -2vw;
+  top: 60px;
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 900;
+  font-size: clamp(6rem, 14vw, 16rem);
+  color: rgba(255,255,255,0.035);
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+  line-height: 1;
+}
+.priorities-intro {
+  max-width: 760px;
+  margin: 0 auto 64px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+.priorities-intro .section-label { color: #F36F6B; }
+.priorities-opening {
+  color: rgba(255,255,255,0.85);
+  font-size: 1.08rem;
+  line-height: 1.78;
+  max-width: 680px;
+  margin: 0 auto;
+}
+.priorities-opening p + p { margin-top: 16px; }
+.priority-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  position: relative;
+  z-index: 1;
+}
+.priority-card {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 36px 32px 32px;
+  border-top: 5px solid #F36F6B;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.18);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+.priority-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 44px rgba(0,0,0,0.28);
+}
+.priority-card:nth-child(2) { border-top-color: #2a7a4b; }
+.priority-card:nth-child(3) { border-top-color: #034A76; }
+.priority-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+.priority-number {
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #F36F6B;
+}
+.priority-icon { font-size: 2rem; line-height: 1; }
+.priority-title {
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 900;
+  font-size: 1.7rem;
+  color: #034A76;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 1.1;
+  margin-bottom: 14px;
+}
+.priority-lede {
+  font-family: "Barlow", sans-serif;
+  font-weight: 600;
+  font-style: italic;
+  color: #1a1a1a;
+  font-size: 1.02rem;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+.priority-body {
+  color: #555555;
+  line-height: 1.7;
+  font-size: 0.97rem;
+  flex: 1;
+}
+.priority-body p + p { margin-top: 14px; }
+.priority-tagline {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid #eeecea;
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #034A76;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+}
+.priorities-cta {
+  margin-top: 72px;
+  max-width: 760px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+.priorities-cta-lead {
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.4rem, 2.4vw, 1.85rem);
+  color: #F36F6B;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 1.25;
+  margin-bottom: 24px;
+}
+.priorities-cta-body {
+  color: rgba(255,255,255,0.85);
+  font-size: 1.05rem;
+  line-height: 1.78;
+  margin-bottom: 24px;
+}
+.priorities-cta-fight {
+  color: #ffffff;
+  font-size: 1.15rem;
+  line-height: 1.55;
+  margin-bottom: 32px;
+}
+.priorities-cta-buttons {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+.priorities-cta-close {
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-top: 12px;
+}
+
+/* ============================================
    HOW WE WIN  (navy background — white text)
    ============================================ */
 .how-we-win {
@@ -1242,6 +1404,11 @@ footer {
   .involved-grid,
   .footer-grid { grid-template-columns: 1fr; gap: 40px; }
   .issue-cards, .steps-grid { grid-template-columns: 1fr; }
+  .priorities { padding: 70px 6vw; }
+  .priority-cards { grid-template-columns: 1fr; gap: 18px; }
+  .priorities-intro { margin-bottom: 44px; }
+  .priorities-cta { margin-top: 48px; }
+  .priorities-cta-buttons { gap: 10px; }
   .conv-steps-grid { grid-template-columns: 1fr 1fr; }
   .involve-grid { grid-template-columns: 1fr 1fr; }
   .photo-grid { grid-template-columns: 1fr 1fr; }
